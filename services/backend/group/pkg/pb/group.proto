@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Group {
+        string id = 1;
+        string title = 2;
+        repeated string people = 3;
+        string details = 4;
+        string type = 5;
+        string description = 6;
+        google.protobuf.Timestamp time = 7;
+}
+
+message PostGroupRequest {
+        string title = 1;
+        repeated string people = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        google.protobuf.Timestamp time = 6;
+}
+
+message PostGroupResponse {
+        string group = 1;
+}
+
+message GetGroupRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetGroupResponse {
+        Group group = 1;
+}
+
+message GetMultipleGroupsRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultipleGroupsResponse {
+        repeated Group groups = 1;
+}
+
+message PutGroupRequest {
+        string id = 1;
+        string title = 2;
+        repeated string people = 3;
+        string details = 4;
+        string type = 5;
+        string description = 6;
+        google.protobuf.Timestamp time = 7;
+}
+
+message PutGroupResponse {
+        string group = 1;
+}
+
+message DeleteGroupRequest {
+        string id = 1;
+}
+
+message DeleteGroupResponse {
+        string id = 1;
+}
+
+service GroupService {
+        rpc PostGroup (PostGroupRequest) returns (PostGroupResponse) {}
+        rpc GetGroup (GetGroupRequest) returns (GetGroupResponse) {}
+        rpc GetMultipleGroups (GetMultipleGroupsRequest) returns (GetMultipleGroupsResponse) {}
+        rpc PutGroup (PutGroupRequest) returns (PutGroupResponse) {}
+        rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {}
+}

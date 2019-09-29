@@ -1,0 +1,57 @@
+schema:
+ - "schema/**/*.graphql"
+exec:
+  filename: generated/generated.go
+models:
+  User:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.User
+  State:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.State
+  Address:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Address
+  City:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.City
+  Country:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Country
+  Contact:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Contact
+  Language:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Language
+  UserPost:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.UserPost
+  Image:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Image
+  File:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.File
+  Journey:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Journey
+  Comment:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Comment
+  Share:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Share
+  Space:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Space
+  Task:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Task
+  Profile:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Profile
+  UserMessage:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.UserMessage
+  Chat:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Chat
+  Location:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Location
+  Match:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Match
+  MatchedUser:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.MatchedUser
+  Group:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Group
+  Goal:
+    model: github.com/hackerrithm/blackfox/services/backend/api/pkg.Goal
+  # UploadFile:
+  #   model: github.com/hackerrithm/blackfox/services/backend/api/pkg.UploadFile
+resolver:
+  filename: resolver/resolver.go
+  type: Resolver
+# autobind: []

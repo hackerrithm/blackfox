@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+message Notification {
+        string id = 1;
+        string service = 2;
+        string topic = 3;
+        string body = 4;
+}
+
+message SendNotificationRequest {
+        string service = 1;
+        string topic = 2;
+        string body = 3;
+}
+
+message SendNotificationResponse {
+        Notification notification = 1;
+}
+
+
+service NotificationService {
+        rpc SendNotification (SendNotificationRequest) returns (SendNotificationResponse) {}
+}

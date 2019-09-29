@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Post {
+        string id = 1;
+        string author = 2;
+        string topic = 3;
+        string category = 4;
+        string contentText = 5;
+        string type = 6;
+        bool anonymous = 7;
+        double latitude = 8;
+        double longitude = 9;
+        google.protobuf.Timestamp time = 10;
+        Image contentPhoto = 11;
+        File contentFile = 12;
+        repeated string likes = 13;
+        repeated string agreements = 14;
+        repeated string followers = 15;
+        repeated string comments = 16;
+        repeated string share = 17;
+}
+
+message Image {
+        string id = 1;
+        string name = 2;
+        string type = 3;
+        int64 size = 4;
+        int32 width = 5;
+        int32 height = 6;
+}
+
+message File {
+        string id = 1;
+        string name = 2;
+        string type = 3;
+        int64 size = 4;
+        int32 width = 5;
+        int32 height = 6;
+}
+
+message Comment {
+        string id = 1;
+        string userID = 2;
+        string text = 3;
+}
+
+message Share {
+        string party = 1;
+}
+
+message PostPostRequest {
+        string author = 1;
+        string topic = 2;
+        string category = 3;
+        string contentText = 4;
+        string type = 5;
+        bool anonymous = 6;
+        double latitude = 7;
+        double longitude = 8;
+        google.protobuf.Timestamp time = 9;
+        Image contentPhoto = 10;
+        File contentFile = 11;
+}
+
+message PostPostResponse {
+        string post = 1;
+}
+
+message GetPostRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetPostResponse {
+        Post post = 1;
+}
+
+message GetMultiplePostsRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultiplePostsResponse {
+        repeated Post posts = 1;
+}
+
+message PutPostRequest {
+        string id = 1;
+        string author = 2;
+        string topic = 3;
+        string category = 4;
+        string contentText = 5;
+        string type = 6;
+        bool anonymous = 7;
+        double latitude = 8;
+        double longitude = 9;
+        google.protobuf.Timestamp time = 10;
+        Image contentPhoto = 11;
+        File contentFile = 12;
+}
+
+message PutPostResponse {
+        string post = 1;
+}
+
+message DeletePostRequest {
+        string id = 1;
+}
+
+message DeletePostResponse {
+        string id = 1;
+}
+
+service PostService {
+        rpc PostPost (PostPostRequest) returns (PostPostResponse) {}
+        rpc GetPost (GetPostRequest) returns (GetPostResponse) {}
+        rpc GetMultiplePosts (GetMultiplePostsRequest) returns (GetMultiplePostsResponse) {}
+        rpc PutPost (PutPostRequest) returns (PutPostResponse) {}
+        rpc DeletePost (DeletePostRequest) returns (DeletePostResponse) {}
+}

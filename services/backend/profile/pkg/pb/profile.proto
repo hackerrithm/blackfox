@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Profile {
+        string id = 1;
+        string username = 2;
+        string about = 3;
+        string level = 4;
+        int32 rings = 5;
+        Image profileImg = 6;
+        Image backgroundImg = 7;
+        google.protobuf.Timestamp dateLastUpdated = 8;
+        repeated string followers = 9;
+        repeated string following = 10;
+}
+
+message Image {
+        string id = 1;
+        string name = 2;
+        string type = 3;
+        int64 size = 4;
+        int32 width = 5;
+        int32 height = 6;
+}
+
+message PostRequest {
+        string username = 1;
+        string about = 2;
+        string level = 3;
+        int32 rings = 4;
+        Image profileImg = 5;
+        Image backgroundImg = 6;
+        google.protobuf.Timestamp dateLastUpdated = 7;
+        repeated string followers = 8;
+        repeated string following = 9;
+}
+
+message PostResponse {
+        string profile = 1;
+}
+
+message GetRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetResponse {
+        Profile profile = 1;
+}
+
+message GetMultipleRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultipleResponse {
+        repeated Profile profiles = 1;
+}
+
+message PutRequest {
+        string id = 1;
+        string username = 2;
+        string about = 3;
+        string level = 4;
+        int32 rings = 5;
+        Image profileImg = 6;
+        Image backgroundImg = 7;
+        google.protobuf.Timestamp dateLastUpdated = 8;
+        repeated string followers = 9;
+        repeated string following = 10;
+}
+
+message PutResponse {
+        string profile = 1;
+}
+
+message DeleteRequest {
+        string id = 1;
+}
+
+message DeleteResponse {
+        string id = 1;
+}
+
+service ProfileService {
+        rpc Post (PostRequest) returns (PostResponse) {}
+        rpc Get (GetRequest) returns (GetResponse) {}
+        rpc GetMultiple (GetMultipleRequest) returns (GetMultipleResponse) {}
+        rpc Put (PutRequest) returns (PutResponse) {}
+        rpc Delete (DeleteRequest) returns (DeleteResponse) {}
+}

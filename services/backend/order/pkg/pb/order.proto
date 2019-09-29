@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Order {
+        string id = 1;
+        string userID = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        double totalPrice = 6;
+        repeated OrderedProduct orderedProducts = 7;
+        google.protobuf.Timestamp createdOn = 8;
+}
+
+message OrderedProduct {
+        string id = 1;
+        string name = 2;
+        string description = 3;
+        double price = 4;
+        uint32 quantity = 5;
+}
+
+message PostOrderRequest {
+        message OrderProduct {
+          string productId = 2;
+          uint32 quantity = 3;
+        }
+
+        string userID = 2;
+        repeated OrderProduct products = 4;
+}
+
+
+
+message PostOrderResponse {
+        Order order = 1;
+}
+
+message GetOrderRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetOrderResponse {
+        Order order = 1;
+}
+
+message GetMultipleOrdersRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+        string userID =  3;
+}
+
+message GetMultipleOrdersResponse {
+        repeated Order orders = 1;
+}
+
+message DeleteOrderRequest {
+        string id = 1;
+}
+
+message DeleteOrderResponse {
+        string id = 1;
+}
+
+service OrderService {
+        rpc PostOrder (PostOrderRequest) returns (PostOrderResponse) {}
+        rpc GetOrder (GetOrderRequest) returns (GetOrderResponse) {}
+        rpc GetMultipleOrders (GetMultipleOrdersRequest) returns (GetMultipleOrdersResponse) {}
+        rpc DeleteOrder (DeleteOrderRequest) returns (DeleteOrderResponse) {}
+}

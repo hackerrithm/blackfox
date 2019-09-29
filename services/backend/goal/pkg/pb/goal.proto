@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Goal {
+        string id = 1;
+        string creator = 2;
+        repeated string participants = 3;
+        repeated string likes = 4;
+        repeated string watchers = 5;
+        string aim = 6;
+        string reason = 7;
+        string details = 8;
+        string inspiration = 9;
+        string type = 10;
+        repeated string tags = 11;
+        repeated string similarGoals = 12;
+        bool isAchieved = 13;
+        bool isPrivate = 14;
+        google.protobuf.Timestamp date = 15;
+        Journey goalJourney = 16;
+}
+
+message Journey {
+    bool isComplete = 1;
+    bool IsInProgress = 2;
+    bool IsStarted = 3;
+    string Details = 4;
+    string typ = 5;
+    repeated string steps = 6;
+    int32 progress = 7;
+    google.protobuf.Timestamp startDate = 8;
+    google.protobuf.Timestamp dueDate = 9;
+}
+
+message PostGoalRequest {
+    string creator = 1;
+    repeated string participants = 2;
+    repeated string likes = 3;
+    repeated string watchers = 4;
+    string aim = 5;
+    string reason = 6;
+    string details = 7;
+    string type = 8;
+    string inspiration = 9;
+    repeated string tags = 10;
+    repeated string similarGoals = 11;
+    bool isAchieved = 12;
+    bool isPrivate = 13;
+    Journey journey = 14;
+    google.protobuf.Timestamp time = 15;
+}
+
+message PostGoalResponse {
+    string goal = 1;
+}
+
+message GetGoalRequest {
+    string id = 1;
+    uint64 userID = 2;
+}
+
+message GetGoalResponse {
+    Goal goal = 1;
+}
+
+message GetMultipleGoalsRequest {
+    uint64 skip = 1;
+    uint64 take = 2;
+}
+
+message GetMultipleGoalsResponse {
+    repeated Goal goals = 1;
+}
+
+message PutGoalRequest {
+    string id = 1;
+    string creator = 2;
+    repeated string participants = 3;
+    repeated string likes = 4;
+    repeated string watchers = 5;
+    string aim = 6;
+    string reason = 7;
+    string details = 8;
+    string type = 9;
+    string inspiration = 10;
+    repeated string tags = 11;
+    repeated string similarGoals = 12;
+    bool isAchieved = 13;
+    bool isPrivate = 14;
+    Journey journey = 15;
+    google.protobuf.Timestamp time = 16;
+}
+
+message PutGoalResponse {
+    string goal = 1;
+}
+
+message DeleteGoalRequest {
+    string id = 1;
+}
+
+message DeleteGoalResponse {
+    string id = 1;
+}
+
+service GoalService {
+    rpc PostGoal (PostGoalRequest) returns (PostGoalResponse) {}
+    rpc GetGoal (GetGoalRequest) returns (GetGoalResponse) {}
+    rpc GetMultipleGoals (GetMultipleGoalsRequest) returns (GetMultipleGoalsResponse) {}
+    rpc PutGoal (PutGoalRequest) returns (PutGoalResponse) {}
+    rpc DeleteGoal (DeleteGoalRequest) returns (DeleteGoalResponse) {}
+}

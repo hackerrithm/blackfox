@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Catalogue {
+        string id = 1;
+        string name = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        repeated string tags = 6;
+        repeated string productIDs = 7;
+        google.protobuf.Timestamp time = 8;
+}
+
+message Product {
+        string id = 1;
+        string name = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        repeated string tags = 6;
+        double price = 7;
+        float discount = 8;
+        google.protobuf.Timestamp time = 9;
+}
+
+message PostCatalogueRequest {
+        string name = 1;
+        string details = 2;
+        string type = 3;
+        string description = 4;
+        repeated string tags = 5;
+        repeated string productIDs = 6;
+        google.protobuf.Timestamp time = 7;
+}
+
+message PostCatalogueResponse {
+        string catalogue = 1;
+}
+
+message GetCatalogueRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetCatalogueResponse {
+        Catalogue catalogue = 1;
+}
+
+message GetMultipleCataloguesRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultipleCataloguesResponse {
+        repeated Catalogue catalogues = 1;
+}
+
+message PutCatalogueRequest {
+        string id = 1;
+        string name = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        repeated string tags = 6;
+        repeated string productIDs = 7;
+        google.protobuf.Timestamp time = 8;
+}
+
+message PutCatalogueResponse {
+        string catalogue = 1;
+}
+
+message DeleteCatalogueRequest {
+        string id = 1;
+}
+
+message DeleteCatalogueResponse {
+        string id = 1;
+}
+
+// ---
+
+message PostProductRequest {
+        string name = 1;
+        string details = 2;
+        string type = 3;
+        string description = 4;
+        repeated string tags = 5;
+        double price = 6;
+        float discount = 7;
+        google.protobuf.Timestamp time = 8;
+}
+
+message PostProductResponse {
+        string product = 1;
+}
+
+message GetProductRequest {
+        string id = 1;
+        string userID = 2;
+}
+
+message GetProductResponse {
+        Product product = 1;
+}
+
+message GetMultipleProductsRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultipleProductsResponse {
+        repeated Product products = 1;
+}
+
+message PutProductRequest {
+        string id = 1;
+        string name = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        repeated string tags = 6;
+        double price = 7;
+        float discount = 8;
+        google.protobuf.Timestamp time = 9;
+}
+
+message PutProductResponse {
+        string product = 1;
+}
+
+message DeleteProductRequest {
+        string id = 1;
+}
+
+message DeleteProductResponse {
+        string id = 1;
+}
+
+service CatalogueService {
+        rpc PostCatalogue (PostCatalogueRequest) returns (PostCatalogueResponse) {}
+        rpc GetCatalogue (GetCatalogueRequest) returns (GetCatalogueResponse) {}
+        rpc GetMultipleCatalogues (GetMultipleCataloguesRequest) returns (GetMultipleCataloguesResponse) {}
+        rpc PutCatalogue (PutCatalogueRequest) returns (PutCatalogueResponse) {}
+        rpc DeleteCatalogue (DeleteCatalogueRequest) returns (DeleteCatalogueResponse) {}
+        rpc PostProduct (PostProductRequest) returns (PostProductResponse) {}
+        rpc GetProduct (GetProductRequest) returns (GetProductResponse) {}
+        rpc GetMultipleProducts (GetMultipleProductsRequest) returns (GetMultipleProductsResponse) {}
+        rpc PutProduct (PutProductRequest) returns (PutProductResponse) {}
+        rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse) {}
+}

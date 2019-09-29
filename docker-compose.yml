@@ -1,0 +1,300 @@
+version: "3.7"
+
+services:
+    user:
+        image: blackfox-user-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/user/pkg/docker/app.dockerfile"
+        environment:
+            USER_SERVICE_URL: "user:5000"
+            PROFILE_SERVICE_URL: "profile:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "user"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5000:8080"
+        links:
+            - jaeger
+            # - consul
+            - mongodb
+        restart: always
+    profile:
+        image: blackfox-profile-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/profile/pkg/docker/app.dockerfile"
+        environment:
+            PROFILE_SERVICE_URL: "profile:5002"
+            USER_SERVICE_URL: "user:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "profile"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5002:8080"
+        links:
+            - jaeger
+            # - consul
+            - mongodb
+        restart: always
+        depends_on:
+            - "user"
+    task:
+        image: blackfox-task-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/task/pkg/docker/app.dockerfile"
+        environment:
+            TASK_SERVICE_URL: "task:5004"
+            PROFILE_SERVICE_URL: "profile:8080"
+            USER_SERVICE_URL: "user:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "task"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5004:8080"
+        links:
+            - jaeger
+            # - consul
+            - mongodb
+        restart: always
+    post:
+        image: blackfox-post-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/post/pkg/docker/app.dockerfile"
+        environment:
+            POST_SERVICE_URL: "post:5006"
+            PROFILE_SERVICE_URL: "profile:8080"
+            USER_SERVICE_URL: "user:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "post"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5006:8080"
+        links:
+            - jaeger
+            # - consul
+            - mongodb
+        restart: always
+        depends_on:
+            - "user"
+    space:
+        image: blackfox-space-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/space/pkg/docker/app.dockerfile"
+        environment:
+            SPACE_SERVICE_URL: "space:5008"
+            PROFILE_SERVICE_URL: "profile:8080"
+            USER_SERVICE_URL: "user:8080"
+            POST_SERVICE_URL: "post:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "space"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5008:8080"
+        links:
+            # - jaeger
+            # - consul
+            - mongodb
+        restart: always
+        depends_on:
+            - "user"
+    geography:
+        image: blackfox-geography-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/geography/pkg/docker/app.dockerfile"
+        environment:
+            GEOGRAPHY_SERVICE_URL: "geography:5010"
+            PROFILE_SERVICE_URL: "profile:8080"
+            USER_SERVICE_URL: "user:8080"
+            POST_SERVICE_URL: "post:8080"
+            GRPC_PORT: "8080"
+        ports:
+            - "5010:8080"
+        restart: always
+        depends_on:
+            - "user"
+    # worldEvent:
+    #         image: blackfox-worldevent-srv
+    #         build:
+    #                 context: "."
+    #                 dockerfile: "./services/backend/worldEvent/pkg/docker/app.dockerfile"
+    #         environment:
+    #                 WORLDEVENT_SERVICE_URL: "worldEvent:5012"
+    #                 PROFILE_SERVICE_URL: "profile:8080"
+    #                 USER_SERVICE_URL: "user:8080"
+    #                 POST_SERVICE_URL: "post:8080"
+    #                 MONGO_HOSTS: "mongo:27017"
+    #                 MONGO_DATABASE: "test1"
+    #                 MONGO_USERNAME: ""
+    #                 MONGO_PASSWORD: ""
+    #                 MONGO_COLLECTION: "worldEvent"
+    #                 MONGO_URL: "mongodb://mongo:27017/test1"
+    #                 GRPC_PORT: "8080"
+    #         ports:
+    #                 - "5012:8080"
+    #         links:
+    #                 # - jaeger
+    #                 # - consul
+    #                 - mongodb
+    #         restart: always
+    #         depends_on:
+    #                 - "user"
+    goal:
+        image: blackfox-goal-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/goal/pkg/docker/app.dockerfile"
+        environment:
+            GOAL_SERVICE_URL: "goal:5012"
+            PROFILE_SERVICE_URL: "profile:8080"
+            USER_SERVICE_URL: "user:8080"
+            POST_SERVICE_URL: "post:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "goal"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5012:8080"
+        links:
+            # - jaeger
+            # - consul
+            - mongodb
+        restart: always
+        depends_on:
+            - "user"
+    match:
+        image: blackfox-match-srv
+        build:
+            context: "."
+            dockerfile: "./services/backend/match/pkg/docker/app.dockerfile"
+        environment:
+            MATCH_SERVICE_URL: "match:5014"
+            USER_SERVICE_URL: "user:8080"
+            PROFILE_SERVICE_URL: "profile:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "match"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5014:8080"
+        links:
+            - jaeger
+            # - consul
+            - mongodb
+        restart: always
+        depends_on:
+            - "user"
+    # frontend_api_gateway:
+    #         image: blackfox-frontend-api-gateway
+    #         build:
+    #                 context: "."
+    #                 dockerfile: "./services/backend/frontendgateway/pkg/docker/app.dockerfile"
+    #         ports:
+    #                 - "9000:8080"
+    #         depends_on:
+    #                 - "user"
+    #         environment:
+    #                 USER_SERVICE_URL: "user:8080"
+    #                 PROFILE_SERVICE_URL: "profile:8080"
+    #                 POST_SERVICE_URL: "post:8080"
+    #                 SPACE_SERVICE_URL: "space:8080"
+    #                 TASK_SERVICE_URL: "task:8080"
+    #                 SERVER_PORT: "8080"
+    #         restart: always
+    gql_api_gateway:
+        image: blackfox-gql-api-gateway
+        build:
+            context: "."
+            dockerfile: "./services/backend/api/pkg/docker/app.dockerfile"
+        ports:
+            - "9000:8080"
+        depends_on:
+            - "user"
+        environment:
+            USER_SERVICE_URL: "user:8080"
+            PROFILE_SERVICE_URL: "profile:8080"
+            POST_SERVICE_URL: "post:8080"
+            SPACE_SERVICE_URL: "space:8080"
+            GOAL_SERVICE_URL: "goal:8080"
+            TASK_SERVICE_URL: "task:8080"
+            GEOGRAPHY_SERVICE_URL: "geography:8080"
+            REDIS_SERVICE_URL: "redis:6379"
+            SERVER_PORT: "8080"
+        restart: always
+    # consul:
+    #         image: consul:latest
+    #         ports:
+    #                 - "8300:8300"
+    #                 - "8400:8400"
+    #                 - "8500:8500"
+    #                 - "8600:53/udp"
+    # client:
+    #         image: blackfox-frontend-srv
+    #         build:
+    #                 # context: "./services/frontend/prism"
+    #                 context: "."
+    #                 dockerfile: "./services/frontend/prism/Dockerfile"
+    #         command: npm start
+    #         volumes:
+    #                 - ./services/frontend/prism/src
+    #         depends_on:
+    #                 - user
+    #         ports:
+    #                 - "3000:3000"
+
+    mongodb:
+        image: 'mongo:latest'
+        container_name: 'mongo'
+        ports:
+            - "27017:27017"
+        restart: always
+        volumes:
+                     - ./data/db:/data/db
+    redis:
+        image: "redis:4.0.9"
+    nats:
+        image: "nats-streaming:0.9.2"
+        restart: "always"
+    elasticsearch:
+        image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.3'
+    jaeger:
+        image: jaegertracing/all-in-one:latest
+        ports:
+                    - "14269"
+                    - "5778:5778"
+                    - "14268:14268"
+                    - "14267"
+                    - "16686:16686"
+                    - "5775:5775/udp"
+                    - "6831:6831/udp"
+                    - "6832:6832/udp"

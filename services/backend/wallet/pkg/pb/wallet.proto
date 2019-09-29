@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Wallet {
+        string id = 1;
+        string details = 2;
+        string description = 3;
+        string userID = 4;
+        Token tokens = 5;
+        Money balance = 6;
+        string type = 7;
+        google.protobuf.Timestamp expiresOn = 8;
+        google.protobuf.Timestamp createdOn = 9;
+        google.protobuf.Timestamp lastAccessed = 10;
+}
+
+message Currency {
+        string id = 1;
+        string abbreviation = 2;
+        string name = 3;
+        string type = 4;
+}
+
+message Token {
+        string id = 1;
+        string type = 2;
+        int64 amount = 3;
+        float value = 4;
+}
+
+message Money {
+        string id = 1;
+        Currency currency = 2;
+        double amount = 3;
+}
+
+message PostWalletRequest {
+        string details = 1;
+        string description = 2;
+        string userID = 3;
+        Token tokens = 4;
+        Money balance = 5;
+        string type = 6;
+        google.protobuf.Timestamp expiresOn = 7;
+        google.protobuf.Timestamp createdOn = 8;
+        google.protobuf.Timestamp lastAccessed = 9;
+}
+
+message PostWalletResponse {
+        string wallet = 1;
+}
+
+message GetWalletRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetWalletResponse {
+        Wallet wallet = 1;
+}
+
+message GetMultipleWalletsRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultipleWalletsResponse {
+        repeated Wallet wallets = 1;
+}
+
+message PutWalletRequest {
+        string id = 1;
+        string details = 2;
+        string description = 3;
+        string userID = 4;
+        Token tokens = 5;
+        Money balance = 6;
+        string type = 7;
+        google.protobuf.Timestamp expiresOn = 8;
+        google.protobuf.Timestamp createdOn = 9;
+        google.protobuf.Timestamp lastAccessed = 10;
+}
+
+message PutWalletResponse {
+        string wallet = 1;
+}
+
+message DeleteWalletRequest {
+        string id = 1;
+}
+
+message DeleteWalletResponse {
+        string id = 1;
+}
+
+service WalletService {
+        rpc PostWallet (PostWalletRequest) returns (PostWalletResponse) {}
+        rpc GetWallet (GetWalletRequest) returns (GetWalletResponse) {}
+        rpc GetMultipleWallets (GetMultipleWalletsRequest) returns (GetMultipleWalletsResponse) {}
+        rpc PutWallet (PutWalletRequest) returns (PutWalletResponse) {}
+        rpc DeleteWallet (DeleteWalletRequest) returns (DeleteWalletResponse) {}
+}

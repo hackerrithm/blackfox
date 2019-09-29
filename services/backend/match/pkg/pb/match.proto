@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Match {
+    string id = 1;
+    string personID = 2;
+    repeated string managers = 3;
+    string details = 4;
+    string type = 5;
+    string description = 6;
+    repeated string similarities = 7;
+    google.protobuf.Timestamp time = 8;
+}
+
+
+message MatchedUser {
+	string id = 1;
+	string name = 2;
+    string username = 3;
+	string firstname = 4;
+    string lastname = 5;
+	string status = 6;
+    string type = 7;
+    string emailAddress = 8;
+	string gender = 9;
+}
+
+message PostMatchRequest {
+    string personID = 1;
+    repeated string managers = 2;
+    string details = 3;
+    string type = 4;
+    string description = 5;
+    repeated string similarities = 6;
+    google.protobuf.Timestamp time = 7;
+}
+
+message PostMatchResponse {
+    string match = 1;
+}
+
+message GetMatchRequest {
+    string id = 1;
+    uint64 userID = 2;
+}
+
+message GetMatchResponse {
+    Match match = 1;
+}
+
+message GetMultipleMatchesRequest {
+    repeated string similarities = 1;
+    uint64 skip = 2;
+    uint64 take = 3;
+}
+
+message GetMultipleMatchesResponse {
+    repeated MatchedUser matches = 1;
+}
+
+message PutMatchRequest {
+    string id = 1;
+    string personID = 2;
+    repeated string managers = 3;
+    string details = 4;
+    string type = 5;
+    string description = 6;
+    repeated string similarities = 7;
+    google.protobuf.Timestamp time = 8;
+}
+
+message PutMatchResponse {
+    string match = 1;
+}
+
+message DeleteMatchRequest {
+    string id = 1;
+}
+
+message DeleteMatchResponse {
+    string id = 1;
+}
+
+service MatchService {
+    rpc PostMatch (PostMatchRequest) returns (PostMatchResponse) {}
+    rpc GetMatch (GetMatchRequest) returns (GetMatchResponse) {}
+    rpc GetMultipleMatches (GetMultipleMatchesRequest) returns (GetMultipleMatchesResponse) {}
+    rpc PutMatch (PutMatchRequest) returns (PutMatchResponse) {}
+    rpc DeleteMatch (DeleteMatchRequest) returns (DeleteMatchResponse) {}
+}

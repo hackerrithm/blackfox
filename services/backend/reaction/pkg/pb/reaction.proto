@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Reaction {
+        string id = 1;
+        string personID = 2;
+        repeated string managers = 3;
+        string details = 4;
+        string type = 5;
+        string description = 6;
+        repeated string similarities = 7;
+        google.protobuf.Timestamp time = 8;
+}
+
+message PostReactionRequest {
+        string personID = 1;
+        repeated string managers = 2;
+        string details = 3;
+        string type = 4;
+        string description = 5;
+        repeated string similarities = 6;
+        google.protobuf.Timestamp time = 7;
+}
+
+message PostReactionResponse {
+        string reaction = 1;
+}
+
+message GetReactionRequest {
+        string id = 1;
+        uint64 userID = 2;
+}
+
+message GetReactionResponse {
+        Reaction reaction = 1;
+}
+
+message GetMultipleReactionesRequest {
+        uint64 skip = 1;
+        uint64 take = 2;
+}
+
+message GetMultipleReactionesResponse {
+        repeated Reaction reactiones = 1;
+}
+
+message PutReactionRequest {
+        string id = 1;
+        string personID = 2;
+        repeated string managers = 3;
+        string details = 4;
+        string type = 5;
+        string description = 6;
+        repeated string similarities = 7;
+        google.protobuf.Timestamp time = 8;
+}
+
+message PutReactionResponse {
+        string reaction = 1;
+}
+
+message DeleteReactionRequest {
+        string id = 1;
+}
+
+message DeleteReactionResponse {
+        string id = 1;
+}
+
+service ReactionService {
+        rpc PostReaction (PostReactionRequest) returns (PostReactionResponse) {}
+        rpc GetReaction (GetReactionRequest) returns (GetReactionResponse) {}
+        rpc GetMultipleReactiones (GetMultipleReactionesRequest) returns (GetMultipleReactionesResponse) {}
+        rpc PutReaction (PutReactionRequest) returns (PutReactionResponse) {}
+        rpc DeleteReaction (DeleteReactionRequest) returns (DeleteReactionResponse) {}
+}

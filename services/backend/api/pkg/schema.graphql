@@ -1,0 +1,467 @@
+scalar Time
+# scalar Upload
+
+schema {
+	query: Query
+	mutation: Mutation
+	subscription: Subscription
+}
+
+type Journey {
+	details: String!
+	isComplete: Boolean
+	isInProgress: Boolean
+	isStarted: Boolean
+	type: String!
+	steps: [String!]!
+	progress: Int
+}
+
+type Goal {
+	id: String!
+	creator: String!
+	aim: String!
+	participants: [String!]!
+	likes: [String!]!
+	watchers: [String!]!
+	reason: String!
+	inspiration: String!
+	details: String!
+	type: String!
+	tags: [String!]!
+	similarGoals: [String!]!
+	isAchieved: Boolean
+	isPrivate: Boolean
+	journey: Journey
+}
+
+type MatchedUser {
+	name: String!
+	username: String!
+	firstname: String!
+	lastname: String!
+	status: String!
+	type: String!
+	emailAddress: String!
+	gender: String!
+}
+
+# type WorldEvent {
+# 	name: String!
+# 	type: String
+# 	size: Int
+# 	width: Int
+# 	height: Int
+# 	details: String!
+# 	isComplete: Boolean
+# 	isInProgress: Boolean
+# 	isStarted: Boolean
+# 	steps: [String!]!
+# 	progress: Int
+# }
+
+type Group {
+	id: String!
+	title: String!
+	details: String!
+	description: String
+	type: String
+	people: [String!]!
+}
+
+
+type Location {
+	id: String!
+	longitude: Float!
+	latitude: Float!
+}
+
+type Chat {
+		id: String!
+		messages: [UserMessage!]!
+}
+
+type UserMessage {
+		id: String!
+		sender: String!
+		receiver: String!
+		type: String!
+		text: String!
+		timestamp: Time!
+		isSeen: Boolean!
+		isSent: Boolean!
+		isReceived: Boolean!
+}
+
+
+type Profile {
+	id: String!
+	userID: String!
+	level: String
+	rings: Int
+	about: String!
+	profileImage: Image
+	backgroundImage: Image
+	followers: [String!]!
+	following: [String!]!
+	dateLastUpdated: Time
+}
+
+type Space {
+	id: String
+	creator: String
+	topic: String
+	details: String
+	description: String
+	type: String
+	tags: [String!]!
+	date: Time
+	followers: [String!]!
+	managers: [String!]!
+}
+
+type Task {
+	id: String
+	text: String!
+	# Date: Time
+}
+
+type User {
+	id: String
+	name: String
+	username: String
+	password: String
+	firstname: String
+	lastname: String
+	middlename: String
+	status: String
+	type: String
+	emailAddress: String
+	gender: String
+	birthDate: Time
+	dateJoined: Time
+	mobilePhoneNumber: Contact
+	billingAddress: Address
+	mailingAddress: Address
+	languages: [Language!]!
+}
+
+type Contact {
+	lineNumber: String!
+	countryCode: String!
+	areaCode: String!
+	premfix: String!
+}
+
+type Address  {
+	streetAddressLine1: String!
+	streetAddressLine2: String!
+	postalCode: String!
+	province: String!
+	country: Country
+	state: State
+	city: City
+}
+
+type Country  {
+	name: String!
+	code: String!
+}
+
+type City  {
+	name: String!
+	code: String!
+}
+
+type State  {
+	name: String!
+	code: String!
+}
+
+
+type Language  {
+	name: String!
+	code: String!
+}
+
+type UserPost {
+	id: String!
+	author: String!
+	anonymous: Boolean
+	topic: String!
+	category: String
+	contentText: String!
+	type: String!
+	latitude: Float
+	longitude: Float
+	date: Time
+	contentPhoto: Image
+	contentFile: File
+	likes: [String!]!
+	agreements: [String!]!
+	followers: [String!]!
+	comments: [Comment!]!
+	shares: [Share!]!
+	# file: UploadFile!
+}
+
+type Image  {
+	name: String!
+	type: String
+	size: Int
+	width: Int
+	height: Int
+}
+
+type File  {
+	name: String!
+	type: String
+	size: Int
+	width: Int
+	height: Int
+}
+
+type Comment  {
+	id: String!
+	userID: String
+	text: String
+}
+
+type Share  {
+	party: String!
+}
+
+input JourneyInput {
+	details: String!
+	isComplete: Boolean!
+	isInProgress: Boolean!
+	isStarted: Boolean!
+	type: String!
+	steps: [String!]!
+	progress: Int
+}
+
+input PostGoalInput {
+	creator: String!
+	aim: String!
+	participants: [String!]!
+	likes: [String!]!
+	watchers: [String!]!
+	reason: String!
+	inspiration: String!
+	details: String!
+	type: String!
+	tags: [String!]!
+	similarGoals: [String!]!
+	isAchieved: Boolean!
+	isPrivate: Boolean!
+	journey: JourneyInput
+}
+
+input UpdateGoalInput {
+	id: String!
+	creator: String!
+	aim: String!
+	participants: [String!]!
+	likes: [String!]!
+	watchers: [String!]!
+	reason: String!
+	inspiration: String!
+	details: String!
+	type: String!
+	tags: [String!]!
+	similarGoals: [String!]!
+	isAchieved: Boolean!
+	isPrivate: Boolean!
+	journey: JourneyInput
+}
+
+input RegisterInput {
+	username: String!
+	password: String!
+	firstname: String!
+	lastname: String!
+	emailAddress: String!
+	gender: String!
+}
+
+input LoginInput {
+	username: String!
+	password: String!
+}
+
+input PaginationInput {
+	skip: Int
+	take: Int
+}
+
+input PostPostInput {
+	author: String!
+	anonymous: Boolean
+	topic: String!
+	category: String!
+	contentText: String!
+	type: String!
+	latitude: Float!
+	longitude: Float!
+	# Date: Time
+	contentPhotoName: String!
+	contentFileName: String!
+	# file: UploadFile!
+}
+
+input UpdatePostInput {
+	id: String!
+	author: String!
+	anonymous: Boolean
+	topic: String!
+	category: String!
+	contentText: String!
+	type: String!
+	latitude: Float!
+	longitude: Float!
+	# Date: Time
+	contentPhotoName: String!
+	contentFileName: String!
+}
+
+input PostSpaceInput {
+	creator: String!
+	topic: String!
+	details: String!
+	description: String!
+	type: String!
+	tags: [String!]!
+	date: Time
+	managers: [String!]!
+	followers: [String!]!
+}
+
+input UpdateSpaceInput {
+	id: String!
+	creator: String!
+	topic: String!
+	details: String!
+	description: String!
+	type: String!
+	tags: [String!]!
+	date: Time
+	managers: [String!]!
+	followers: [String!]!
+}
+
+# input PostWorldEventInput {
+# 	creator: String!
+# 	Host: String!
+# 	Managers: [String!]!
+# 	Subscribers: Int!
+# 	Cost: Float!
+# 	name: String!
+# 	description: String!
+# 	type: String!
+# 	tags: [String!]!
+# 	Categories: [String!]!
+# 	Latitude: Float!
+# 	Longitude: Float!
+# 	Anniversary: Int!
+# 	Capacity: Int!
+# 	Attendees: Int!
+# }
+
+# input UpdateWorldEventInput {
+# 	id: String!
+# 	creator: String!
+# 	Host: String!
+# 	Managers: [String!]!
+# 	Subscribers: Int!
+# 	Cost: Float!
+# 	name: String!
+# 	description: String!
+# 	type: String!
+# 	tags: [String!]!
+# 	Categories: [String!]!
+# 	Latitude: Float!
+# 	Longitude: Float!
+# 	Anniversary: Int!
+# 	Capacity: Int!
+# 	Attendees: Int!
+# }
+
+# input UploadFile {
+# 	file: Upload!
+# }
+
+input PostTaskInput {
+	text: String!
+	date: Time
+}
+
+input UpdateTaskInput {
+	id: String!
+	text: String!
+	date: Time
+}
+
+input LocationInput {
+	longitude: Float!
+	latitude: Float!
+}
+
+input PostGroupInput {
+	title: String!
+	details: String!
+	description: String!
+	type: String!
+	people: [String!]!
+}
+
+input UpdateGroupInput {
+	id: String!
+	title: String!
+	details: String!
+	description: String!
+	type: String!
+	people: [String!]!
+}
+
+type Mutation {
+	registerUser(user: RegisterInput!): String!
+	loginUser(user: LoginInput!): String!
+	deleteUser(id: String!): Boolean!
+	addPost(post: PostPostInput!): String!
+	updatePost(post: UpdatePostInput!): String!
+	addSpace(space: PostSpaceInput!): String!
+	updateSpace(space: UpdateSpaceInput!): String!
+	addGoal(goal: PostGoalInput!): String!
+	updateGoal(goal: UpdateGoalInput!): String!
+	addTask(text: String!): Task!
+	updateTask(task: UpdateTaskInput!): String!
+	postUserMessage(text: String!, senderName: String!, receiverName: String!): UserMessage!
+	addGroup(group: PostGroupInput!): String!
+	updateGroup(group: UpdateGroupInput!): String!
+}
+
+type Query {
+	getAllUsers: [User!]!
+	getUser(id: String!): User
+	getUserByUserName(username: String!): User
+	getUserByEmailAddress(email: String!): User
+	getPost(id: String!): UserPost
+	getAllPosts(id: Int!): [UserPost!]!
+	getSpace(id: String!): Space
+	getAllSpaces: [Space!]!
+	getGoal(id: String!): Goal
+	getAllGoals: [Goal!]!
+	getTask(id: String!): Task
+	getAllTasks: [Task!]!
+	getProfile(id: String!): Profile
+	GetLocationDistance(lon: Float!, lat: Float!): Float!
+	userChat(name:String!): Chat
+	getGroup(id: String!): Group
+	getAllGroups: [Group!]!
+	getAllMatches: [MatchedUser!]!
+}
+
+type Subscription {
+	userMessageAdded(chatName: String!): UserMessage!
+}
