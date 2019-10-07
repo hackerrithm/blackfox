@@ -175,9 +175,6 @@ func main() {
 
 	c := h.Handler(router)
 
-	// log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	// log.Fatal(http.ListenAndServe(":"+port, nil))
-
 	log.Println("listening graphql server from port:", defaultPort, cfg.Server.Port)
 	log.Fatal(http.ListenAndServe(":"+defaultPort, c))
 }

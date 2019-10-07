@@ -34,7 +34,7 @@ build:
     context: service/backend/chat
   - image: geographyservice
     context: service/backend/geography
-  - image: worldeventservice
+  - image: goalservice
     context: service/backend/goal
   tagPolicy:
     gitCommit: {}

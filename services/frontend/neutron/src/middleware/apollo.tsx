@@ -1,10 +1,12 @@
 import * as React from "react";
 import { withClientState } from "@tgrx/apollo-link-state";
 import { InMemoryCache } from "apollo-cache-inmemory";
-import { ApolloClient } from "apollo-client";
+// import { ApolloClient } from "apollo-client";
 import { ApolloLink } from "apollo-link";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
+// import { ApolloProvider } from "react-apollo";
+import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 
 import { ResolverDefaults,  Resolvers } from "../gql";
@@ -59,14 +61,19 @@ export default class ApolloClientProvider extends React.Component<IProps> {
 
                 this._apolloClient = new ApolloClient({
                         cache: this._cache,
-                        connectToDevTools: true,
-                        link: ApolloLink.from(links),
+                        // connectToDevTools: true,
+                        // link: ApolloLink.from(links),
                 });
         }
 
+        
         public render() {
+                const client2 = new ApolloClient({
+                        uri: "http://localhost:9000/graphql",
+                        // credentials: "include"
+                      });
                 return (
-                        <ApolloProvider client={this._apolloClient}>
+                        <ApolloProvider client={client2}>
                                 {this.props.children}
                         </ApolloProvider>
                 );

@@ -7,17 +7,19 @@ import {
         Link,
       } from "react-router-dom";
 import Home from "../components/home/home";
+import PrimarySearchAppBar from "../components/navbar/navbar";
 
 export default function({children}: {children: React.ReactChild}) {
         return (
                 <Router>
                         <div>
                                 <header>
-                                        <Link to="/about">About</Link>
+                                        {/* <Link to="/about">About</Link>
                                         {" "}
                                         <Link to="/">Login</Link>
                                         {" "}
-                                        <strong>neutron</strong>
+                                        <strong>neutron</strong> */}
+                                        <PrimarySearchAppBar />
                                 </header>
                                 <main>
 
