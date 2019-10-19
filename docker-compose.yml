@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
     user:
-        image: ${REPO}/blackfox-user-srv:${TAG}
+        image: ${REPO}/user-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/user/pkg/docker/app.dockerfile"
@@ -24,7 +24,7 @@ services:
             - mongodb
         restart: always
     profile:
-        image: ${REPO}/blackfox-profile-srv:${TAG}
+        image: ${REPO}/profile-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/profile/pkg/docker/app.dockerfile"
@@ -48,7 +48,7 @@ services:
         depends_on:
             - "user"
     task:
-        image: ${REPO}/blackfox-task-srv:${TAG}
+        image: ${REPO}/task-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/task/pkg/docker/app.dockerfile"
@@ -71,7 +71,7 @@ services:
             - mongodb
         restart: always
     post:
-        image: ${REPO}/blackfox-post-srv:${TAG}
+        image: ${REPO}/post-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/post/pkg/docker/app.dockerfile"
@@ -96,7 +96,7 @@ services:
         depends_on:
             - "user"
     space:
-        image: ${REPO}/blackfox-space-srv:${TAG}
+        image: ${REPO}/space-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/space/pkg/docker/app.dockerfile"
@@ -122,7 +122,7 @@ services:
         depends_on:
             - "user"
     geography:
-        image: ${REPO}/blackfox-geography-srv:${TAG}
+        image: ${REPO}/geography-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/geography/pkg/docker/app.dockerfile"
@@ -138,7 +138,7 @@ services:
         depends_on:
             - "user"
     # worldEvent:
-    #         image: blackfox-worldevent-srv
+    #         image: worldevent-srv
     #         build:
     #                 context: "."
     #                 dockerfile: "./services/backend/worldEvent/pkg/docker/app.dockerfile"
@@ -164,7 +164,7 @@ services:
     #         depends_on:
     #                 - "user"
     goal:
-        image: ${REPO}/blackfox-goal-srv:${TAG}
+        image: ${REPO}/goal-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/goal/pkg/docker/app.dockerfile"
@@ -190,7 +190,7 @@ services:
         depends_on:
             - "user"
     match:
-        image: ${REPO}/blackfox-match-srv:${TAG}
+        image: ${REPO}/match-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/match/pkg/docker/app.dockerfile"
@@ -215,7 +215,7 @@ services:
         depends_on:
             - "user"
     # frontend_api_gateway:
-    #         image: blackfox-frontend-api-gateway
+    #         image: frontend-api-gateway
     #         build:
     #                 context: "."
     #                 dockerfile: "./services/backend/frontendgateway/pkg/docker/app.dockerfile"
@@ -232,7 +232,7 @@ services:
     #                 SERVER_PORT: "8080"
     #         restart: always
     gql_api_gateway:
-        image: ${REPO}/blackfox-gql-api-gateway:${TAG}
+        image: ${REPO}/gql-api-gateway:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/api/pkg/docker/app.dockerfile"
@@ -259,7 +259,7 @@ services:
     #                 - "8500:8500"
     #                 - "8600:53/udp"
     # client:
-    #         image: blackfox-frontend-srv
+    #         image: frontend-srv
     #         build:
     #                 # context: "./services/frontend/prism"
     #                 context: "."
