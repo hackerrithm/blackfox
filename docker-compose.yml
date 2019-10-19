@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
     user:
-        image: blackfox-user-srv
+        image: ${REPO}/blackfox-user-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/user/pkg/docker/app.dockerfile"
@@ -24,7 +24,7 @@ services:
             - mongodb
         restart: always
     profile:
-        image: blackfox-profile-srv
+        image: ${REPO}/blackfox-profile-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/profile/pkg/docker/app.dockerfile"
@@ -48,7 +48,7 @@ services:
         depends_on:
             - "user"
     task:
-        image: blackfox-task-srv
+        image: ${REPO}/blackfox-task-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/task/pkg/docker/app.dockerfile"
@@ -71,7 +71,7 @@ services:
             - mongodb
         restart: always
     post:
-        image: blackfox-post-srv
+        image: ${REPO}/blackfox-post-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/post/pkg/docker/app.dockerfile"
@@ -96,7 +96,7 @@ services:
         depends_on:
             - "user"
     space:
-        image: blackfox-space-srv
+        image: ${REPO}/blackfox-space-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/space/pkg/docker/app.dockerfile"
@@ -122,7 +122,7 @@ services:
         depends_on:
             - "user"
     geography:
-        image: blackfox-geography-srv
+        image: ${REPO}/blackfox-geography-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/geography/pkg/docker/app.dockerfile"
@@ -164,7 +164,7 @@ services:
     #         depends_on:
     #                 - "user"
     goal:
-        image: blackfox-goal-srv
+        image: ${REPO}/blackfox-goal-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/goal/pkg/docker/app.dockerfile"
@@ -190,7 +190,7 @@ services:
         depends_on:
             - "user"
     match:
-        image: blackfox-match-srv
+        image: ${REPO}/blackfox-match-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/match/pkg/docker/app.dockerfile"
@@ -232,7 +232,7 @@ services:
     #                 SERVER_PORT: "8080"
     #         restart: always
     gql_api_gateway:
-        image: blackfox-gql-api-gateway
+        image: ${REPO}/blackfox-gql-api-gateway:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/api/pkg/docker/app.dockerfile"
