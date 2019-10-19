@@ -24,7 +24,7 @@ import { getThemeProps } from "@material-ui/styles";
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		body: {
-			margin: theme.spacing(0)
+			margin: theme.spacing(0),
 		},
 		grow: {
 			flexGrow: 1
@@ -36,14 +36,16 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: "none",
 			[theme.breakpoints.up("sm")]: {
 				display: "block"
-			}
+			},
+			color: "#000"
 		},
 		search: {
 			position: "relative",
 			borderRadius: theme.shape.borderRadius,
-			backgroundColor: fade(theme.palette.common.white, 0.15),
+			backgroundColor: fade(theme.palette.common.black, 1),
+			color: theme.palette.common.black,
 			"&:hover": {
-				backgroundColor: fade(theme.palette.common.white, 0.25)
+				backgroundColor: fade(theme.palette.common.black, 1)
 			},
 			marginRight: theme.spacing(2),
 			marginLeft: 0,
@@ -63,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			justifyContent: "center"
 		},
 		inputRoot: {
-			color: "inherit"
+			color: '#fff',
 		},
 		inputInput: {
 			padding: theme.spacing(1, 1, 1, 7),
@@ -178,12 +180,12 @@ export default function PrimarySearchAppBar() {
 
 	return (
 		<div className={classes.grow}>
-			<AppBar position="fixed">
+			<AppBar position="fixed" color="secondary" style={{backgroundColor: 'white'}}>
 				<Toolbar>
 					<IconButton
 						edge="start"
 						className={classes.menuButton}
-						color="inherit"
+						color="secondary"
 						aria-label="open drawer"
 					>
 						<MenuIcon />
@@ -208,7 +210,7 @@ export default function PrimarySearchAppBar() {
 					<div className={classes.sectionDesktop}>
 						<IconButton
 							aria-label="show 4 new mails"
-							color="inherit"
+							color="secondary"
 						>
 							<Badge badgeContent={4} color="secondary">
 								<MailIcon />
@@ -216,7 +218,7 @@ export default function PrimarySearchAppBar() {
 						</IconButton>
 						<IconButton
 							aria-label="show 17 new notifications"
-							color="inherit"
+							color="secondary"
 						>
 							<Badge badgeContent={17} color="secondary">
 								<NotificationsIcon />
@@ -228,7 +230,7 @@ export default function PrimarySearchAppBar() {
 							aria-controls={menuId}
 							aria-haspopup="true"
 							onClick={handleProfileMenuOpen}
-							color="inherit"
+							color="secondary"
 						>
 							<AccountCircle />
 						</IconButton>
@@ -239,7 +241,7 @@ export default function PrimarySearchAppBar() {
 							aria-controls={mobileMenuId}
 							aria-haspopup="true"
 							onClick={handleMobileMenuOpen}
-							color="inherit"
+							color="secondary"
 						>
 							<MoreIcon />
 						</IconButton>
