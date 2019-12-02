@@ -28,5 +28,18 @@ module.exports = {
             template: "./src/assets/index.html",
             filename: "./index.html"
         })
-    ]
+    ],
+    devServer: {
+        // contentBase: path.join(__dirname, 'dist'),
+        compress: true,
+        // Port
+        port: 3000,
+        host: 'localhost',
+        // Automatically open page
+        open: true,
+        // Serves index.html (contains 404 page in react-router) in place of any 404 responses
+        historyApiFallback: true,
+        // Shows a full-screen overlay when there are compiler errors
+        overlay: true,
+    }
 };
