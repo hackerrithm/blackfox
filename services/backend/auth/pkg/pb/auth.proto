@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+// import "google/protobuf/any.proto";
+
+message Any {
+	string type_url = 1;
+	bytes value = 2;
+}
+
+message User {
+	string id = 1;
+	string name = 2;
+	string username = 3;
+	string password = 4;
+	string firstname = 5;
+	string lastname = 6;
+	string middlename = 7;
+	string status = 8;
+	string type = 9;
+	string emailaddress = 10;
+	google.protobuf.Timestamp birthDate = 11;
+	google.protobuf.Timestamp dateJoined = 12;
+	string gender = 13;
+	Contact MobilePhoneNumber = 14;
+	Address BillingAddress = 15;
+	Address MailingAddress = 16;
+	repeated Language languages = 17;
+}
+
+message Contact {
+	string LineNumber = 1;
+	string CountryCode = 2;
+	string AreaCode = 3;
+	string Premfix = 4;
+}
+
+message Address {
+	string StreetAddressLine1 = 1;
+	string StreetAddressLine2  = 2;
+	string PostalCode = 3;
+	string Province = 4;
+	Country Country = 5;
+	State State = 6;
+	City City = 7;
+}
+
+message Country {
+	string Name = 1;
+	string Code = 2;
+}
+
+
+message City {
+	string Name = 1;
+	string Code = 2;
+}
+
+
+message State {
+	string Name = 1;
+	string Code = 2;
+}
+
+
+message Language {
+	string Name = 1;
+	string Code = 2;
+}
+
+message Register {
+	string username = 1;
+	string password = 2;
+	string firstname = 3;
+	string lastname = 4;
+	string gender = 5;
+	string status = 6;
+}
+
+message Login {
+	string username = 1;
+	string password = 2;
+}
+
+message UserLoginRequest {
+	string username = 1;
+	string password = 2;
+}
+
+message UserLoginResponse {
+	string token = 1;
+}
+
+message UserRegisterRequest {
+	Register register = 1;
+}
+
+message UserRegisterResponse {
+	User user = 1;
+}
+
+message GenerateTokenRequest {
+	string token = 1;
+}
+
+message GenerateTokenResponse {
+	string result = 1;
+}
+
+message GetUserFromTokenRequest {
+	string token = 1;
+}
+
+message GetUserFromTokenResponse {
+	string result = 1;
+}
+
+service AuthService {
+	rpc UserLogin (UserLoginRequest) returns (UserLoginResponse) {}
+	rpc UserRegister (UserRegisterRequest) returns (UserRegisterResponse) {}
+	rpc GenerateToken(GenerateTokenRequest) returns (GenerateTokenResponse) {}
+	rpc GetUserFromToken(GetUserFromTokenRequest) returns (GetUserFromTokenResponse) {}
+}

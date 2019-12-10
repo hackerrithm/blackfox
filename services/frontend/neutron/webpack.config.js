@@ -12,14 +12,18 @@ module.exports = {
     },
     devtool: "source-map",
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".jsx", ".json"]
+        extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".css"]
     },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 loader: "awesome-typescript-loader"
-            }
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
         ]
     },
 

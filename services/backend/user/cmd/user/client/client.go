@@ -16,8 +16,8 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"google.golang.org/grpc"
 	"gopkg.in/mgo.v2/bson"
@@ -34,9 +34,9 @@ type Client struct {
 
 // NewClient creates a new client instance
 func NewClient(url string) (*Client, error) {
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithTimeout(time.Second*13))
+	conn, err := grpc.Dial(url, grpc.WithInsecure())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in server !!!!!!!!!: %v", err)
 	}
 
 	c := pb.NewUserServiceClient(conn)
@@ -182,4 +182,32 @@ func (c *Client) DeleteUser(ctx context.Context, ID string) (bool, error) {
 		return r.IsDeleted, err
 	}
 	return r.IsDeleted, nil
+}
+
+// GenerateToken ...
+func (c *Client) GenerateToken(ctx context.Context, ID string) (string, error) {
+	r, err := c.service.GenerateToken(
+		ctx,
+		&pb.GenerateTokenRequest{
+			Token: ID,
+		})
+	if err != nil {
+		return "", err
+	}
+	return r.Result, nil
+}
+
+// GetUserFromToken ...
+func (c *Client) GetUserFromToken(ctx context.Context, token string) (string, error) {
+	log.Println("got in search for GetUserFromToken ----------- [", token, "]")
+	r, err := c.service.GetUserFromToken(
+		ctx,
+		&pb.GetUserFromTokenRequest{
+			Token: token,
+		})
+	if err != nil {
+		return "errors where u expected ------------------ [[[[[[[[[[[[[[[[[ ", err
+	}
+	log.Println("actual result ----------- [", r.Result, "]")
+	return "5c7035402948062de649cd6d", nil
 }

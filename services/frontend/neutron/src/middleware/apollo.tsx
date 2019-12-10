@@ -9,74 +9,69 @@ import { HttpLink } from "apollo-link-http";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 
-import { ResolverDefaults,  Resolvers } from "../gql";
+import { ResolverDefaults, Resolvers } from "../gql";
 
 interface IProps {
-        graphqlURL: string;
-        children: React.ReactChild;
+	graphqlURL: string;
+	children: React.ReactChild;
 }
 
 export default class ApolloClientProvider extends React.Component<IProps> {
+	// tslint:disable-next-line:variable-name
+	private _apolloClient: ApolloClient<any>;
 
-        // tslint:disable-next-line:variable-name
-        private _apolloClient: ApolloClient<any>;
+	// tslint:disable-next-line:variable-name
+	private _cache = new InMemoryCache();
 
-        // tslint:disable-next-line:variable-name
-        private _cache = new InMemoryCache();
+	// tslint:disable-next-line:variable-name
+	private _stateLink = withClientState({
+		cache: this._cache,
+		defaults: ResolverDefaults,
+		resolvers: Resolvers
+	});
 
-        // tslint:disable-next-line:variable-name
-        private _stateLink = withClientState({
-                cache: this._cache,
-                defaults: ResolverDefaults,
-                resolvers: Resolvers,
-        });
+	// tslint:disable-next-line:variable-name
+	private _httpLink = new HttpLink({
+		uri: this.props.graphqlURL
+	});
 
-        // tslint:disable-next-line:variable-name
-        private _httpLink = new HttpLink({
-                uri: this.props.graphqlURL,
-        });
+	// tslint:disable-next-line:variable-name
+	private _errorLink = onError(({ graphQLErrors, networkError }) => {
+		if (graphQLErrors) {
+			graphQLErrors.map(({ message, locations, path }) => {
+				// tslint:disable-next-line:no-console
+				console.error(
+					`[GraphQL] Message: ${message}, Location: ${locations}, Path: ${path}`
+				);
+			});
+		}
+		if (networkError) {
+			// tslint:disable-next-line:no-console
+			console.error(`[Network] ${networkError}`);
+		}
+	});
 
-        // tslint:disable-next-line:variable-name
-        private _errorLink = onError(({ graphQLErrors, networkError }) => {
-                if (graphQLErrors) {
-                  graphQLErrors.map(({ message, locations, path }) => {
-                    // tslint:disable-next-line:no-console
-                    console.error(`[GraphQL] Message: ${message}, Location: ${locations}, Path: ${path}`)
-                  });
-                }
-                if (networkError) {
-                  // tslint:disable-next-line:no-console
-                  console.error(`[Network] ${networkError}`);
-                }
-        });
+	constructor(props: IProps) {
+		super(props);
+		// tslint:disable-next-line:member-ordering
+		const links = [this._stateLink, this._errorLink, this._httpLink];
 
-        constructor(props: IProps) {
-                super(props);
-                // tslint:disable-next-line:member-ordering
-                const links = [
-                        this._stateLink,
-                        this._errorLink,
-                        this._httpLink,
-                ];
+		this._apolloClient = new ApolloClient({
+			cache: this._cache
+			// connectToDevTools: true,
+			// link: ApolloLink.from(links),
+		});
+	}
 
-                this._apolloClient = new ApolloClient({
-                        cache: this._cache,
-                        // connectToDevTools: true,
-                        // link: ApolloLink.from(links),
-                });
-        }
-
-        
-        public render() {
-                const client2 = new ApolloClient({
-                        uri: "http://localhost:9000/graphql",
-                        // credentials: "include"
-                      });
-                return (
-                        <ApolloProvider client={client2}>
-                                {this.props.children}
-                        </ApolloProvider>
-                );
-        }
-
+	public render() {
+		const client2 = new ApolloClient({
+			uri: "http://localhost:9000/graphql"
+			// credentials: "include"
+		});
+		return (
+			<ApolloProvider client={client2}>
+				{this.props.children}
+			</ApolloProvider>
+		);
+	}
 }

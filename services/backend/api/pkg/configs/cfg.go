@@ -5,6 +5,7 @@ import "time"
 // Config ...
 type Config struct {
 	UserServiceURL      string `envconfig:"USER_SERVICE_URL"`
+	AuthServiceURL      string `envconfig:"AUTH_SERVICE_URL"`
 	ProfileServiceURL   string `envconfig:"PROFILE_SERVICE_URL"`
 	RedisServiceURL     string `envconfig:"REDIS_SERVICE_URL"`
 	TaskServiceURL      string `envconfig:"TASK_SERVICE_URL"`

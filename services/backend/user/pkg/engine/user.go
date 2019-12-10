@@ -50,9 +50,9 @@ type (
 		// by the passed user identifier
 		DeleteUserAccount(ctx context.Context, id string) (bool, error)
 		//GenerateToken ...
-		GenerateToken(ctx context.Context, id string) (map[string]interface{}, error)
+		GenerateToken(ctx context.Context, id string) (string, error)
 		// ParseToken ...
-		ParseToken(token string) (map[string]interface{}, error)
+		ParseToken(ctx context.Context, token string) (map[string]interface{}, error)
 	}
 
 	user struct {

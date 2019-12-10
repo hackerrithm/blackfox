@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi"
 
 	"cloud.google.com/go/profiler"
 	"contrib.go.opencensus.io/exporter/jaeger"
@@ -151,21 +151,31 @@ func main() {
 	go initProfiling(log, "apigateway", "1.0.0")
 	go initTracing(log)
 
-	s, err := multiserviceMap.NewGraphQLServer(cfg.UserServiceURL, cfg.PostServiceURL, cfg.SpaceServiceURL,
+	s, err := multiserviceMap.NewGraphQLServer(cfg.UserServiceURL, cfg.AuthServiceURL, cfg.PostServiceURL, cfg.SpaceServiceURL,
 		cfg.TaskServiceURL, cfg.ProfileServiceURL, cfg.GeographyServiceURL,
 		cfg.GoalServiceURL, cfg.MatchServiceURL, cfg.RedisServiceURL)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// router := chi.NewRouter()
 	// mux := http.NewServeMux()
-	router := mux.NewRouter()
+	// router := mux.NewRouter()
+	router := chi.NewRouter()
 	router.Use(authentication.AuthHandlerMiddleware)
 	h := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:8080", "http://localhost:9000"},
-		AllowCredentials: true,
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: false,
 		Debug:            true,
 	})
+	// h := cors.AllowAll()
 	router.Handle("/", handler.Playground("GraphQL playground", "/query"))
+	// router.Handle("/query", http.Handler(authentication.AuthHandlerMiddleware(handler.GraphQL(s.ToExecutableSchema(),
+	// 	handler.WebsocketUpgrader(websocket.Upgrader{
+	// 		CheckOrigin: func(r *http.Request) bool {
+	// 			return true
+	// 		},
+	// 	})))))
 	router.Handle("/query", h.Handler(handler.GraphQL(s.ToExecutableSchema(),
 		handler.WebsocketUpgrader(websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {

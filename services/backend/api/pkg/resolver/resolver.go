@@ -4,10 +4,13 @@ package resolver
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/hackerrithm/blackfox/services/backend/api/pkg/authentication"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/go-redis/redis"
@@ -17,6 +20,7 @@ import (
 	"github.com/hackerrithm/blackfox/services/backend/api/pkg/generated"
 
 	geography "github.com/hackerrithm/blackfox/services/backend/geography/cmd/geography/client"
+	auth "github.com/hackerrithm/blackfox/services/backend/auth/cmd/auth/client"
 	goal "github.com/hackerrithm/blackfox/services/backend/goal/cmd/goal/client"
 	group "github.com/hackerrithm/blackfox/services/backend/group/cmd/group/client"
 	match "github.com/hackerrithm/blackfox/services/backend/match/cmd/match/client"
@@ -30,6 +34,7 @@ import (
 // GQLServer ...
 type GQLServer struct {
 	userClient      *user.Client
+	authClient      *auth.Client
 	postClient      *post.Client
 	spaceClient     *space.Client
 	taskClient      *task.Client
@@ -46,6 +51,7 @@ type GQLServer struct {
 // NewGraphQLServer ...
 func NewGraphQLServer(
 	userURL,
+	authURL,
 	postURL,
 	spaceURL,
 	taskURL,
@@ -152,8 +158,24 @@ func NewGraphQLServer(
 		return nil, err
 	}
 
+	authClient, err := auth.NewClient(authURL)
+	if err != nil {
+		userClient.Close()
+		authClient.Close()
+		postClient.Close()
+		spaceClient.Close()
+		taskClient.Close()
+		profileClient.Close()
+		geographyClient.Close()
+		goalClient.Close()
+		matchClient.Close()
+		log.Println("error user NewGraphQLServer")
+		return nil, err
+	}
+
 	return &GQLServer{
 		userClient:      userClient,
+		authClient:      authClient,
 		postClient:      postClient,
 		spaceClient:     spaceClient,
 		taskClient:      taskClient,
@@ -397,6 +419,11 @@ func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*pkg.User, error) {
 	// var g []string
 	var q pkg.User
 	var z []*pkg.User
+
+	if user := authentication.ForContext(ctx); user == nil {
+		return nil, fmt.Errorf("Access denied")
+	}
+
 	a, err := r.server.userClient.GetAllUsers(ctx, "")
 	if err != nil {
 		return nil, err

@@ -15,6 +15,11 @@ go mod vendor
 docker-compose up -d --build -d --remove-orphans
 
 Open <http://localhost:9000/playground> in your browser.
+
+docker logs -f mongo
+
+docker exec -it mongo bash
+
 ```
 
 ## Badge

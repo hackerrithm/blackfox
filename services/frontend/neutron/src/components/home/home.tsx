@@ -1,12 +1,7 @@
 import * as React from "react";
 import { IHomeProps } from ".";
-// import Button from "@material-ui/core/Button";
-
 import { gql } from "apollo-boost";
 import { Query } from "react-apollo";
-import Register from "../register/register";
-import Login from "../login/login";
-import ExpandableCard from "../general/card/Card";
 import {
 	Grid,
 	Paper,
@@ -15,7 +10,10 @@ import {
 	createStyles
 } from "@material-ui/core";
 import { getThemeProps } from "@material-ui/styles";
-import Tasks from "../task/tasks";
+import Books from "../book/books";
+import CustomizedInputBase from "../general/reusable/input/search";
+import YouTube from "../examples/youtube/yt";
+
 
 const GET_EXAMPLE = gql`
 	query {
@@ -47,16 +45,16 @@ export default class Home extends React.Component<IHomeProps, any> {
 				<br />
 				<br />
 				<br />
-                {/** GOALS */}
+				{/** GOALS */}
 				<GoalsSection />
-                {/** GOALS */}
+				{/** GOALS */}
 				<Query query={GET_EXAMPLE}>
 					{({ loading, error, data }: any) => {
 						if (loading) {
 							return <div>Loading...</div>;
 						}
 						if (error) {
-							return <div>Error :(</div>;
+							return <div>No results at the moment</div>;
 						}
 
 						return (
@@ -68,11 +66,6 @@ export default class Home extends React.Component<IHomeProps, any> {
 						);
 					}}
 				</Query>
-				{/* <Register /> */}
-				{/* <Login /> */}
-				<Tasks />
-				{/* <CounterReducer /> */}
-				{/* <Task /> */}
 				{/* //</div>    <br/>
                     //     <br/>
                     //     <div />
@@ -133,27 +126,32 @@ const useStylesGoalsSection = makeStyles((theme: Theme) =>
 );
 
 function GoalsSection() {
-    const classes = useStylesGoalsSection(getThemeProps);
-    const goalsList = [1, 2, 3, 4];
+	const classes = useStylesGoalsSection(getThemeProps);
+	const goalsList = [1, 2, 3, 4];
 	return (
 		<div className={classes.root}>
 			<Grid container spacing={3}>
 				<Grid item xs={12}>
-					<Paper className={classes.paper}>Big board</Paper>
+					<Paper className={classes.paper}>
+						{" "}
+						<Books />
+					</Paper>
 				</Grid>
-				<Grid item xs={12} sm={6}>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-				</Grid>
-                {
-                    goalsList.map((val, index) => {
-                        return (
-                            <Grid alignContent={"center"} item xs={6} sm={3} key={index}>
-                                <ExpandableCard />
-                            </Grid>
-                        );
-                    })
-                }
+				<Grid item xs={12} sm={6}></Grid>
+				<Grid item xs={12} sm={6}></Grid>
+				{/* {goalsList.map((val, index) => {
+					return (
+						<Grid
+							alignContent={"center"}
+							item
+							xs={6}
+							sm={3}
+							key={index}
+						>
+							<ExpandableCard />
+						</Grid>
+					);
+				})} */}
 			</Grid>
 		</div>
 	);

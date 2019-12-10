@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useReducer } from "react";
 import {
 	fade,
 	makeStyles,
@@ -20,11 +20,18 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { getThemeProps } from "@material-ui/styles";
+import { Link, useHistory } from "react-router-dom";
+import "./style.css";
+import { authContext } from "../utils/authContext";
+import MButton from "../general/reusable/button/mbutton";
+import { LoginReducer, InitialState } from "../login";
+
+export const Context = React.createContext(InitialState);
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		body: {
-			margin: theme.spacing(0),
+			margin: theme.spacing(-10)
 		},
 		grow: {
 			flexGrow: 1
@@ -65,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			justifyContent: "center"
 		},
 		inputRoot: {
-			color: '#fff',
+			color: "#fff"
 		},
 		inputInput: {
 			padding: theme.spacing(1, 1, 1, 7),
@@ -91,6 +98,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function PrimarySearchAppBar() {
+	const { auth } = React.useContext(authContext);
+	const [state, dispatch] = useReducer(LoginReducer, InitialState);
+	const history = useHistory();
 	const classes = useStyles(getThemeProps);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [
@@ -154,14 +164,16 @@ export default function PrimarySearchAppBar() {
 				<p>Messages</p>
 			</MenuItem>
 			<MenuItem>
-				<IconButton
-					aria-label="show 11 new notifications"
-					color="inherit"
-				>
-					<Badge badgeContent={11} color="secondary">
-						<NotificationsIcon />
-					</Badge>
-				</IconButton>
+				<Link to="/about">
+					<IconButton
+						aria-label="show 11 new notifications"
+						color="inherit"
+					>
+						<Badge badgeContent={11} color="secondary">
+							<NotificationsIcon />
+						</Badge>
+					</IconButton>
+				</Link>
 				<p>Notifications</p>
 			</MenuItem>
 			<MenuItem onClick={handleProfileMenuOpen}>
@@ -179,77 +191,125 @@ export default function PrimarySearchAppBar() {
 	);
 
 	return (
-		<div className={classes.grow}>
-			<AppBar position="fixed" color="secondary" style={{backgroundColor: 'white'}}>
-				<Toolbar>
-					<IconButton
-						edge="start"
-						className={classes.menuButton}
-						color="secondary"
-						aria-label="open drawer"
-					>
-						<MenuIcon />
-					</IconButton>
-					<Typography className={classes.title} variant="h6" noWrap>
-						Blackfox
-					</Typography>
-					<div className={classes.search}>
-						<div className={classes.searchIcon}>
-							<SearchIcon />
+		<Context.Provider
+			value={{
+				username: state.username,
+				// password: state.password,
+				isLoading: state.isLoading,
+				isLoggedIn: state.isLoggedIn,
+				error: state.error
+			}}
+		>
+			<div className={classes.grow}>
+				<AppBar
+					color="secondary"
+					style={{ backgroundColor: "white" }}
+					position="sticky"
+				>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							className={classes.menuButton}
+							color="secondary"
+							aria-label="open drawer"
+						>
+							<MenuIcon />
+						</IconButton>
+						<Link to="/">
+							<Typography
+								className={classes.title}
+								variant="h6"
+								noWrap
+							>
+								Blackfox
+							</Typography>
+						</Link>
+						<div className={classes.search}>
+							<div className={classes.searchIcon}>
+								<SearchIcon />
+							</div>
+							<InputBase
+								placeholder="Search…"
+								classes={{
+									root: classes.inputRoot,
+									input: classes.inputInput
+								}}
+								inputProps={{ "aria-label": "search" }}
+							/>
 						</div>
-						<InputBase
-							placeholder="Search…"
-							classes={{
-								root: classes.inputRoot,
-								input: classes.inputInput
-							}}
-							inputProps={{ "aria-label": "search" }}
-						/>
-					</div>
-					<div className={classes.grow} />
-					<div className={classes.sectionDesktop}>
-						<IconButton
-							aria-label="show 4 new mails"
-							color="secondary"
-						>
-							<Badge badgeContent={4} color="secondary">
-								<MailIcon />
-							</Badge>
-						</IconButton>
-						<IconButton
-							aria-label="show 17 new notifications"
-							color="secondary"
-						>
-							<Badge badgeContent={17} color="secondary">
-								<NotificationsIcon />
-							</Badge>
-						</IconButton>
-						<IconButton
-							edge="end"
-							aria-label="account of current user"
-							aria-controls={menuId}
-							aria-haspopup="true"
-							onClick={handleProfileMenuOpen}
-							color="secondary"
-						>
-							<AccountCircle />
-						</IconButton>
-					</div>
-					<div className={classes.sectionMobile}>
-						<IconButton
-							aria-label="show more"
-							aria-controls={mobileMenuId}
-							aria-haspopup="true"
-							onClick={handleMobileMenuOpen}
-							color="secondary"
-						>
-							<MoreIcon />
-						</IconButton>
-					</div>
-				</Toolbar>
-			</AppBar>
-			{renderMobileMenu}
-			{renderMenu}
-		</div>
+						<div className={classes.grow} />
+						<div className={classes.sectionDesktop}>
+							{state.isLogged ? (
+								<IconButton
+									aria-label="show 4 new mails"
+									color="secondary"
+								>
+									<Badge badgeContent={4} color="secondary">
+										<MailIcon />
+									</Badge>
+								</IconButton>
+							) : null}
+							{!state.isLoggedIn && (
+								<Link to="/about">
+									<Typography
+										className={classes.title}
+										variant="h6"
+										noWrap
+									>
+										about
+									</Typography>
+								</Link>
+							)}
+							<Link to="/register">
+								<Typography
+									className={classes.title}
+									variant="h6"
+									noWrap
+								>
+									register
+								</Typography>
+							</Link>
+							<Link to="/login">
+								<Typography
+									className={classes.title}
+									variant="h6"
+									noWrap
+								>
+									login
+								</Typography>
+							</Link>
+							<Link to="/" onClick={
+								() => {					
+									localStorage.removeItem("userAuthData");
+									dispatch({ type: "logOut" });
+									history.push("/");
+								}
+							}>
+								<Typography
+									className={classes.title}
+									variant="h6"
+									noWrap
+								>
+									logout
+								</Typography>
+							</Link>
+						</div>
+						<div className={classes.sectionMobile}>
+							<IconButton
+								aria-label="show more"
+								aria-controls={mobileMenuId}
+								aria-haspopup="true"
+								onClick={handleMobileMenuOpen}
+								color="secondary"
+							>
+								<MoreIcon />
+							</IconButton>
+						</div>
+					</Toolbar>
+				</AppBar>
+				{renderMobileMenu}
+				{renderMenu}
+			</div>
+		</Context.Provider>
 	);
 }

@@ -16,6 +16,8 @@ package engine
 
 import (
 	"context"
+	"log"
+	"time"
 
 	"github.com/hackerrithm/blackfox/services/backend/user/pkg/domain"
 )
@@ -105,14 +107,16 @@ func (s *user) DeleteUserAccount(ctx context.Context, id string) (bool, error) {
 	return b, nil
 }
 
-func (s *user) GenerateToken(ctx context.Context, id string) (map[string]interface{}, error) {
+func (s *user) GenerateToken(ctx context.Context, id string) (string, error) {
+	log.Println("generated token (ID)-- ", id)
 	claims := map[string]interface{}{
 		"userid": id,
+		"exp":    time.Now().Add(time.Hour * 24).Unix(),
 	}
-
+	log.Println("generated token (claims)-- ", claims)
 	return s.jwt.Sign(claims, secretKey)
 }
 
-func (s *user) ParseToken(token string) (map[string]interface{}, error) {
+func (s *user) ParseToken(ctx context.Context, token string) (map[string]interface{}, error) {
 	return s.jwt.Parse(token, secretKey)
 }

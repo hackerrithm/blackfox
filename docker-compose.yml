@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
     user:
-        image: ${REPO}/user-srv:${TAG}
+        image: ${REPO}/${PROJECT}-user-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/user/pkg/docker/app.dockerfile"
@@ -24,7 +24,7 @@ services:
             - mongodb
         restart: always
     profile:
-        image: ${REPO}/profile-srv:${TAG}
+        image: ${REPO}/${PROJECT}-profile-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/profile/pkg/docker/app.dockerfile"
@@ -48,7 +48,7 @@ services:
         depends_on:
             - "user"
     task:
-        image: ${REPO}/task-srv:${TAG}
+        image: ${REPO}/${PROJECT}-task-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/task/pkg/docker/app.dockerfile"
@@ -71,7 +71,7 @@ services:
             - mongodb
         restart: always
     post:
-        image: ${REPO}/post-srv:${TAG}
+        image: ${REPO}/${PROJECT}-post-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/post/pkg/docker/app.dockerfile"
@@ -96,7 +96,7 @@ services:
         depends_on:
             - "user"
     space:
-        image: ${REPO}/space-srv:${TAG}
+        image: ${REPO}/${PROJECT}-space-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/space/pkg/docker/app.dockerfile"
@@ -122,7 +122,7 @@ services:
         depends_on:
             - "user"
     geography:
-        image: ${REPO}/geography-srv:${TAG}
+        image: ${REPO}/${PROJECT}-geography-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/geography/pkg/docker/app.dockerfile"
@@ -164,7 +164,7 @@ services:
     #         depends_on:
     #                 - "user"
     goal:
-        image: ${REPO}/goal-srv:${TAG}
+        image: ${REPO}/${PROJECT}-goal-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/goal/pkg/docker/app.dockerfile"
@@ -190,7 +190,7 @@ services:
         depends_on:
             - "user"
     match:
-        image: ${REPO}/match-srv:${TAG}
+        image: ${REPO}/${PROJECT}-match-srv:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/match/pkg/docker/app.dockerfile"
@@ -214,6 +214,29 @@ services:
         restart: always
         depends_on:
             - "user"
+    auth:
+        image: ${REPO}/${PROJECT}-auth-srv:${TAG}
+        build:
+            context: "."
+            dockerfile: "./services/backend/auth/pkg/docker/app.dockerfile"
+        environment:
+            AUTH_SERVICE_URL: "auth:5016"
+            USER_SERVICE_URL: "user:8080"
+            PROFILE_SERVICE_URL: "profile:8080"
+            MONGO_HOSTS: "mongo:27017"
+            MONGO_DATABASE: "test1"
+            MONGO_USERNAME: ""
+            MONGO_PASSWORD: ""
+            MONGO_COLLECTION: "auth"
+            MONGO_URL: "mongodb://mongo:27017/test1"
+            GRPC_PORT: "8080"
+        ports:
+            - "5016:8080"
+        links:
+            - jaeger
+            # - consul
+            - mongodb
+        restart: always
     # frontend_api_gateway:
     #         image: frontend-api-gateway
     #         build:
@@ -232,7 +255,7 @@ services:
     #                 SERVER_PORT: "8080"
     #         restart: always
     gql_api_gateway:
-        image: ${REPO}/gql-api-gateway:${TAG}
+        image: ${REPO}/${PROJECT}-gql-api-gateway:${TAG}
         build:
             context: "."
             dockerfile: "./services/backend/api/pkg/docker/app.dockerfile"
@@ -242,6 +265,7 @@ services:
             - "user"
         environment:
             USER_SERVICE_URL: "user:8080"
+            AUTH_SERVICE_URL: "auth:8080"
             PROFILE_SERVICE_URL: "profile:8080"
             POST_SERVICE_URL: "post:8080"
             SPACE_SERVICE_URL: "space:8080"
@@ -271,7 +295,16 @@ services:
     #                 - user
     #         ports:
     #                 - "3000:3000"
-
+    # client:
+    #     image: ${REPO}/${PROJECT}-neutron:${TAG}
+    #     build:
+    #         context: "./services/frontend/neutron/"
+    #     command: npm start
+    #     volumes:
+    #         - ./services/frontend/neutron/:/usr/app
+    #         - /usr/app/node_modules
+    #     ports:
+    #         - "3000:3000"
     mongodb:
         image: 'mongo:latest'
         container_name: 'mongo'
@@ -279,7 +312,7 @@ services:
             - "27017:27017"
         restart: always
         volumes:
-                     - ./data/db:/data/db
+                - ./data/db:/data/db
     redis:
         image: "redis:4.0.9"
     nats:
@@ -290,11 +323,11 @@ services:
     jaeger:
         image: jaegertracing/all-in-one:latest
         ports:
-                    - "14269"
-                    - "5778:5778"
-                    - "14268:14268"
-                    - "14267"
-                    - "16686:16686"
-                    - "5775:5775/udp"
-                    - "6831:6831/udp"
-                    - "6832:6832/udp"
+            - "14269"
+            - "5778:5778"
+            - "14268:14268"
+            - "14267"
+            - "16686:16686"
+            - "5775:5775/udp"
+            - "6831:6831/udp"
+            - "6832:6832/udp"

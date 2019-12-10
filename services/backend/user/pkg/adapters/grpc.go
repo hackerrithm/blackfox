@@ -111,7 +111,7 @@ func (s *grpcServer) UserLogin(ctx context.Context, r *pb.UserLoginRequest) (*pb
 	}
 
 	return &pb.UserLoginResponse{
-		Token: res["token"].(string),
+		Token: res,
 	}, nil
 }
 
@@ -244,5 +244,45 @@ func (s *grpcServer) DeleteUser(ctx context.Context, r *pb.DeleteUserRequest) (*
 
 	return &pb.DeleteUserResponse{
 		IsDeleted: b,
+	}, nil
+}
+
+func (s *grpcServer) GenerateToken(ctx context.Context, r *pb.GenerateTokenRequest) (*pb.GenerateTokenResponse, error) {
+	var ID = r.Token
+	b, err := s.service.GenerateToken(ctx, ID)
+	if err != nil {
+		return &pb.GenerateTokenResponse{
+			Result: "error in result -----------",
+		}, err
+	}
+	fmt.Println("got to line before token response")
+	return &pb.GenerateTokenResponse{
+		Result: b,
+	}, nil
+}
+
+func (s *grpcServer) GetUserFromToken(ctx context.Context, r *pb.GetUserFromTokenRequest) (*pb.GetUserFromTokenResponse, error) {
+	log.Println("got in search for GetUserFromToken grpc method-----------")
+
+	var ID = r.Token
+	log.Println("------------------- ID VAL: ", ID)
+	claims, err := s.service.ParseToken(ctx, ID)
+	if err != nil {
+		return &pb.GetUserFromTokenResponse{
+			Result: "----------- error in result -----------",
+		}, fmt.Errorf("this is the error thats BIG ------ : %v", err)
+	}
+
+	// if err, ok := claims["type"].(float64); ok != true {
+	// 	return &pb.GenerateTokenResponse{}, err
+	// }
+
+	userid, ok := claims["userid"].(string)
+	if !ok {
+		return &pb.GetUserFromTokenResponse{}, fmt.Errorf("user id can't get from token claims: %v", claims)
+	}
+	log.Println("------------------- ID VAL:- USERID ", userid)
+	return &pb.GetUserFromTokenResponse{
+		Result: userid,
 	}, nil
 }

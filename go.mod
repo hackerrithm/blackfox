@@ -10,12 +10,10 @@ require (
 	github.com/alecthomas/units v0.0.0-20190910110746-680d30ca3117 // indirect
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-redis/redis v6.15.5+incompatible
 	github.com/golang/protobuf v1.3.2
-	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/pprof v0.0.0-20190908185732-236ed259b199 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
-	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/hackerrithm/light v0.0.0-20190821114916-a9f455a830d8 // indirect
 	github.com/hashicorp/consul v1.6.1 // indirect
@@ -28,7 +26,7 @@ require (
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/lib/pq v1.2.0
+	github.com/lib/pq v1.2.0 // indirect
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.9 // indirect
@@ -42,7 +40,6 @@ require (
 	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
 	github.com/prometheus/common v0.7.0 // indirect
 	github.com/prometheus/procfs v0.0.4 // indirect
-	github.com/prometheus/tsdb v0.7.1 // indirect
 	github.com/rogpeppe/go-internal v1.3.2 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/segmentio/ksuid v1.0.2

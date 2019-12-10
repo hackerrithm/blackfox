@@ -11,6 +11,7 @@ COPY services/backend/geography ../../geography
 COPY services/backend/goal ../../goal
 COPY services/backend/match ../../match
 COPY services/backend/group ../../group
+COPY services/backend/auth ../../auth
 
 
 COPY ./services/backend/api/pkg ./

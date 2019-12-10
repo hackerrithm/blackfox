@@ -33,16 +33,16 @@ func newJWT( /*token jwtgo.Token*/ ) engine.JWTSignParser {
 var returnObjectMap = make(map[string]interface{})
 
 // Sign ...
-func (j *jwt) Sign(claims map[string]interface{}, secretKey string) (map[string]interface{}, error) {
+func (j *jwt) Sign(claims map[string]interface{}, secretKey string) (string, error) {
 	token := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, jwtgo.MapClaims(claims))
 	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		log.Println("StatusUnauthorized ", err)
 	}
 
-	returnObjectMap["token"] = tokenString
+	// returnObjectMap["token"] = tokenString
 
-	return returnObjectMap, nil
+	return tokenString, nil
 }
 
 // Parse ..
