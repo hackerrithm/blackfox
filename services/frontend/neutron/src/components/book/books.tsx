@@ -136,33 +136,44 @@ const useStylesGoalsSection = makeStyles((theme: Theme) =>
 );
 
 const Books = () => {
+	let count = 0;
 	const [query, setQuery] = useState("");
-	const [{ data, isLoading, isError }, doFetch] = useDataApi(
-		"http://hn.algolia.com/api/v1/search?query=redux",
-		{ hits: [] }
-	);
+	const [
+		{ data, isLoading, isError },
+		doFetch
+	] = useDataApi("http://hn.algolia.com/api/v1/search?query=redux", {
+		hits: []
+	});
 
 	// const classes = useStylesGoalsSection(getThemeProps);
 	const classes = useStyles("");
 	return (
 		<Fragment>
-				<CustomizedInputBase 
-					value={query}
-					onChange={(event: any) => setQuery(event.target.value)} 
-					btnType="submit"
-					onSubmit={(event: any) => {
-						doFetch(
-							`http://hn.algolia.com/api/v1/search?query=${query}`
-						);
-	
-						event.preventDefault();
-					}}
-					/>
+			<CustomizedInputBase
+				value={query}
+				onChange={(event: any) => setQuery(event.target.value)}
+				btnType="submit"
+				onSubmit={(event: any) => {
+					doFetch(
+						`http://hn.algolia.com/api/v1/search?query=${query}`
+					);
+
+					event.preventDefault();
+				}}
+			/>
 
 			{isError && <div>Something went wrong ...</div>}
 
 			{isLoading ? (
-				<div><ExampleLoadPage loading={true} /></div>
+				<div>
+					{" "}
+					{data.hits.forEach((d: any) => {
+						(count = count + 1)
+						console.log(d);
+						
+					})}
+					<ExampleLoadPage loading={true} />
+				</div>
 			) : (
 				<div className={classes.root}>
 					{/* {data.hits.map((item: any) => (
@@ -170,10 +181,10 @@ const Books = () => {
 						<a href={item.url}>{item.title}</a>
 						{/* <MediaCard searchItemID={item.objectID} searchItemTitle={item.title.toString()} searchItemURL={item.url.toString()}/> */}
 					{/* </li> */}
-					{/* ))} */} 
+					{/* ))} */}
 					{/* <AdvancedGridList goalList={data.hits} />
 					 */}
-					<GridList
+					{/* <GridList
 						cellHeight={200}
 						spacing={1}
 						className={classes.gridList}
@@ -201,7 +212,9 @@ const Books = () => {
 								/>
 							</GridListTile>
 						))}
-					</GridList>
+					</GridList> */}
+
+					<ExampleLoadPage data={data.hits} />
 				</div>
 
 				// <div className={classes.root}>
