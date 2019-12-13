@@ -25,6 +25,7 @@ import "./style.css";
 import { authContext } from "../utils/authContext";
 import MButton from "../general/reusable/button/mbutton";
 import { LoginReducer, InitialState } from "../login";
+import Button from "@material-ui/core/Button";
 
 export const Context = React.createContext(InitialState);
 
@@ -97,7 +98,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function PrimarySearchAppBar() {
+const PrimarySearchAppBar = () => {
 	const { auth } = React.useContext(authContext);
 	const [state, dispatch] = useReducer(LoginReducer, InitialState);
 	const history = useHistory();
@@ -215,7 +216,7 @@ export default function PrimarySearchAppBar() {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Link to="/">
+						<Link to="/" style={{ textDecoration: "none" }}>
 							<Typography
 								className={classes.title}
 								variant="h6"
@@ -224,7 +225,7 @@ export default function PrimarySearchAppBar() {
 								Blackfox
 							</Typography>
 						</Link>
-						<div className={classes.search}>
+						{/* <div className={classes.search}>
 							<div className={classes.searchIcon}>
 								<SearchIcon />
 							</div>
@@ -236,8 +237,8 @@ export default function PrimarySearchAppBar() {
 								}}
 								inputProps={{ "aria-label": "search" }}
 							/>
-						</div>
-						<div className={classes.grow} />
+						</div>*/}
+						<div className={classes.grow} /> 
 						<div className={classes.sectionDesktop}>
 							{state.isLogged ? (
 								<IconButton
@@ -250,48 +251,35 @@ export default function PrimarySearchAppBar() {
 								</IconButton>
 							) : null}
 							{!state.isLoggedIn && (
-								<Link to="/about">
-									<Typography
-										className={classes.title}
-										variant="h6"
-										noWrap
-									>
-										about
-									</Typography>
+								<Link
+									to="/about"
+									style={{ textDecoration: "none" }}
+								>
+									<Button color="inherit">about</Button>
 								</Link>
 							)}
-							<Link to="/register">
-								<Typography
-									className={classes.title}
-									variant="h6"
-									noWrap
-								>
-									register
-								</Typography>
+							<Link
+								to="/register"
+								style={{ textDecoration: "none" }}
+							>
+								<Button color="inherit">register</Button>
 							</Link>
-							<Link to="/login">
-								<Typography
-									className={classes.title}
-									variant="h6"
-									noWrap
-								>
-									login
-								</Typography>
+							<Link
+								to="/login"
+								style={{ textDecoration: "none" }}
+							>
+								<Button color="inherit">login</Button>
 							</Link>
-							<Link to="/" onClick={
-								() => {					
+							<Link
+								to="/"
+								style={{ textDecoration: "none" }}
+								onClick={() => {
 									localStorage.removeItem("userAuthData");
 									dispatch({ type: "logOut" });
 									history.push("/");
-								}
-							}>
-								<Typography
-									className={classes.title}
-									variant="h6"
-									noWrap
-								>
-									logout
-								</Typography>
+								}}
+							>
+								<Button color="inherit">logout</Button>
 							</Link>
 						</div>
 						<div className={classes.sectionMobile}>
@@ -312,4 +300,6 @@ export default function PrimarySearchAppBar() {
 			</div>
 		</Context.Provider>
 	);
-}
+};
+
+export default PrimarySearchAppBar;

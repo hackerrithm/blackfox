@@ -35,9 +35,9 @@ export default function CustomizedInputBase({val, onChange, btnType, onSubmit}: 
 
 	return (
 		<Paper component="form" onSubmit={onSubmit} className={classes.root}>
-			<IconButton className={classes.iconButton} aria-label="menu">
+			{/* <IconButton className={classes.iconButton} aria-label="menu">
 				<MenuIcon />
-			</IconButton>
+			</IconButton> */}
 			<InputBase
                 type="text"
                 value={val}
@@ -53,14 +53,14 @@ export default function CustomizedInputBase({val, onChange, btnType, onSubmit}: 
 			>
 				<SearchIcon />
 			</IconButton>
-			<Divider className={classes.divider} orientation="vertical" />
-			<IconButton
+			{/* <Divider className={classes.divider} orientation="vertical" /> */}
+			{/* <IconButton
 				color="primary"
 				className={classes.iconButton}
 				aria-label="directions"
 			>
 				<DirectionsIcon />
-			</IconButton>
+			</IconButton> */}
 		</Paper>
 	);
 }

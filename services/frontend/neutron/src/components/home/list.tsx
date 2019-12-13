@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import FacebookExampleFeedLoader from "../examples/facebook/fb";
 
-const List = () => {
+const List = ({initialListCount}: any) => {
 	const [listItems, setListItems] = useState(
-		Array.from(Array(300).keys(), n => n + 1)
+		Array.from(Array(initialListCount).keys(), n => n + 1)
 	);
 	const [isFetching, setIsFetching] = useState(false);
 
@@ -30,7 +31,7 @@ const List = () => {
 		setTimeout(() => {
 			setListItems(prevState => [
 				...prevState,
-				...Array.from(Array(20).keys(), n => n + prevState.length + 1)
+				...Array.from(Array(initialListCount).keys(), n => n + prevState.length + 1)
 			]);
 			setIsFetching(false);
 		}, 2000);
@@ -38,14 +39,15 @@ const List = () => {
 
 	return (
 		<>
-			<ul className="list-group mb-2">
+			{/* <ul className="list-group mb-2"> */}
 				{listItems.map((listItem: any, index: number) => (
-					<li key={index} className="list-group-item">
-						List Item {listItem}
-					</li>
+					// <li key={index} className="list-group-item">
+					// 	List Item {listItem}
+					// </li>
+					<FacebookExampleFeedLoader />
 				))}
-			</ul>
-			{isFetching && "Fetching more list items..."}
+			{/* </ul> */}
+			{isFetching && <FacebookExampleFeedLoader loading={true}/>}
 		</>
 	);
 };

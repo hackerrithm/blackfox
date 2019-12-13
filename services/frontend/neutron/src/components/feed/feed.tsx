@@ -6,6 +6,7 @@ import List from "../home/list";
 const Feed = () => {
     const [state, dispatch] = useReducer(LoginReducer, InitialState);
     const history = useHistory();
+    let listSize: number = 3;
 	return (
 		<div>
 			{/* <h1>Welcome {username}!</h1> */}
@@ -16,7 +17,7 @@ const Feed = () => {
             <br/>
             <br/>
 
-            <List />
+            <List initialListCount={listSize} />
 		</div>
 	);
 };

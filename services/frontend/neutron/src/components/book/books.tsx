@@ -166,12 +166,6 @@ const Books = () => {
 
 			{isLoading ? (
 				<div>
-					{" "}
-					{data.hits.forEach((d: any) => {
-						(count = count + 1)
-						console.log(d);
-						
-					})}
 					<ExampleLoadPage loading={true} />
 				</div>
 			) : (
