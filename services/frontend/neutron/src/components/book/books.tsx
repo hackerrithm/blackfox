@@ -1,55 +1,14 @@
-import React, {
-	useReducer,
-	useEffect,
-	useRef,
-	useState,
-	Fragment
-} from "react";
+import React, { useReducer, useEffect, useState, Fragment } from "react";
 import axios from "axios";
 import { DataFetchReducer } from ".";
-import ExpandableCard from "../general/reusable/card/card";
 import {
-	Grid,
-	Paper,
 	makeStyles,
 	Theme,
-	createStyles
+	createStyles,
 } from "@material-ui/core";
-import { getThemeProps } from "@material-ui/styles";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
-import GridListTileBar from "@material-ui/core/GridListTileBar";
-import IconButton from "@material-ui/core/IconButton";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
 import ExampleLoadPage from "../examples/youtube/yt";
 import CustomizedInputBase from "../general/reusable/input/search";
-// import tileData from './tileData';
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			display: "flex",
-			flexWrap: "wrap",
-			justifyContent: "space-around",
-			overflow: "hidden",
-			backgroundColor: theme.palette.background.paper
-		},
-		gridList: {
-			width: 500,
-			height: 450,
-			// Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-			transform: "translateZ(0)"
-		},
-		titleBar: {
-			background:
-				"linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-				"rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
-		},
-		icon: {
-			color: "white"
-		}
-	})
-);
+import useStyles from "./styles";
 
 const useDataApi = (initialUrl: any, initialData: any) => {
 	const [url, setUrl] = useState(initialUrl);
@@ -70,6 +29,7 @@ const useDataApi = (initialUrl: any, initialData: any) => {
 				const result = await axios(url);
 
 				if (!didCancel) {
+					console.log("here is counter: ", result);
 					dispatch({ type: "FETCH_SUCCESS", payload: result.data });
 				}
 			} catch (error) {
@@ -136,17 +96,26 @@ const useStylesGoalsSection = makeStyles((theme: Theme) =>
 );
 
 const Books = () => {
-	let count = 0;
 	const [query, setQuery] = useState("");
-	const [
-		{ data, isLoading, isError },
-		doFetch
-	] = useDataApi("http://hn.algolia.com/api/v1/search?query=redux", {
-		hits: []
-	});
+	const [{ data, isLoading, isError }, doFetch] = useDataApi(
+		"http://hn.algolia.com/api/v1/search?query=japan",
+		{
+			hits: []
+		}
+	);
 
 	// const classes = useStylesGoalsSection(getThemeProps);
 	const classes = useStyles("");
+
+	const [embla, setEmbla] = useState(null);
+
+	useEffect(() => {
+		if (embla) {
+			embla.on("select", () => {
+				console.log(`Current index is ${embla.selectedScrollSnap()}`);
+			});
+		}
+	}, [embla]);
 	return (
 		<Fragment>
 			<CustomizedInputBase
@@ -166,86 +135,63 @@ const Books = () => {
 
 			{isLoading ? (
 				<div>
-					<ExampleLoadPage loading={true} />
+					<ExampleLoadPage loading={true} length={12} />
 				</div>
 			) : (
-				<div className={classes.root}>
-					{/* {data.hits.map((item: any) => (
-					  <li key={item.objectID}>
-						<a href={item.url}>{item.title}</a>
-						{/* <MediaCard searchItemID={item.objectID} searchItemTitle={item.title.toString()} searchItemURL={item.url.toString()}/> */}
-					{/* </li> */}
-					{/* ))} */}
-					{/* <AdvancedGridList goalList={data.hits} />
-					 */}
-					{/* <GridList
-						cellHeight={200}
-						spacing={1}
-						className={classes.gridList}
-					>
-						{data.hits.map((goal: any) => (
-							<GridListTile
-								key={goal.objectID}
-								cols={true ? 2 : 1}
-								rows={true ? 2 : 1}
-							>
-								<img src={""} alt={goal.title} />
-								<GridListTileBar
-									title={goal.title}
-									titlePosition="top"
-									actionIcon={
-										<IconButton
-											aria-label={`star ${goal.title}`}
-											className={classes.icon}
-										>
-											<StarBorderIcon />
-										</IconButton>
-									}
-									actionPosition="left"
-									className={classes.titleBar}
-								/>
-							</GridListTile>
-						))}
-					</GridList> */}
+				<div>
 
-					<ExampleLoadPage data={data.hits} />
+						{/* <EmblaCarouselReact
+							emblaRef={setEmbla}
+							options={{
+								loop: true,
+								draggable: true,
+								dragFree: false,
+								speed: 10,
+								startIndex: 0
+							}}
+						>
+							<div style={{ display: "flex" }}>
+								<div>
+									<img
+										alt={"1"}
+										width="500px"
+										height="200px"
+										src={
+											"https://66.media.tumblr.com/e7b8cf45f9d29ffe6644ebeaf9e87419/tumblr_oy6vcn7U7l1vtzqkfo1_400.jpg"
+										}
+									/>
+								</div>
+								<div style={{ flex: "0 0 100%" }}>
+									{" "}
+									<img
+										alt={"2"}
+										height="200px"
+										width="500px"
+										src={
+											"https://i.ytimg.com/vi/pLqipJNItIo/hqdefault.jpg?sqp=-oaymwEYCNIBEHZIVfKriqkDCwgBFQAAiEIYAXAB&rs=AOn4CLBkklsyaw9FxDmMKapyBYCn9tbPNQ"
+										}
+									/>
+								</div>
+								<div style={{ flex: "0 0 100%" }}>
+									{" "}
+									<img
+										alt={"3"}
+										height="200px"
+										width="500px"
+										src={
+											"https://i.ytimg.com/vi/kkLk2XWMBf8/hqdefault.jpg?sqp=-oaymwEYCNIBEHZIVfKriqkDCwgBFQAAiEIYAXAB&rs=AOn4CLB4GZTFu1Ju2EPPPXnhMZtFVvYBaw"
+										}
+									/>
+								</div>
+							</div>
+						</EmblaCarouselReact>
+						<button onClick={() => embla.scrollPrev()}>Prev</button>
+						<button onClick={() => embla.scrollNext()}>Next</button> */}
+					{/* </div> */}
+					<div className={classes.root}>
+						<ExampleLoadPage data={data.hits} />
+					</div>
 				</div>
-
-				// <div className={classes.root}>
-				// 	<Grid container spacing={3}>
-				// 		<Grid item xs={12}>
-				// 			<Paper className={classes.paper}>
-				// 				{" "}
-				// 				<Books />
-				// 			</Paper>
-				// 		</Grid>
-				// 		<Grid item xs={12} sm={6}></Grid>
-				// 		<Grid item xs={12} sm={6}></Grid>
-				// <ul>
-				// {data.hits.map((searchItem: any) => {
-				// return (
-				// <Grid
-				// 	alignContent={"center"}
-				// 	item
-				// 	xs={6}
-				// 	sm={3}
-				// 	key={searchItem.objectID}
-				// >
-				// <li>
-				// 	<ExpandableCard
-				// 		url={searchItem.url}
-				// 		title={searchItem.title}
-				// 	/>
-				// </li>
-				// 									  <li key={searchItem.objectID}>
-				// 		<a href={searchItem.url}>{searchItem.title}</a>
-				// 	  </li>
-				// 				// </Grid>
-				// 			// );
-				// 		})}
-				// 		</ul>
-				// // 	</Grid>
-				// </div>
 			)}
 		</Fragment>
 	);

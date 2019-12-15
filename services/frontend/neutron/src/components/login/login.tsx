@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { login, LoginReducer, InitialState } from ".";
-import Profile from "../profile/profile";
 import MButton from "../general/reusable/button/mbutton";
 import { authContext } from "../utils/authContext";
 import { apiRequest, validateLoginForm } from "../utils/Helpers";

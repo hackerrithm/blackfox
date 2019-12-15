@@ -1,14 +1,8 @@
 import React, { useReducer } from "react";
-import {
-	fade,
-	makeStyles,
-	Theme,
-	createStyles
-} from "@material-ui/core/styles";
+
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -23,82 +17,13 @@ import { getThemeProps } from "@material-ui/styles";
 import { Link, useHistory } from "react-router-dom";
 import "./style.css";
 import { authContext } from "../utils/authContext";
-import MButton from "../general/reusable/button/mbutton";
 import { LoginReducer, InitialState } from "../login";
 import Button from "@material-ui/core/Button";
+import useStyles from "./styles";
 
 export const Context = React.createContext(InitialState);
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		body: {
-			margin: theme.spacing(-10)
-		},
-		grow: {
-			flexGrow: 1
-		},
-		menuButton: {
-			marginRight: theme.spacing(2)
-		},
-		title: {
-			display: "none",
-			[theme.breakpoints.up("sm")]: {
-				display: "block"
-			},
-			color: "#000"
-		},
-		search: {
-			position: "relative",
-			borderRadius: theme.shape.borderRadius,
-			backgroundColor: fade(theme.palette.common.black, 1),
-			color: theme.palette.common.black,
-			"&:hover": {
-				backgroundColor: fade(theme.palette.common.black, 1)
-			},
-			marginRight: theme.spacing(2),
-			marginLeft: 0,
-			width: "100%",
-			[theme.breakpoints.up("sm")]: {
-				marginLeft: theme.spacing(3),
-				width: "auto"
-			}
-		},
-		searchIcon: {
-			width: theme.spacing(7),
-			height: "100%",
-			position: "absolute",
-			pointerEvents: "none",
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "center"
-		},
-		inputRoot: {
-			color: "#fff"
-		},
-		inputInput: {
-			padding: theme.spacing(1, 1, 1, 7),
-			transition: theme.transitions.create("width"),
-			width: "100%",
-			[theme.breakpoints.up("md")]: {
-				width: 200
-			}
-		},
-		sectionDesktop: {
-			display: "none",
-			[theme.breakpoints.up("md")]: {
-				display: "flex"
-			}
-		},
-		sectionMobile: {
-			display: "flex",
-			[theme.breakpoints.up("md")]: {
-				display: "none"
-			}
-		}
-	})
-);
-
-const PrimarySearchAppBar = () => {
+const PrimarySearchAppBar: React.FC = () => {
 	const { auth } = React.useContext(authContext);
 	const [state, dispatch] = useReducer(LoginReducer, InitialState);
 	const history = useHistory();
@@ -195,7 +120,6 @@ const PrimarySearchAppBar = () => {
 		<Context.Provider
 			value={{
 				username: state.username,
-				// password: state.password,
 				isLoading: state.isLoading,
 				isLoggedIn: state.isLoggedIn,
 				error: state.error
@@ -207,7 +131,7 @@ const PrimarySearchAppBar = () => {
 					style={{ backgroundColor: "white" }}
 					position="sticky"
 				>
-					<Toolbar>
+					<Toolbar variant="dense">
 						<IconButton
 							edge="start"
 							className={classes.menuButton}
@@ -217,15 +141,33 @@ const PrimarySearchAppBar = () => {
 							<MenuIcon />
 						</IconButton>
 						<Link to="/" style={{ textDecoration: "none" }}>
-							<Typography
-								className={classes.title}
-								variant="h6"
-								noWrap
-							>
-								Blackfox
-							</Typography>
+							<img
+								style={{ width: "50px" }}
+								src="https://icon-library.net/images/fox-icon-png/fox-icon-png-12.jpg"
+								alt="Blackfox"
+							/>
 						</Link>
-						{/* <div className={classes.search}>
+						<Link
+									to="/discover"
+									style={{
+										textDecoration: "none",
+										marginLeft: 10,
+										color: "black"
+									}}
+								>
+									<Button color="inherit">discover</Button>
+								</Link>
+								<Link
+									to="/browse"
+									style={{
+										textDecoration: "none",
+										marginLeft: 10,
+										color: "black"
+									}}
+								>
+									<Button color="inherit">browse</Button>
+								</Link>
+						<div className={classes.search}>
 							<div className={classes.searchIcon}>
 								<SearchIcon />
 							</div>
@@ -237,8 +179,8 @@ const PrimarySearchAppBar = () => {
 								}}
 								inputProps={{ "aria-label": "search" }}
 							/>
-						</div>*/}
-						<div className={classes.grow} /> 
+						</div>
+						<div className={classes.grow} />
 						<div className={classes.sectionDesktop}>
 							{state.isLogged ? (
 								<IconButton
@@ -253,7 +195,11 @@ const PrimarySearchAppBar = () => {
 							{!state.isLoggedIn && (
 								<Link
 									to="/about"
-									style={{ textDecoration: "none" }}
+									style={{
+										textDecoration: "none",
+										marginLeft: 10,
+										color: "black"
+									}}
 								>
 									<Button color="inherit">about</Button>
 								</Link>
@@ -262,17 +208,36 @@ const PrimarySearchAppBar = () => {
 								to="/register"
 								style={{ textDecoration: "none" }}
 							>
-								<Button color="inherit">register</Button>
+								<Button
+									color="inherit"
+									variant="outlined"
+									style={{ marginLeft: 10, color: "black" }}
+								>
+									register
+								</Button>
 							</Link>
 							<Link
 								to="/login"
 								style={{ textDecoration: "none" }}
 							>
-								<Button color="inherit">login</Button>
+								<Button
+									color="primary"
+									variant="contained"
+									style={{
+										marginLeft: 10,
+										backgroundColor: "#5588FF"
+									}}
+								>
+									login
+								</Button>
 							</Link>
 							<Link
 								to="/"
-								style={{ textDecoration: "none" }}
+								style={{
+									textDecoration: "none",
+									marginLeft: 10,
+									color: "black"
+								}}
 								onClick={() => {
 									localStorage.removeItem("userAuthData");
 									dispatch({ type: "logOut" });

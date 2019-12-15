@@ -74,7 +74,7 @@ const DataFetchReducer = (state: any, action: any) => {
 				...state,
 				isLoading: false,
 				isError: false,
-				data: action.payload
+				data: action.payload,
 			};
 		case "FETCH_FAILURE":
 			return {

@@ -28,6 +28,9 @@ const data = [
 		channel: "Calvin Harris",
 		views: "130 M views",
 		createdAt: "10 months ago"
+	},
+	{
+		src: "https://66.media.tumblr.com/e7b8cf45f9d29ffe6644ebeaf9e87419/tumblr_oy6vcn7U7l1vtzqkfo1_400.jpg",
 	}
 ];
 
