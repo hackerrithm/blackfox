@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 
 	pb "github.com/hackerrithm/blackfox/services/backend/auth/pkg/model"
 )
@@ -108,7 +109,7 @@ func (c *Client) GetUserFromToken(ctx context.Context, token string) (string, er
 			Token: token,
 		})
 	if err != nil {
-		return "errors where u expected ------------------ [[[[[[[[[[[[[[[[[ ", fmt.Errorf("this is the error thats BIG ------ : %v", err)
+		return "", grpc.Errorf(codes.Internal, err.Error())
 	}
 	log.Println("actual result ----------- [", r.Result, "]")
 	return r.Result, nil

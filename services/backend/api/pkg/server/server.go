@@ -7,11 +7,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-chi/chi"
-
 	"cloud.google.com/go/profiler"
 	"contrib.go.opencensus.io/exporter/jaeger"
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/hackerrithm/blackfox/services/backend/api/pkg/authentication"
 	multiserviceMap "github.com/hackerrithm/blackfox/services/backend/api/pkg/resolver"
@@ -160,15 +159,15 @@ func main() {
 
 	// router := chi.NewRouter()
 	// mux := http.NewServeMux()
-	// router := mux.NewRouter()
-	router := chi.NewRouter()
+	router := mux.NewRouter()
+	// router := chi.NewRouter()
 	router.Use(authentication.AuthHandlerMiddleware)
-	h := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: false,
-		Debug:            true,
-	})
-	// h := cors.AllowAll()
+	// h := cors.New(cors.Options{
+	// 	AllowedOrigins:   []string{"*"},
+	// 	AllowCredentials: false,
+	// 	Debug:            true,
+	// })
+	h := cors.AllowAll()
 	router.Handle("/", handler.Playground("GraphQL playground", "/query"))
 	// router.Handle("/query", http.Handler(authentication.AuthHandlerMiddleware(handler.GraphQL(s.ToExecutableSchema(),
 	// 	handler.WebsocketUpgrader(websocket.Upgrader{

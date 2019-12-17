@@ -78,6 +78,7 @@ func AuthHandlerMiddleware(next http.Handler) http.Handler {
 				log.Println("invalid auth token")
 			}
 
+			log.Println("authHeaderParts :: ", authHeaderParts)
 			tokenStr := authHeaderParts[1] //, err := getToken(request, response, next)
 			// if err != nil {
 			// 	log.Println("error on getting token")
@@ -87,17 +88,17 @@ func AuthHandlerMiddleware(next http.Handler) http.Handler {
 				next.ServeHTTP(response, request)
 			}
 
-			// authClient, err := auth.NewClient(cfg.AuthServiceURL)
-			// if err != nil {
-			// 	log.Println("error connecting to user client")
-			// 	authClient.Close()
-			// }
+			authClient, err := auth.NewClient(cfg.AuthServiceURL)
+			if err != nil {
+				log.Println("error connecting to user client")
+				authClient.Close()
+			}
 
-			// userID, err := authClient.GetUserFromToken(contxt, tokenStr)
-			// if err != nil {
-			// 	log.Println("error parsing token")
-			// }
-			// authClient.Close()
+			userID, err := authClient.GetUserFromToken(contxt, tokenStr)
+			if err != nil {
+				log.Println("error parsing token")
+			}
+			authClient.Close()
 
 			userClient, err := user.NewClient(cfg.UserServiceURL)
 			if err != nil {
@@ -105,7 +106,7 @@ func AuthHandlerMiddleware(next http.Handler) http.Handler {
 				userClient.Close()
 			}
 
-			userID := "5dade4266700b1a5e37555ef"
+			// userID := "5dade4266700b1a5e37555ef"
 
 			// get the user from the database
 			user, err := userClient.GetUser(contxt, userID)

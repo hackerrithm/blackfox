@@ -82,7 +82,7 @@ func (s *grpcServer) GetTask(ctx context.Context, r *pb.GetTaskRequest) (*pb.Get
 
 	return &pb.GetTaskResponse{
 		Task: &pb.Task{
-			Id:   a.ID.Hex(),
+			Id:   a.ID,
 			Text: a.Text,
 		},
 	}, nil
@@ -98,7 +98,7 @@ func (s *grpcServer) GetMultipleTask(ctx context.Context, r *pb.GetMultipleTaskR
 		tasks = append(
 			tasks,
 			&pb.Task{
-				Id:   p.ID.Hex(),
+				Id:   p.ID,
 				Text: p.Text,
 			},
 		)
@@ -115,6 +115,6 @@ func (s *grpcServer) DeleteTask(ctx context.Context, r *pb.DeleteTaskRequest) (*
 		return nil, err
 	}
 	return &pb.DeleteTaskResponse{
-		Id: a,
+		Id: uint32(a),
 	}, nil
 }

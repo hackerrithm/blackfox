@@ -300,6 +300,6 @@ type Share struct {
 
 // Task ...
 type Task struct {
-	ID   string `json:"id"`
+	ID   uint32 `json:"id"`
 	Text string `json:"text"`
 }

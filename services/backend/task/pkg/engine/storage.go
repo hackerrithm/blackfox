@@ -30,17 +30,17 @@ type (
 		Insert(c context.Context, task domain.Task) error
 
 		// Put adds a new Task to the datastore
-		Update(c context.Context, task domain.Task, id string) error
+		Update(c context.Context, task domain.Task, id uint32) error
 
 		// Query returns existing tasks matching the
 		// query provided
 		Query(c context.Context, query *Query) []*domain.Task
 
 		// FindOne returns ...
-		FindOne(c context.Context, id string) (*domain.Task, error)
+		FindOne(c context.Context, id uint32) (*domain.Task, error)
 
 		// Remove ...
-		Remove(c context.Context, id string) (string, error)
+		Remove(c context.Context, id uint32) (int64, error)
 
 		// ListAllTasks ...
 		ListAllTasks(ctx context.Context, skip uint64, take uint64) ([]domain.Task, error)

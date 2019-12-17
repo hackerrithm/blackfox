@@ -33,7 +33,7 @@ import (
 	taskCfg "github.com/hackerrithm/blackfox/services/backend/task/configs"
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/adapters"
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/engine"
-	"github.com/hackerrithm/blackfox/services/backend/task/pkg/providers/mongodb"
+	"github.com/hackerrithm/blackfox/services/backend/task/pkg/providers/postgresdb"
 )
 
 type (
@@ -67,13 +67,12 @@ func main() {
 
 	var strg engine.StorageFactory
 	retry.ForeverSleep(2*time.Second, func(_ int) (err error) {
-		strg, err = mongodb.NewStorage(
-			cfg.MongoHost,
-			cfg.MongoDB,
-			cfg.MongoUsername,
-			cfg.MongoPassword,
-			cfg.MongoCollection,
-			cfg.MONGOURL)
+		strg, err = postgresdb.NewStorage(
+			cfg.PostgresHost,
+			cfg.PostgresPort,
+			cfg.PostgresUsername,
+			cfg.PostgresDBName,
+			cfg.PostgresPassword)
 		if err != nil {
 			log.Println(err)
 		}

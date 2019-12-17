@@ -20,6 +20,7 @@ import (
 	"log"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/hackerrithm/blackfox/services/backend/user/pkg/domain"
@@ -206,7 +207,7 @@ func (c *Client) GetUserFromToken(ctx context.Context, token string) (string, er
 			Token: token,
 		})
 	if err != nil {
-		return "errors where u expected ------------------ [[[[[[[[[[[[[[[[[ ", err
+		return "", grpc.Errorf(codes.Internal, err.Error())
 	}
 	log.Println("actual result ----------- [", r.Result, "]")
 	return "5c7035402948062de649cd6d", nil

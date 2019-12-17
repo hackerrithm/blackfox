@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strconv"
 	"sync"
 	"time"
 
@@ -19,8 +20,8 @@ import (
 	"github.com/hackerrithm/blackfox/services/backend/api/pkg"
 	"github.com/hackerrithm/blackfox/services/backend/api/pkg/generated"
 
-	geography "github.com/hackerrithm/blackfox/services/backend/geography/cmd/geography/client"
 	auth "github.com/hackerrithm/blackfox/services/backend/auth/cmd/auth/client"
+	geography "github.com/hackerrithm/blackfox/services/backend/geography/cmd/geography/client"
 	goal "github.com/hackerrithm/blackfox/services/backend/goal/cmd/goal/client"
 	group "github.com/hackerrithm/blackfox/services/backend/group/cmd/group/client"
 	match "github.com/hackerrithm/blackfox/services/backend/match/cmd/match/client"
@@ -316,7 +317,12 @@ func (r *mutationResolver) AddTask(ctx context.Context, user string) (*pkg.Task,
 }
 
 func (r *mutationResolver) UpdateTask(ctx context.Context, user pkg.UpdateTaskInput) (string, error) {
-	a, err := r.server.taskClient.Put(ctx, user.ID, user.Text)
+	userID, err := strconv.ParseUint(user.ID, 10, 32)
+	if err == nil {
+		fmt.Printf("Type: %T \n", userID)
+		fmt.Println(userID)
+	}
+	a, err := r.server.taskClient.Put(ctx, uint32(userID), user.Text)
 	if err != nil {
 		return "", err
 	}
@@ -638,7 +644,7 @@ func (r *queryResolver) GetAllTasks(ctx context.Context) ([]*pkg.Task, error) {
 	tasks := []*pkg.Task{}
 	for _, a := range a {
 		tasks = append(tasks, &pkg.Task{
-			ID:   a.ID.Hex(),
+			ID:   a.ID,
 			Text: a.Text,
 		})
 	}
@@ -647,13 +653,18 @@ func (r *queryResolver) GetAllTasks(ctx context.Context) ([]*pkg.Task, error) {
 }
 
 func (r *queryResolver) GetTask(ctx context.Context, id string) (*pkg.Task, error) {
-	a, err := r.server.taskClient.Get(ctx, id, 0)
+	userID, err := strconv.ParseUint(id, 10, 32)
+	if err == nil {
+		fmt.Printf("Type: %T \n", userID)
+		fmt.Println(userID)
+	}
+	a, err := r.server.taskClient.Get(ctx, uint32(userID), 0)
 	if err != nil {
 		return &pkg.Task{}, err
 	}
 
 	return &pkg.Task{
-		ID:   a.ID.Hex(),
+		ID:   a.ID,
 		Text: a.Text,
 	}, nil
 }

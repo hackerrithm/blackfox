@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
-	"gopkg.in/mgo.v2/bson"
 
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/domain"
 	pb "github.com/hackerrithm/blackfox/services/backend/task/pkg/model"
@@ -64,7 +63,7 @@ func (c *Client) Post(ctx context.Context, text string) (string, error) {
 }
 
 // Put ...
-func (c *Client) Put(ctx context.Context, id, text string) (string, error) {
+func (c *Client) Put(ctx context.Context, id uint32, text string) (string, error) {
 	r, err := c.service.PutTask(
 		ctx,
 		&pb.PutTaskRequest{
@@ -79,7 +78,7 @@ func (c *Client) Put(ctx context.Context, id, text string) (string, error) {
 }
 
 // Get ...
-func (c *Client) Get(ctx context.Context, id string, userID uint64) (*domain.Task, error) {
+func (c *Client) Get(ctx context.Context, id uint32, userID uint64) (*domain.Task, error) {
 	r, err := c.service.GetTask(
 		ctx,
 		&pb.GetTaskRequest{Id: id, UserID: userID},
@@ -88,7 +87,7 @@ func (c *Client) Get(ctx context.Context, id string, userID uint64) (*domain.Tas
 		return nil, err
 	}
 	return &domain.Task{
-		ID:   bson.ObjectIdHex(r.Task.Id),
+		ID:   r.Task.Id,
 		Text: r.Task.Text,
 	}, nil
 }
@@ -109,7 +108,7 @@ func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]d
 	tasks := []domain.Task{}
 	for _, a := range r.Tasks {
 		tasks = append(tasks, domain.Task{
-			ID:   bson.ObjectIdHex(a.Id),
+			ID:   a.Id,
 			Text: a.Text,
 		})
 	}
@@ -117,13 +116,13 @@ func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]d
 }
 
 // Delete removes a task with passed identifier
-func (c *Client) Delete(ctx context.Context, id string) (string, error) {
+func (c *Client) Delete(ctx context.Context, id uint32) (uint32, error) {
 	r, err := c.service.DeleteTask(
 		ctx,
 		&pb.DeleteTaskRequest{Id: id},
 	)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	return r.Id, nil
 }
