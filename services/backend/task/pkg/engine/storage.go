@@ -54,6 +54,8 @@ type (
 		// TaskRepository implementation
 		NewTaskRepository() TaskRepository
 
+		Automigrate()
+
 		Close()
 	}
 )

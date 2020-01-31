@@ -11,14 +11,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hackerrithm/blackfox/services/backend/api/pkg/authentication"
-
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/go-redis/redis"
 	"github.com/tinrab/retry"
 
-	"github.com/hackerrithm/blackfox/services/backend/api/pkg"
 	"github.com/hackerrithm/blackfox/services/backend/api/pkg/generated"
+	"github.com/hackerrithm/blackfox/services/backend/api/pkg/models"
 
 	auth "github.com/hackerrithm/blackfox/services/backend/auth/cmd/auth/client"
 	geography "github.com/hackerrithm/blackfox/services/backend/geography/cmd/geography/client"
@@ -45,7 +43,7 @@ type GQLServer struct {
 	groupClient     *group.Client
 	goalClient      *goal.Client
 	redisClient     *redis.Client
-	Chats           map[string]*pkg.Chat
+	Chats           map[string]*models.Chat
 	mu              sync.Mutex
 }
 
@@ -186,7 +184,7 @@ func NewGraphQLServer(
 		matchClient:     matchClient,
 		groupClient:     groupClient,
 		redisClient:     client,
-		Chats:           map[string]*pkg.Chat{},
+		Chats:           map[string]*models.Chat{},
 		mu:              sync.Mutex{},
 	}, nil
 }
@@ -236,7 +234,7 @@ func (r *GQLServer) ToExecutableSchema() graphql.ExecutableSchema {
 
 type mutationResolver struct{ server *GQLServer }
 
-func (r *mutationResolver) RegisterUser(ctx context.Context, user pkg.RegisterInput) (string, error) {
+func (r *mutationResolver) RegisterUser(ctx context.Context, user models.RegisterInput) (string, error) {
 	a, err := r.server.userClient.RegisterUser(ctx, user.Username, user.Password, user.Firstname, user.Lastname, user.EmailAddress, user.Gender)
 	if err != nil {
 		return "", err
@@ -244,7 +242,7 @@ func (r *mutationResolver) RegisterUser(ctx context.Context, user pkg.RegisterIn
 
 	return a, nil
 }
-func (r *mutationResolver) LoginUser(ctx context.Context, user pkg.LoginInput) (string, error) {
+func (r *mutationResolver) LoginUser(ctx context.Context, user models.LoginInput) (string, error) {
 	a, err := r.server.userClient.LoginUser(ctx, user.Username, user.Password)
 	if err != nil {
 		return "", err
@@ -264,7 +262,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, err
 
 // Post
 
-func (r *mutationResolver) AddPost(ctx context.Context, user pkg.PostPostInput) (string, error) {
+func (r *mutationResolver) AddPost(ctx context.Context, user models.PostPostInput) (string, error) {
 	// log.Println("did the upload with [ ", user.File, " ]")
 	a, err := r.server.postClient.Post(ctx, user.Author, user.Topic, user.Category, user.ContentText, user.ContentPhotoName)
 	if err != nil {
@@ -274,7 +272,7 @@ func (r *mutationResolver) AddPost(ctx context.Context, user pkg.PostPostInput) 
 	return a, nil
 }
 
-func (r *mutationResolver) UpdatePost(ctx context.Context, user pkg.UpdatePostInput) (string, error) {
+func (r *mutationResolver) UpdatePost(ctx context.Context, user models.UpdatePostInput) (string, error) {
 	a, err := r.server.postClient.Put(ctx, user.Author, user.Topic, user.Category, user.ContentText, user.ContentPhotoName, user.ID)
 	if err != nil {
 		return "", err
@@ -285,7 +283,7 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, user pkg.UpdatePostIn
 
 // Space
 
-func (r *mutationResolver) AddSpace(ctx context.Context, user pkg.PostSpaceInput) (string, error) {
+func (r *mutationResolver) AddSpace(ctx context.Context, user models.PostSpaceInput) (string, error) {
 	a, err := r.server.spaceClient.Post(ctx, user.Creator, user.Topic, user.Details, user.Description, user.Type, user.Managers, user.Followers, user.Tags)
 	if err != nil {
 		return "", err
@@ -294,8 +292,8 @@ func (r *mutationResolver) AddSpace(ctx context.Context, user pkg.PostSpaceInput
 	return a, nil
 }
 
-func (r *mutationResolver) UpdateSpace(ctx context.Context, user pkg.UpdateSpaceInput) (string, error) {
-	a, err := r.server.spaceClient.Put(ctx, user.ID, user.Creator, user.Topic, user.Details, user.Description, user.Type, user.Managers, user.Followers, user.Tags)
+func (r *mutationResolver) UpdateSpace(ctx context.Context, user models.UpdateSpaceInput) (string, error) {
+	a, err := r.server.spaceClient.Put(ctx, uint64(user.ID), user.Creator, user.Topic, user.Details, user.Description, user.Type, user.Managers, user.Followers, user.Tags)
 	if err != nil {
 		return "", err
 	}
@@ -305,18 +303,17 @@ func (r *mutationResolver) UpdateSpace(ctx context.Context, user pkg.UpdateSpace
 
 // Task
 
-func (r *mutationResolver) AddTask(ctx context.Context, user string) (*pkg.Task, error) {
-	a, err := r.server.taskClient.Post(ctx, user)
+func (r *mutationResolver) AddTask(ctx context.Context, text string) (string, error) {
+	fmt.Println("TEXT: ", text)
+	a, err := r.server.taskClient.Post(ctx, text)
 	if err != nil {
-		return &pkg.Task{}, err
+		return "", err
 	}
-
-	return &pkg.Task{
-		Text: a,
-	}, nil
+	fmt.Println("a:: text:: ", a)
+	return a, nil
 }
 
-func (r *mutationResolver) UpdateTask(ctx context.Context, user pkg.UpdateTaskInput) (string, error) {
+func (r *mutationResolver) UpdateTask(ctx context.Context, user models.UpdateTaskInput) (string, error) {
 	userID, err := strconv.ParseUint(user.ID, 10, 32)
 	if err == nil {
 		fmt.Printf("Type: %T \n", userID)
@@ -332,48 +329,49 @@ func (r *mutationResolver) UpdateTask(ctx context.Context, user pkg.UpdateTaskIn
 
 // Chat
 
-func (r *mutationResolver) PostUserMessage(ctx context.Context, text string, senderName string, receiverName string) (*pkg.UserMessage, error) {
-	r.server.mu.Lock()
-	receiver := r.server.Chats[receiverName]
-	if receiver == nil {
-		receiver = &pkg.Chat{
-			ID:        receiverName,
-			Observers: map[string]chan *pkg.UserMessage{},
-		}
-		r.server.Chats[receiverName] = receiver
-	}
-	r.server.mu.Unlock()
+func (r *mutationResolver) PostUserMessage(ctx context.Context, text string, senderName string, receiverName string) (*models.UserMessage, error) {
+	// r.server.mu.Lock()
+	// receiver := r.server.Chats[receiverName]
+	// if receiver == nil {
+	// 	receiver = &models.Chat{
+	// 		ID:        receiverName,
+	// 		Observers: map[string]chan *models.UserMessage{},
+	// 	}
+	// 	r.server.Chats[receiverName] = receiver
+	// }
+	// r.server.mu.Unlock()
 
-	message := pkg.UserMessage{
-		ID:         randString(8),
-		Sender:     senderName,
-		Receiver:   receiverName,
-		Type:       "text-only",
-		IsSeen:     false,
-		IsSent:     false,
-		IsReceived: false,
-		Timestamp:  time.Now(),
-		Text:       text,
-	}
+	// message := models.UserMessage{
+	// 	ID:         randString(8),
+	// 	Sender:     senderName,
+	// 	Receiver:   receiverName,
+	// 	Type:       "text-only",
+	// 	IsSeen:     false,
+	// 	IsSent:     false,
+	// 	IsReceived: false,
+	// 	Timestamp:  time.Now(),
+	// 	Text:       text,
+	// }
 
-	mj, _ := json.Marshal(message)
-	if err := r.server.redisClient.LPush("messages", mj).Err(); err != nil {
-		log.Println(err)
-		return nil, err
-	}
+	// mj, _ := json.Marshal(message)
+	// if err := r.server.redisClient.LPush("messages", mj).Err(); err != nil {
+	// 	log.Println(err)
+	// 	return nil, err
+	// }
 
-	receiver.Messages = append(receiver.Messages, message)
-	r.server.mu.Lock()
-	for _, observer := range receiver.Observers {
-		observer <- &message
-	}
-	r.server.mu.Unlock()
-	return &message, nil
+	// receiver.Messages = append(receiver.Messages, message)
+	// r.server.mu.Lock()
+	// for _, observer := range receiver.Observers {
+	// 	observer <- &message
+	// }
+	// r.server.mu.Unlock()
+	// return &message, nil
+	return nil, nil
 }
 
 // Goal
 
-func (r *mutationResolver) AddGoal(ctx context.Context, user pkg.PostGoalInput) (string, error) {
+func (r *mutationResolver) AddGoal(ctx context.Context, user models.PostGoalInput) (string, error) {
 	a, err := r.server.goalClient.Post(ctx, user.Creator, user.Aim, user.Reason, user.Details, user.Journey.Type, user.Type, user.Tags)
 	if err != nil {
 		return "", err
@@ -382,7 +380,7 @@ func (r *mutationResolver) AddGoal(ctx context.Context, user pkg.PostGoalInput) 
 	return a, nil
 }
 
-func (r *mutationResolver) UpdateGoal(ctx context.Context, user pkg.UpdateGoalInput) (string, error) {
+func (r *mutationResolver) UpdateGoal(ctx context.Context, user models.UpdateGoalInput) (string, error) {
 	a, err := r.server.goalClient.Put(ctx, user.ID, user.Creator, user.Aim, user.Reason, user.Details, user.Type, user.Inspiration,
 		user.Tags, user.Likes, user.SimilarGoals, user.Watchers,
 		user.IsAchieved, user.IsPrivate,
@@ -398,7 +396,7 @@ func (r *mutationResolver) UpdateGoal(ctx context.Context, user pkg.UpdateGoalIn
 
 // Group
 
-func (r *mutationResolver) AddGroup(ctx context.Context, user pkg.PostGroupInput) (string, error) {
+func (r *mutationResolver) AddGroup(ctx context.Context, user models.PostGroupInput) (string, error) {
 	a, err := r.server.groupClient.Post(ctx, user.Title, user.Details, user.Description, user.Type, user.People)
 	if err != nil {
 		return "", err
@@ -407,7 +405,7 @@ func (r *mutationResolver) AddGroup(ctx context.Context, user pkg.PostGroupInput
 	return a, nil
 }
 
-func (r *mutationResolver) UpdateGroup(ctx context.Context, user pkg.UpdateGroupInput) (string, error) {
+func (r *mutationResolver) UpdateGroup(ctx context.Context, user models.UpdateGroupInput) (string, error) {
 	a, err := r.server.groupClient.Put(ctx, user.ID, user.Title, user.Details, user.Description, user.Type, user.People)
 	if err != nil {
 		return "", err
@@ -418,17 +416,17 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, user pkg.UpdateGroup
 
 type queryResolver struct{ server *GQLServer }
 
-func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*pkg.User, error) {
+func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*models.User, error) {
 	// var gc *gin.Context
 	// ctx := getContext(gc)
 	// var k []string
 	// var g []string
-	var q pkg.User
-	var z []*pkg.User
+	var q models.User
+	var z []*models.User
 
-	if user := authentication.ForContext(ctx); user == nil {
-		return nil, fmt.Errorf("Access denied")
-	}
+	// if user := authentication.ForContext(ctx); user == nil {
+	// 	return nil, fmt.Errorf("Access denied")
+	// }
 
 	a, err := r.server.userClient.GetAllUsers(ctx, "")
 	if err != nil {
@@ -458,8 +456,8 @@ func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*pkg.User, error) {
 	// return user, nil
 
 	for index := 0; index < len(a); index++ {
-		q.Username = a[index].Username
-		q.Password = a[index].Password
+		q.Username = &a[index].Username
+		q.Password = &a[index].Password
 
 		z = append(z, &q)
 
@@ -477,78 +475,78 @@ func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*pkg.User, error) {
 	return z, nil
 }
 
-func (r *queryResolver) GetUser(ctx context.Context, id string) (*pkg.User, error) {
+func (r *queryResolver) GetUser(ctx context.Context, id string) (*models.User, error) {
 	// var gc *gin.Context
 	// ctx := getContext(gc)
 
 	a, err := r.server.userClient.GetUser(ctx, id)
 	if err != nil {
-		return &pkg.User{}, err
+		return &models.User{}, err
 	}
-	var user pkg.User
-	user.Username = a.Username
-	user.Password = a.Password
+	var user *models.User
+	user.Username = &a.Username
+	user.Password = &a.Password
 
-	return &user, nil
+	return user, nil
 }
 
-func (r *queryResolver) GetUserByUserName(ctx context.Context, username string) (*pkg.User, error) {
+func (r *queryResolver) GetUserByUserName(ctx context.Context, username string) (*models.User, error) {
 	// var gc *gin.Context
 	// ctx := getContext(gc)
 
 	a, err := r.server.userClient.GetUserByUserName(ctx, username)
 	if err != nil {
-		return &pkg.User{}, err
+		return &models.User{}, err
 	}
-	var user pkg.User
-	user.Username = a.Username
-	user.Password = a.Password
-	user.Firstname = a.Firstname
-	user.Lastname = a.Lastname
-	user.EmailAddress = a.EmailAddress
-	user.Gender = a.Gender
-	user.ID = a.ID.Hex()
+	var user models.User
+	user.Username = &a.Username
+	user.Password = &a.Password
+	user.Firstname = &a.Firstname
+	user.Lastname = &a.Lastname
+	user.EmailAddress = &a.EmailAddress
+	user.Gender = &a.Gender
+	// user.ID = &a.ID.Hex()
 
 	return &user, nil
 }
 
 // GetUserByEmailAddress ...
-func (r *queryResolver) GetUserByEmailAddress(ctx context.Context, email string) (*pkg.User, error) {
+func (r *queryResolver) GetUserByEmailAddress(ctx context.Context, email string) (*models.User, error) {
 	// var gc *gin.Context
 	// ctx := getContext(gc)
 
 	a, err := r.server.userClient.GetUserByEmailAddress(ctx, email)
 	if err != nil {
-		return &pkg.User{}, err
+		return &models.User{}, err
 	}
-	var user pkg.User
-	user.Username = a.Username
-	user.Password = a.Password
-	user.Firstname = a.Firstname
-	user.Lastname = a.Lastname
-	user.EmailAddress = a.EmailAddress
-	user.Gender = a.Gender
-	user.ID = a.ID.Hex()
+	var user models.User
+	user.Username = &a.Username
+	user.Password = &a.Password
+	user.Firstname = &a.Firstname
+	user.Lastname = &a.Lastname
+	user.EmailAddress = &a.EmailAddress
+	user.Gender = &a.Gender
+	// user.ID = a.ID.Hex()
 
 	return &user, nil
 }
 
-func (r *queryResolver) GetAllPosts(ctx context.Context, pagination int) ([]*pkg.UserPost, error) {
+func (r *queryResolver) GetAllPosts(ctx context.Context, pagination int) ([]*models.UserPost, error) {
 
 	a, err := r.server.postClient.GetMultiple(ctx, 0, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	posts := []*pkg.UserPost{}
+	posts := []*models.UserPost{}
 	for _, a := range a {
-		var pst = pkg.UserPost{}
+		var pst = models.UserPost{}
 		pst.ContentPhoto.Name = a.ContentPhoto.Name
-		posts = append(posts, &pkg.UserPost{
+		posts = append(posts, &models.UserPost{
 			ID:           a.ID.Hex(),
 			Author:       a.Author.Hex(),
 			Topic:        a.Topic,
-			Category:     a.Category,
+			Category:     &a.Category,
 			ContentText:  a.ContentText,
 			ContentPhoto: pst.ContentPhoto,
 		})
@@ -557,50 +555,50 @@ func (r *queryResolver) GetAllPosts(ctx context.Context, pagination int) ([]*pkg
 	return posts, nil
 }
 
-func (r *queryResolver) GetPost(ctx context.Context, id string) (*pkg.UserPost, error) {
+func (r *queryResolver) GetPost(ctx context.Context, id string) (*models.UserPost, error) {
 
 	a, err := r.server.postClient.Get(ctx, id, 0)
 	if err != nil {
-		return &pkg.UserPost{}, err
+		return &models.UserPost{}, err
 	}
 
-	var pst = pkg.UserPost{}
+	var pst = models.UserPost{}
 	pst.ContentPhoto.Name = a.ContentPhoto.Name
-	return &pkg.UserPost{
+	return &models.UserPost{
 		ID:           a.ID.Hex(),
 		Author:       a.Author.Hex(),
 		Topic:        a.Topic,
-		Category:     a.Category,
+		Category:     &a.Category,
 		ContentText:  a.ContentText,
 		ContentPhoto: pst.ContentPhoto,
 	}, nil
 }
 
-func (r *queryResolver) GetAllSpaces(ctx context.Context) ([]*pkg.Space, error) {
-	var mngs, fllwrs []string
+func (r *queryResolver) GetAllSpaces(ctx context.Context) ([]*models.Space, error) {
+	// var mngs, fllwrs []string
 
 	a, err := r.server.spaceClient.GetMultiple(ctx, 0, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	spaces := []*pkg.Space{}
+	spaces := []*models.Space{}
 	for _, a := range a {
-		for _, m := range a.Managers {
-			mngs = append(mngs, m.Hex())
-		}
-		for _, f := range a.Followers {
-			fllwrs = append(fllwrs, f.Hex())
-		}
-		spaces = append(spaces, &pkg.Space{
-			ID:          a.ID.Hex(),
-			Creator:     a.Creator.Hex(),
-			Topic:       a.Topic,
-			Details:     a.Details,
-			Description: a.Description,
-			Type:        a.Type,
-			Followers:   fllwrs,
-			Managers:    mngs,
+		// for _, m := range a.Managers {
+		// 	mngs = append(mngs, m.Hex())
+		// }
+		// for _, f := range a.Followers {
+		// 	fllwrs = append(fllwrs, f.Hex())
+		// }
+		spaces = append(spaces, &models.Space{
+			ID:          int(a.ID),
+			Creator:     &a.Creator,
+			Topic:       &a.Topic,
+			Details:     &a.Details,
+			Description: &a.Description,
+			Type:        &a.Type,
+			Followers:   a.Followers,
+			Managers:    a.Managers,
 			Tags:        a.Tags,
 		})
 	}
@@ -608,43 +606,43 @@ func (r *queryResolver) GetAllSpaces(ctx context.Context) ([]*pkg.Space, error) 
 	return spaces, nil
 }
 
-func (r *queryResolver) GetSpace(ctx context.Context, id string) (*pkg.Space, error) {
+func (r *queryResolver) GetSpace(ctx context.Context, id int) (*models.Space, error) {
 	var mngs, fllwrs []string
-	a, err := r.server.spaceClient.Get(ctx, id, 0)
+	a, err := r.server.spaceClient.Get(ctx, uint64(id), 0)
 	if err != nil {
-		return &pkg.Space{}, err
+		return &models.Space{}, err
 	}
 
-	for _, m := range a.Managers {
-		mngs = append(mngs, m.Hex())
-	}
-	for _, f := range a.Followers {
-		fllwrs = append(fllwrs, f.Hex())
-	}
+	// for _, m := range a.Managers {
+	// 	mngs = append(mngs, m.Hex())
+	// }
+	// for _, f := range a.Followers {
+	// 	fllwrs = append(fllwrs, f.Hex())
+	// }
 
-	return &pkg.Space{
-		ID:          a.ID.Hex(),
-		Creator:     a.Creator.Hex(),
-		Topic:       a.Topic,
-		Details:     a.Details,
-		Description: a.Description,
-		Type:        a.Type,
+	return &models.Space{
+		ID:          int(a.ID),
+		Creator:     &a.Creator,
+		Topic:       &a.Topic,
+		Details:     &a.Details,
+		Description: &a.Description,
+		Type:        &a.Type,
 		Followers:   fllwrs,
 		Managers:    mngs,
 		Tags:        a.Tags,
 	}, nil
 }
 
-func (r *queryResolver) GetAllTasks(ctx context.Context) ([]*pkg.Task, error) {
+func (r *queryResolver) GetAllTasks(ctx context.Context) ([]*models.Task, error) {
 	a, err := r.server.taskClient.GetMultiple(ctx, 0, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	tasks := []*pkg.Task{}
+	tasks := []*models.Task{}
 	for _, a := range a {
-		tasks = append(tasks, &pkg.Task{
-			ID:   a.ID,
+		tasks = append(tasks, &models.Task{
+			// ID:   &a.ID,
 			Text: a.Text,
 		})
 	}
@@ -652,7 +650,7 @@ func (r *queryResolver) GetAllTasks(ctx context.Context) ([]*pkg.Task, error) {
 	return tasks, nil
 }
 
-func (r *queryResolver) GetTask(ctx context.Context, id string) (*pkg.Task, error) {
+func (r *queryResolver) GetTask(ctx context.Context, id string) (*models.Task, error) {
 	userID, err := strconv.ParseUint(id, 10, 32)
 	if err == nil {
 		fmt.Printf("Type: %T \n", userID)
@@ -660,22 +658,22 @@ func (r *queryResolver) GetTask(ctx context.Context, id string) (*pkg.Task, erro
 	}
 	a, err := r.server.taskClient.Get(ctx, uint32(userID), 0)
 	if err != nil {
-		return &pkg.Task{}, err
+		return &models.Task{}, err
 	}
 
-	return &pkg.Task{
-		ID:   a.ID,
+	return &models.Task{
+		// ID:   &a.ID,
 		Text: a.Text,
 	}, nil
 }
 
-func (r *queryResolver) GetProfile(ctx context.Context, id string) (*pkg.Profile, error) {
+func (r *queryResolver) GetProfile(ctx context.Context, id string) (*models.Profile, error) {
 	var fllwrs, fllwing []string
-	var prof = pkg.Profile{}
+	var prof = models.Profile{}
 
 	a, err := r.server.profileClient.Get(ctx, id, 0)
 	if err != nil {
-		return &pkg.Profile{}, err
+		return &models.Profile{}, err
 	}
 
 	prof.ProfileImage.Name = a.ProfileImage.Name
@@ -689,7 +687,7 @@ func (r *queryResolver) GetProfile(ctx context.Context, id string) (*pkg.Profile
 		fllwing = append(fllwing, f.Hex())
 	}
 
-	return &pkg.Profile{
+	return &models.Profile{
 		ID:              a.ID.Hex(),
 		About:           a.About,
 		BackgroundImage: prof.BackgroundImage,
@@ -700,7 +698,6 @@ func (r *queryResolver) GetProfile(ctx context.Context, id string) (*pkg.Profile
 }
 
 func (r *queryResolver) GetLocationDistance(ctx context.Context, lon, lat float64) (float64, error) {
-
 	a, err := r.server.geographyClient.GetLocationDistance(ctx, lon, lat)
 	if err != nil {
 		return 0.0, err
@@ -709,7 +706,7 @@ func (r *queryResolver) GetLocationDistance(ctx context.Context, lon, lat float6
 	return a, nil
 }
 
-func (r *queryResolver) UserChat(ctx context.Context, username string) (*pkg.Chat, error) {
+func (r *queryResolver) UserChat(ctx context.Context, username string) (*models.Chat, error) {
 	r.server.mu.Lock()
 
 	cmd := r.server.redisClient.LRange("messages", 0, -1)
@@ -723,19 +720,19 @@ func (r *queryResolver) UserChat(ctx context.Context, username string) (*pkg.Cha
 		return nil, err
 	}
 	userChat := r.server.Chats[username]
-	messages := []pkg.UserMessage{}
+	messages := []models.UserMessage{}
 	log.Println("res ::: ", res)
 
 	for _, mj := range res {
-		var m pkg.UserMessage
+		var m models.UserMessage
 		err = json.Unmarshal([]byte(mj), &m)
 		messages = append(messages, m)
 	}
 
 	if userChat == nil {
-		userChat = &pkg.Chat{
-			ID:        username,
-			Observers: map[string]chan *pkg.UserMessage{},
+		userChat = &models.Chat{
+			ID: username,
+			// Observers: map[string]chan *models.UserMessage{},
 		}
 		r.server.Chats[username] = userChat
 		log.Println("error")
@@ -745,7 +742,7 @@ func (r *queryResolver) UserChat(ctx context.Context, username string) (*pkg.Cha
 	return userChat, nil
 }
 
-func (r *queryResolver) GetAllGoals(ctx context.Context) ([]*pkg.Goal, error) {
+func (r *queryResolver) GetAllGoals(ctx context.Context) ([]*models.Goal, error) {
 	var likes, participants, watchers []string
 
 	a, err := r.server.goalClient.GetMultiple(ctx, 0, 0)
@@ -753,10 +750,10 @@ func (r *queryResolver) GetAllGoals(ctx context.Context) ([]*pkg.Goal, error) {
 		return nil, err
 	}
 
-	goal := []*pkg.Goal{}
+	goal := []*models.Goal{}
 
 	for _, a := range a {
-		journey := pkg.Journey{}
+		journey := models.Journey{}
 		for _, m := range a.Participants {
 			participants = append(participants, m.Hex())
 		}
@@ -771,15 +768,15 @@ func (r *queryResolver) GetAllGoals(ctx context.Context) ([]*pkg.Goal, error) {
 
 		journey.Details = a.Journey.Details
 
-		goal = append(goal, &pkg.Goal{
+		goal = append(goal, &models.Goal{
 			ID:           a.ID.Hex(),
 			Creator:      a.Creator.Hex(),
 			Aim:          a.Aim,
 			Type:         a.Type,
-			IsAchieved:   a.IsAchieved,
-			IsPrivate:    a.IsPrivate,
+			IsAchieved:   &a.IsAchieved,
+			IsPrivate:    &a.IsPrivate,
 			Inspiration:  a.Inspiration,
-			Journey:      journey,
+			Journey:      &journey,
 			Likes:        likes,
 			Reason:       a.Reason,
 			SimilarGoals: a.SimilarGoals,
@@ -792,14 +789,14 @@ func (r *queryResolver) GetAllGoals(ctx context.Context) ([]*pkg.Goal, error) {
 	return goal, nil
 }
 
-func (r *queryResolver) GetGoal(ctx context.Context, id string) (*pkg.Goal, error) {
+func (r *queryResolver) GetGoal(ctx context.Context, id string) (*models.Goal, error) {
 	var likes, participants, watchers []string
 	a, err := r.server.goalClient.Get(ctx, id, 0)
 	if err != nil {
-		return &pkg.Goal{}, err
+		return &models.Goal{}, err
 	}
 
-	journey := pkg.Journey{}
+	journey := models.Journey{}
 	for _, m := range a.Participants {
 		participants = append(participants, m.Hex())
 	}
@@ -814,15 +811,15 @@ func (r *queryResolver) GetGoal(ctx context.Context, id string) (*pkg.Goal, erro
 
 	journey.Details = a.Journey.Details
 
-	return &pkg.Goal{
+	return &models.Goal{
 		ID:           a.ID.Hex(),
 		Creator:      a.Creator.Hex(),
 		Aim:          a.Aim,
 		Type:         a.Type,
-		IsAchieved:   a.IsAchieved,
-		IsPrivate:    a.IsPrivate,
+		IsAchieved:   &a.IsAchieved,
+		IsPrivate:    &a.IsPrivate,
 		Inspiration:  a.Inspiration,
-		Journey:      journey,
+		Journey:      &journey,
 		Likes:        likes,
 		Reason:       a.Reason,
 		SimilarGoals: a.SimilarGoals,
@@ -832,54 +829,54 @@ func (r *queryResolver) GetGoal(ctx context.Context, id string) (*pkg.Goal, erro
 	}, nil
 }
 
-func (r *queryResolver) GetAllGroups(ctx context.Context) ([]*pkg.Group, error) {
+func (r *queryResolver) GetAllGroups(ctx context.Context) ([]*models.Group, error) {
 	var people []string
 	a, err := r.server.groupClient.GetMultiple(ctx, 0, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	groups := []*pkg.Group{}
+	groups := []*models.Group{}
 
 	for _, a := range a {
 		for _, m := range a.People {
 			people = append(people, m.Hex())
 		}
-		groups = append(groups, &pkg.Group{
+		groups = append(groups, &models.Group{
 			ID:          a.ID.Hex(),
 			Title:       a.Title,
 			People:      people,
-			Description: a.Description,
+			Description: &a.Description,
 			Details:     a.Details,
-			Type:        a.Type,
+			Type:        &a.Type,
 		})
 	}
 
 	return groups, nil
 }
 
-func (r *queryResolver) GetGroup(ctx context.Context, id string) (*pkg.Group, error) {
+func (r *queryResolver) GetGroup(ctx context.Context, id string) (*models.Group, error) {
 	var people []string
 	a, err := r.server.groupClient.Get(ctx, id, 0)
 	if err != nil {
-		return &pkg.Group{}, err
+		return &models.Group{}, err
 	}
 
 	for _, m := range a.People {
 		people = append(people, m.Hex())
 	}
 
-	return &pkg.Group{
+	return &models.Group{
 		ID:          a.ID.Hex(),
 		Title:       a.Title,
 		People:      people,
-		Description: a.Description,
+		Description: &a.Description,
 		Details:     a.Details,
-		Type:        a.Type,
+		Type:        &a.Type,
 	}, nil
 }
 
-func (r *queryResolver) GetAllMatches(ctx context.Context) ([]*pkg.MatchedUser, error) {
+func (r *queryResolver) GetAllMatches(ctx context.Context) ([]*models.MatchedUser, error) {
 	// var people []string
 	// a, err := r.server.groupClient.GetMultiple(ctx, 0, 0)
 	// if err != nil {
@@ -907,30 +904,30 @@ func (r *queryResolver) GetAllMatches(ctx context.Context) ([]*pkg.MatchedUser, 
 
 type subscriptionResolver struct{ server *GQLServer }
 
-func (r *subscriptionResolver) UserMessageAdded(ctx context.Context, chatName string) (<-chan *pkg.UserMessage, error) {
+func (r *subscriptionResolver) UserMessageAdded(ctx context.Context, chatName string) (<-chan *models.UserMessage, error) {
 	r.server.mu.Lock()
 	chat := r.server.Chats[chatName]
 	if chat == nil {
-		chat = &pkg.Chat{
-			ID:        chatName,
-			Observers: map[string]chan *pkg.UserMessage{},
+		chat = &models.Chat{
+			ID: chatName,
+			// Observers: map[string]chan *models.UserMessage{},
 		}
 		r.server.Chats[chatName] = chat
 	}
 	r.server.mu.Unlock()
 
-	id := randString(8)
-	events := make(chan *pkg.UserMessage, 1)
+	// id := randString(8)
+	events := make(chan *models.UserMessage, 1)
 
 	go func() {
 		<-ctx.Done()
 		r.server.mu.Lock()
-		delete(chat.Observers, id)
+		// delete(chat.Observers, id)
 		r.server.mu.Unlock()
 	}()
 
 	r.server.mu.Lock()
-	chat.Observers[id] = events
+	// chat.Observers[id] = events
 	r.server.mu.Unlock()
 
 	return events, nil

@@ -1,5 +1,5 @@
-FROM spacegres:11.1
+FROM postgres:latest
 
-COPY /space/pkg/scripts/up.sql /docker-entrypoint-initdb.d/1.sql
+COPY services/backend/space/pkg/docker/up.sql /docker-entrypoint-initdb.d/1.sql
 
-CMD ["spacegres"]
+CMD ["postgres"]

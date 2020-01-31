@@ -41,13 +41,18 @@ func (s *auth) LoginUser(ctx context.Context, user domain.Login) (*domain.User, 
 func (s *auth) GenerateToken(ctx context.Context, id string) (string, error) {
 	log.Println("generated token (ID)-- ", id)
 	claims := map[string]interface{}{
-		"userid": id,
-		"exp":    time.Now().Add(time.Hour * 24).Unix(),
+		"authorized": true,
+		"userid":     id,
+		"exp":        time.Now().Add(time.Hour * 1).Unix(),
 	}
 	log.Println("generated token (claims)-- ", claims)
 	return s.jwt.Sign(claims, secretKey)
 }
 
-func (s *auth) ParseToken(ctx context.Context, token string) (map[string]interface{}, error) {
+func (s *auth) ParseToken(ctx context.Context, token string) error {
 	return s.jwt.Parse(token, secretKey)
+}
+
+func (s *auth) ExtractTokenID(tokenString string) (string, error) {
+	return s.jwt.ExtractTokenID(tokenString)
 }

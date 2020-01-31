@@ -118,11 +118,11 @@ type UserMessage struct {
 
 // Chat ...is the same as chatroom
 type Chat struct {
-	ID        string                       `json:"_id"`
-	Messages  []UserMessage                `json:"messages"`
-	Observers map[string]chan *UserMessage `json:"observers"`
-	StartDate time.Time                    `json:"startdate"`
-	EndDate   time.Time                    `json:"enddate"`
+	ID        string                      `json:"_id"`
+	Messages  []UserMessage               `json:"messages"`
+	Observers map[string]chan UserMessage `json:"observers"`
+	StartDate time.Time                   `json:"startdate"`
+	EndDate   time.Time                   `json:"enddate"`
 }
 
 // Location ...
@@ -149,7 +149,7 @@ type Profile struct {
 
 // Space ...
 type Space struct {
-	ID          string    `json:"id"`
+	ID          uint64    `json:"id"`
 	Creator     string    `json:"author"`
 	Managers    []string  `json:"managers"`
 	Topic       string    `json:"topic"`

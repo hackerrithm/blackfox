@@ -1,16 +1,11 @@
 // import React, { useReducer, useState } from "react";
 // import { State, Action } from ".";
 
-// const InitialState: State = {
-// 	task: [
-// 		{
-// 			id: Date.now(),
-// 			text: "value here",
-// 			completed: false
-// 		}
-// 	]
-// 	// dispatch: () => {},
-// };
+const SearchInitialState: any = {
+		isLoading: false,
+		isError: false,
+		data: [],
+};
 
 // const TaskReducer: React.Reducer<State, Action> = (state: any, action: any) => {
 // 	switch (action.type) {
@@ -65,6 +60,7 @@
 // 	}
 // };
 
+
 const DataFetchReducer = (state: any, action: any) => {
 	switch (action.type) {
 		case "FETCH_INIT":
@@ -87,4 +83,4 @@ const DataFetchReducer = (state: any, action: any) => {
 	}
 };
 
-export { DataFetchReducer };
+export { DataFetchReducer, SearchInitialState };

@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function MediaCard(searchItemID: any, searchItemTitle: any, searchItemURL:any) {
+export default function MediaCard({searchItemID, searchItemTitle, searchItemURL, imageURL}: any) {
   const classes = useStyles("");
 
   return (
@@ -23,7 +23,7 @@ export default function MediaCard(searchItemID: any, searchItemTitle: any, searc
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image="/static/images/cards/contemplative-reptile.jpg"
+          image={imageURL}
           title={searchItemTitle}
         />
         <CardContent>

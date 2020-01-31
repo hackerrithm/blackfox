@@ -55,21 +55,22 @@ export default function ExampleLoadPage(props: MediaProps) {
 						{item ? (
 							// TODO: Change how image is decided
 							<img
-								style={{ width: 250, height: 218 }}
+								style={{ width: 150, height: 118 }}
 								alt={item.title}
-								src={
-									TestData[index]
-										? TestData[index].src
-										: TestData[
-												Math.floor(
-													Math.random() *
-														(TestData.length -
-															1 -
-															0 +
-															1)
-												) + 0
-										  ].src
-								}
+								// src={
+								// 	TestData[index]
+								// 		? TestData[index].src
+								// 		: TestData[
+								// 				Math.floor(
+								// 					Math.random() *
+								// 						(TestData.length -
+								// 							1 -
+								// 							0 +
+								// 							1)
+								// 				) + 0
+								// 		  ].src
+								// }
+								src={item.owner.avatar_url}
 								aria-owns={
 									open ? "mouse-over-popover" : undefined
 								}
@@ -78,30 +79,30 @@ export default function ExampleLoadPage(props: MediaProps) {
 								onMouseLeave={handlePopoverClose}
 							/>
 						) : (
-							<Skeleton variant="rect" width={210} height={118} />
+							<Skeleton variant="rect" width={110} height={88} />
 						)}
 						{item ? (
 							<Box pr={2}>
 								<Typography gutterBottom variant="body2">
-									{item.title}
+									{item.name}
 								</Typography>
 								<Typography
 									display="block"
 									variant="caption"
 									color="textSecondary"
 								>
-									{item.url}
+									{item.html_url}
 								</Typography>
 								<Typography
 									variant="caption"
 									color="textSecondary"
 								>
-									{`${item.relevancy_score} • ${item.createdAt}`}
+									{`${item.language} • ${item.score}`}
 								</Typography>
 							</Box>
 						) : (
 							<>
-								<Box pt={0.5}>
+								<Box pt={0.9}>
 									<Skeleton />
 									<Skeleton width="60%" />
 								</Box>

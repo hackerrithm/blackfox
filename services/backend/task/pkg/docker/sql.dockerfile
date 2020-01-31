@@ -1,5 +1,5 @@
-FROM taskgres:11.1
+FROM postgres:10.3
 
-COPY /task/pkg/scripts/up.sql /docker-entrypoint-initdb.d/1.sql
+COPY services/backend/task/pkg/docker/up.sql /docker-entrypoint-initdb.d/1.sql
 
-CMD ["taskgres"]
+CMD ["postgres"]

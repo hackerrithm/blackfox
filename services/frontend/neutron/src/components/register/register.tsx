@@ -3,6 +3,7 @@ import * as React from "react";
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useState } from "react";
+import "./style.css";
 
 const SAVE_USER = gql`
   mutation registerUser($user: RegisterInput!) {

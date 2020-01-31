@@ -15,7 +15,10 @@
 package authentication
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/hackerrithm/blackfox/services/backend/auth/pkg/engine"
@@ -46,21 +49,68 @@ func (j *jwt) Sign(claims map[string]interface{}, secretKey string) (string, err
 }
 
 // Parse ..
-func (j *jwt) Parse(tokenStr, secret string) (map[string]interface{}, error) {
+func (j *jwt) Parse(tokenStr, secret string) error {
+	// token, err := jwtgo.Parse(tokenStr, func(token *jwtgo.Token) (interface{}, error) {
+	// 	return []byte(secret), nil
+	// })
+	// if err != nil {
+	// 	e, ok := err.(*jwtgo.ValidationError)
+	// 	if ok {
+	// 		return nil, e
+	// 	}
+	// 	return nil, err
+	// }
+
+	// claims, ok := token.Claims.(jwtgo.MapClaims)
+	// if !ok {
+	// 	return nil, err
+	// }
+	// return claims, nil
 	token, err := jwtgo.Parse(tokenStr, func(token *jwtgo.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwtgo.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
 		return []byte(secret), nil
 	})
 	if err != nil {
-		e, ok := err.(*jwtgo.ValidationError)
-		if ok {
-			return nil, e
+		return err
+	}
+	if claims, ok := token.Claims.(jwtgo.MapClaims); ok && token.Valid {
+		Pretty(claims)
+	}
+	return nil
+}
+
+// ExtractTokenID ...
+func (j *jwt) ExtractTokenID(tokenString string) (string, error) {
+
+	token, err := jwtgo.Parse(tokenString, func(token *jwtgo.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwtgo.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return nil, err
+		return []byte(os.Getenv("API_SECRET")), nil
+	})
+	if err != nil {
+		return "", err
+	}
+	claims, ok := token.Claims.(jwtgo.MapClaims)
+	if ok && token.Valid {
+		userID := fmt.Sprintf("%v", claims["user_id"])
+		if err != nil {
+			return "", err
+		}
+		return userID, nil
+	}
+	return "", nil
+}
+
+//Pretty display the claims licely in the terminal
+func Pretty(data interface{}) {
+	b, err := json.MarshalIndent(data, "", " ")
+	if err != nil {
+		log.Println(err)
+		return
 	}
 
-	claims, ok := token.Claims.(jwtgo.MapClaims)
-	if !ok {
-		return nil, err
-	}
-	return claims, nil
+	fmt.Println(string(b))
 }

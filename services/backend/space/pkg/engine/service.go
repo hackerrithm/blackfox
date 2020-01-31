@@ -16,11 +16,13 @@ package engine
 
 import (
 	"context"
+	"log"
 
 	"github.com/hackerrithm/blackfox/services/backend/space/pkg/domain"
 )
 
 func (s *space) Insert(ctx context.Context, creator, topic, details, description, typ string, managers, followers, tags []string) error {
+	log.Println("got in service")
 	a := domain.NewSpace(creator, topic, details, description, typ, managers, followers, tags)
 	if err := s.repository.Insert(ctx, *a); err != nil {
 		return err
@@ -29,7 +31,7 @@ func (s *space) Insert(ctx context.Context, creator, topic, details, description
 	return nil
 }
 
-func (s *space) Update(ctx context.Context, id, creator, topic, details, description, typ string, managers, followers, tags []string) error {
+func (s *space) Update(ctx context.Context, id uint64, creator, topic, details, description, typ string, managers, followers, tags []string) error {
 	a := domain.NewSpace(creator, topic, details, description, typ, managers, followers, tags)
 	if err := s.repository.Update(ctx, *a, id); err != nil {
 		return err
@@ -38,7 +40,7 @@ func (s *space) Update(ctx context.Context, id, creator, topic, details, descrip
 	return nil
 }
 
-func (s *space) FindOne(ctx context.Context, id string) (*domain.Space, error) {
+func (s *space) FindOne(ctx context.Context, id uint64) (*domain.Space, error) {
 	return s.repository.FindOne(ctx, id)
 }
 
@@ -55,6 +57,6 @@ func (s *space) Query(ctx context.Context, skip uint64, take uint64) ([]domain.S
 	return nil, nil
 }
 
-func (s *space) Remove(ctx context.Context, id string) (string, error) {
+func (s *space) Remove(ctx context.Context, id uint64) (string, error) {
 	return s.repository.Remove(ctx, id)
 }

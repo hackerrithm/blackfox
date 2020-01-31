@@ -28,16 +28,16 @@ type (
 		Insert(ctx context.Context, creator, topic, details, description, typ string, managers, followers, tags []string) error
 
 		// Update is the update-a-space use-case
-		Update(ctx context.Context, id, creator, topic, details, description, typ string, managers, followers, tags []string) error
+		Update(ctx context.Context, id uint64, creator, topic, details, description, typ string, managers, followers, tags []string) error
 
 		// Query is the list-the-spaces use-case
 		Query(ctx context.Context, skip uint64, take uint64) ([]domain.Space, error)
 
 		// FindOne ...
-		FindOne(ctx context.Context, id string) (*domain.Space, error)
+		FindOne(ctx context.Context, id uint64) (*domain.Space, error)
 
 		// RemoveDelete ...
-		Remove(ctx context.Context, id string) (string, error)
+		Remove(ctx context.Context, id uint64) (string, error)
 
 		// ListAllSpaces ...
 		ListAllSpaces(ctx context.Context, skip, take uint64) (*[]domain.Space, error)

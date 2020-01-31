@@ -54,6 +54,7 @@ func ListenGRPC(s engine.Task, userURL string, port int) error {
 }
 
 func (s *grpcServer) PostTask(ctx context.Context, r *pb.PostTaskRequest) (*pb.PostTaskResponse, error) {
+	fmt.Println("this is in GRPC module: ", r.Text)
 	err := s.service.Insert(ctx, r.Text)
 	if err != nil {
 		log.Println("here error in task method")

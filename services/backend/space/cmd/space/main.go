@@ -21,11 +21,11 @@ import (
 	"time"
 
 	"cloud.google.com/go/profiler"
+	"contrib.go.opencensus.io/exporter/jaeger"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
 	"github.com/tinrab/retry"
-	"contrib.go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -33,7 +33,7 @@ import (
 	spaceCfg "github.com/hackerrithm/blackfox/services/backend/space/configs"
 	"github.com/hackerrithm/blackfox/services/backend/space/pkg/adapters"
 	"github.com/hackerrithm/blackfox/services/backend/space/pkg/engine"
-	"github.com/hackerrithm/blackfox/services/backend/space/pkg/providers/mongodb"
+	"github.com/hackerrithm/blackfox/services/backend/space/pkg/providers/postgresdb"
 )
 
 type (
@@ -67,19 +67,20 @@ func main() {
 
 	var strg engine.StorageFactory
 	retry.ForeverSleep(2*time.Second, func(_ int) (err error) {
-		strg, err = mongodb.NewStorage(
-			cfg.MongoHost,
-			cfg.MongoDB,
-			cfg.MongoUsername,
-			cfg.MongoPassword,
-			cfg.MongoCollection,
-			cfg.MONGOURL)
+		strg, err = postgresdb.NewStorage(
+			string(cfg.PostgresHost),
+			string(cfg.PostgresPort),
+			string(cfg.PostgresUsername),
+			string(cfg.PostgresDB),
+			string(cfg.PostgresPassword))
 		if err != nil {
 			log.Println(err)
 		}
 		return
 	})
 	defer strg.Close()
+
+	// strg.Automigrate()
 
 	eObj := engine.NewEngine(strg)
 	log1.Println(strg, eObj)

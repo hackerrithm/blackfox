@@ -5,80 +5,80 @@ package pb;
 import "google/protobuf/timestamp.proto";
 
 message Space {
-        string id = 1;
-        string creator = 2;
-        repeated string managers = 3;
-        string topic = 4;
-        string details = 5;
-        string type = 6;
-        string description = 7;
-        repeated string tags = 8;
-        repeated string followers = 9;
-        google.protobuf.Timestamp time = 10;
+    uint64 id = 1;
+    string creator = 2;
+    repeated string managers = 3;
+    string topic = 4;
+    string details = 5;
+    string type = 6;
+    string description = 7;
+    repeated string tags = 8;
+    repeated string followers = 9;
+    google.protobuf.Timestamp time = 10;
 }
 
 message PostSpaceRequest {
-        string creator = 1;
-        repeated string managers = 2;
-        string topic = 3;
-        string details = 4;
-        string type = 5;
-        string description = 6;
-        repeated string tags = 7;
-        repeated string followers = 8;
-        google.protobuf.Timestamp time = 9;
+    string creator = 1;
+    repeated string managers = 2;
+    string topic = 3;
+    string details = 4;
+    string type = 5;
+    string description = 6;
+    repeated string tags = 7;
+    repeated string followers = 8;
+    google.protobuf.Timestamp time = 9;
 }
 
 message PostSpaceResponse {
-        string space = 1;
+    string space = 1;
 }
 
 message GetSpaceRequest {
-        string id = 1;
-        uint64 userID = 2;
+    uint64 id = 1;
+    uint64 userID = 2;
 }
 
 message GetSpaceResponse {
-        Space space = 1;
+    Space space = 1;
 }
 
 message GetMultipleSpacesRequest {
-        uint64 skip = 1;
-        uint64 take = 2;
+    uint64 skip = 1;
+    uint64 take = 2;
 }
 
 message GetMultipleSpacesResponse {
-        repeated Space spaces = 1;
+    repeated Space spaces = 1;
 }
 
 message PutSpaceRequest {
-        string id = 1;
-        string creator = 2;
-        repeated string managers = 3;
-        string topic = 4;
-        string details = 5;
-        string type = 6;
-        string description = 7;
-        repeated string tags = 8;
-        repeated string followers = 9;
+    uint64 id = 1;
+    string creator = 2;
+    repeated string managers = 3;
+    string topic = 4;
+    string details = 5;
+    string type = 6;
+    string description = 7;
+    repeated string tags = 8;
+    repeated string followers = 9;
 }
 
 message PutSpaceResponse {
-        string space = 1;
+    string space = 1;
 }
 
 message DeleteSpaceRequest {
-        string id = 1;
+    uint64 id = 1;
 }
 
 message DeleteSpaceResponse {
-        string id = 1;
+    string id = 1;
 }
 
 service SpaceService {
-        rpc PostSpace (PostSpaceRequest) returns (PostSpaceResponse) {}
-        rpc GetSpace (GetSpaceRequest) returns (GetSpaceResponse) {}
-        rpc GetMultipleSpaces (GetMultipleSpacesRequest) returns (GetMultipleSpacesResponse) {}
-        rpc PutSpace (PutSpaceRequest) returns (PutSpaceResponse) {}
-        rpc DeleteSpace (DeleteSpaceRequest) returns (DeleteSpaceResponse) {}
+    rpc PostSpace (PostSpaceRequest) returns (PostSpaceResponse) {}
+    rpc GetSpace (GetSpaceRequest) returns (GetSpaceResponse) {}
+    rpc GetMultipleSpaces (GetMultipleSpacesRequest) returns (GetMultipleSpacesResponse) {}
+    rpc PutSpace (PutSpaceRequest) returns (PutSpaceResponse) {}
+    rpc DeleteSpace (DeleteSpaceRequest) returns (DeleteSpaceResponse) {}
 }

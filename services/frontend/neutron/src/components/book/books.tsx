@@ -98,9 +98,9 @@ const useStylesGoalsSection = makeStyles((theme: Theme) =>
 const Books = () => {
 	const [query, setQuery] = useState("");
 	const [{ data, isLoading, isError }, doFetch] = useDataApi(
-		"http://hn.algolia.com/api/v1/search?query=japan",
+		"https://api.github.com/search/repositories?q=stars:%22%3E10000%22&sort=stars&order=desc&per_page=100",
 		{
-			hits: []
+			items: []
 		}
 	);
 
@@ -124,7 +124,8 @@ const Books = () => {
 				btnType="submit"
 				onSubmit={(event: any) => {
 					doFetch(
-						`http://hn.algolia.com/api/v1/search?query=${query}`
+						// `http://hn.algolia.com/api/v1/search?query=${query}`
+						`https://api.github.com/search/repositories?q=stars:%22%3E10000%22&sort=stars&order=desc&per_page=100`
 					);
 
 					event.preventDefault();
@@ -189,7 +190,7 @@ const Books = () => {
 						<button onClick={() => embla.scrollNext()}>Next</button> */}
 					{/* </div> */}
 					<div className={classes.root}>
-						<ExampleLoadPage data={data.hits} />
+						<ExampleLoadPage data={data.items} />
 					</div>
 				</div>
 			)}

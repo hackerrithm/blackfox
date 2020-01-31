@@ -25,6 +25,12 @@ type Config struct {
 	MongoPassword     string `envconfig:"MONGO_PASWORD"`
 	MongoCollection   string `envconfig:"MONGO_COLLECTION"`
 	MONGOURL          string `envconfig:"MONGO_URL"`
+	PostgresHost      string `envconfig:"POSTGRES_DATABASE_HOST"`
+	PostgresDB        string `envconfig:"POSTGRES_DB"`
+	PostgresUsername  string `envconfig:"POSTGRES_USERNAME"`
+	PostgresPassword  string `envconfig:"POSTGRES_PASSWORD"`
+	PostgresDriver    string `envconfig:"POSTGRES_DATABASE_DRIVER"`
+	PostgresPort      string `envconfig:"POSTGRES_PORT"`
 	GRPCPort          string `envconfig:"GRPC_PORT"`
 	GRAPHQLPort       string `envconfig:"GRAPHQL_PORT"`
 }

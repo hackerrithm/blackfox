@@ -61,15 +61,27 @@ services:
             MONGO_USERNAME: ""
             MONGO_PASSWORD: ""
             MONGO_COLLECTION: "task"
-            MONGO_URL: "mongodb://mongo:27017/test1"
+            POSTGRES_DATABASE_HOST: ${DB_HOST}
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USERNAME: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DATABASE_DRIVER: ${DB_DRIVER}
+            POSTGRES_PORT: ${DB_PORT}
             GRPC_PORT: "8080"
         ports:
             - "5004:8080"
         links:
             - jaeger
+            - blackfox-postgres
             # - consul
-            - mongodb
-        restart: always
+            # - mongodb
+        restart: on-failure
+        volumes:
+            - api:/usr/src/app/
+        depends_on:
+            - blackfox-postgres
+        networks:
+            - blackfox-network
     post:
         image: ${REPO}/${PROJECT}-post-srv:${TAG}
         build:
@@ -111,32 +123,42 @@ services:
             MONGO_PASSWORD: ""
             MONGO_COLLECTION: "space"
             MONGO_URL: "mongodb://mongo:27017/test1"
+            POSTGRES_DATABASE_HOST: ${DB_HOST}
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USERNAME: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DATABASE_DRIVER: ${DB_DRIVER}
+            POSTGRES_PORT: ${DB_PORT}
             GRPC_PORT: "8080"
         ports:
             - "5008:8080"
         links:
-            # - jaeger
+            - jaeger
+            - blackfox-postgres
             # - consul
-            - mongodb
+            # - mongodb
         restart: always
         depends_on:
+            - blackfox-postgres
             - "user"
-    geography:
-        image: ${REPO}/${PROJECT}-geography-srv:${TAG}
-        build:
-            context: "."
-            dockerfile: "./services/backend/geography/pkg/docker/app.dockerfile"
-        environment:
-            GEOGRAPHY_SERVICE_URL: "geography:5010"
-            PROFILE_SERVICE_URL: "profile:8080"
-            USER_SERVICE_URL: "user:8080"
-            POST_SERVICE_URL: "post:8080"
-            GRPC_PORT: "8080"
-        ports:
-            - "5010:8080"
-        restart: always
-        depends_on:
-            - "user"
+        networks:
+            - blackfox-network
+    # geography:
+    #     image: ${REPO}/${PROJECT}-geography-srv:${TAG}
+    #     build:
+    #         context: "."
+    #         dockerfile: "./services/backend/geography/pkg/docker/app.dockerfile"
+    #     environment:
+    #         GEOGRAPHY_SERVICE_URL: "geography:5010"
+    #         PROFILE_SERVICE_URL: "profile:8080"
+    #         USER_SERVICE_URL: "user:8080"
+    #         POST_SERVICE_URL: "post:8080"
+    #         GRPC_PORT: "8080"
+    #     ports:
+    #         - "5010:8080"
+    #     restart: always
+    #     depends_on:
+    #         - "user"
     # worldEvent:
     #         image: worldevent-srv
     #         build:
@@ -189,31 +211,31 @@ services:
         restart: always
         depends_on:
             - "user"
-    match:
-        image: ${REPO}/${PROJECT}-match-srv:${TAG}
-        build:
-            context: "."
-            dockerfile: "./services/backend/match/pkg/docker/app.dockerfile"
-        environment:
-            MATCH_SERVICE_URL: "match:5014"
-            USER_SERVICE_URL: "user:8080"
-            PROFILE_SERVICE_URL: "profile:8080"
-            MONGO_HOSTS: "mongo:27017"
-            MONGO_DATABASE: "test1"
-            MONGO_USERNAME: ""
-            MONGO_PASSWORD: ""
-            MONGO_COLLECTION: "match"
-            MONGO_URL: "mongodb://mongo:27017/test1"
-            GRPC_PORT: "8080"
-        ports:
-            - "5014:8080"
-        links:
-            - jaeger
-            # - consul
-            - mongodb
-        restart: always
-        depends_on:
-            - "user"
+    # match:
+    #     image: ${REPO}/${PROJECT}-match-srv:${TAG}
+    #     build:
+    #         context: "."
+    #         dockerfile: "./services/backend/match/pkg/docker/app.dockerfile"
+    #     environment:
+    #         MATCH_SERVICE_URL: "match:5014"
+    #         USER_SERVICE_URL: "user:8080"
+    #         PROFILE_SERVICE_URL: "profile:8080"
+    #         MONGO_HOSTS: "mongo:27017"
+    #         MONGO_DATABASE: "test1"
+    #         MONGO_USERNAME: ""
+    #         MONGO_PASSWORD: ""
+    #         MONGO_COLLECTION: "match"
+    #         MONGO_URL: "mongodb://mongo:27017/test1"
+    #         GRPC_PORT: "8080"
+    #     ports:
+    #         - "5014:8080"
+    #     links:
+    #         - jaeger
+    #         # - consul
+    #         - mongodb
+    #     restart: always
+    #     depends_on:
+    #         - "user"
     auth:
         image: ${REPO}/${PROJECT}-auth-srv:${TAG}
         build:
@@ -263,6 +285,7 @@ services:
             - "9000:8080"
         depends_on:
             - "user"
+            - blackfox-postgres
         environment:
             USER_SERVICE_URL: "user:8080"
             AUTH_SERVICE_URL: "auth:8080"
@@ -331,3 +354,50 @@ services:
             - "5775:5775/udp"
             - "6831:6831/udp"
             - "6832:6832/udp"
+
+    blackfox-postgres:
+        # build:
+        #     context: "."
+        #     dockerfile: "./services/backend/task/pkg/docker/sql.dockerfile"
+        image: postgres:latest
+        container_name: blackfox_db_postgres
+        environment:
+            POSTGRES_USER: ${DB_USER}  
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_DATABASE_HOST: ${DB_HOST}
+            PGDATA: /data/postgres 
+        ports:
+            - '5432:5432'
+        volumes:
+            - ./pgdata/postgres:/pgdata/postgres
+            - ./services/backend/space/pkg/docker/up.sql:/docker-entrypoint-initdb.d/init.sql
+            # - database_postgres:/var/lib/postgresql/data
+        networks:
+            - blackfox-network
+        
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadmin_container
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+        depends_on:
+            - blackfox-postgres
+        ports:
+            - "${PGADMIN_PORT}:80"
+        volumes:
+            - ./pgdata/pgadmin:/var/lib/pgadmin
+        networks:
+            - blackfox-network
+        restart: unless-stopped
+
+volumes:
+    api:
+    database_postgres:   
+    pgadmin:               
+
+# Networks to be created to facilitate communication between containers
+networks:
+    blackfox-network:
+        driver: bridge

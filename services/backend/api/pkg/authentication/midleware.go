@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -33,20 +34,15 @@ type authServer struct {
 
 // getToken gets Authorization key from headers
 func getToken(request *http.Request, response http.ResponseWriter, next http.Handler) (string, error) {
-	log.Println(" -------------------- >>>>>>>>>>>>>> IN getToken method")
 	authHeader := request.Header.Get("Authorization")
 	if authHeader == "" {
-		log.Println("header is empty")
 		next.ServeHTTP(response, request)
 	}
-
-	log.Println(" -------------------- >>>>>>>>>>>>>> IN getToken method :::::: header not empty")
 
 	authHeaderParts := strings.Split(authHeader, " ")
 	if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
 		log.Println("invalid auth token")
 	}
-	log.Println(" -------------------- >>>>>>>>>>>>>> IN getToken method with value ", authHeaderParts[1])
 
 	return authHeaderParts[1], nil
 }
@@ -59,34 +55,21 @@ func AuthHandlerMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 			log.Fatal("------------>>>>>>>>>>>>>>>> error setting up config", err)
 		}
-
-		// return authHeaderParts[1], nil
 		header := request.Header.Get("Authorization")
 
 		switch header {
 		case "":
 			next.ServeHTTP(response, request)
 		default:
-			authHeader := request.Header.Get("Authorization")
-			if authHeader == "" {
-				log.Println("header is empty")
-				next.ServeHTTP(response, request)
+			tokenStr, err := getToken(request, response, next)
+			if err != nil {
+				fmt.Println("our problem", err)
 			}
-
-			authHeaderParts := strings.Split(authHeader, " ")
-			if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
-				log.Println("invalid auth token")
-			}
-
-			log.Println("authHeaderParts :: ", authHeaderParts)
-			tokenStr := authHeaderParts[1] //, err := getToken(request, response, next)
-			// if err != nil {
-			// 	log.Println("error on getting token")
-			// }
-
 			if tokenStr == "" {
 				next.ServeHTTP(response, request)
 			}
+
+			fmt.Println("our URLS: ", cfg.AuthServiceURL, " and User: ", cfg.UserServiceURL)
 
 			authClient, err := auth.NewClient(cfg.AuthServiceURL)
 			if err != nil {
@@ -106,7 +89,7 @@ func AuthHandlerMiddleware(next http.Handler) http.Handler {
 				userClient.Close()
 			}
 
-			// userID := "5dade4266700b1a5e37555ef"
+			log.Println("user ID is: ", userID)
 
 			// get the user from the database
 			user, err := userClient.GetUser(contxt, userID)
@@ -118,11 +101,6 @@ func AuthHandlerMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(response, request.WithContext(ctxt))
 
 		}
-
-		// if header == "" {
-		// } else {
-
-		// }
 	})
 }
 

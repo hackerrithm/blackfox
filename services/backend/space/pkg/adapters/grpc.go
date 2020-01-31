@@ -38,12 +38,14 @@ type grpcServer struct {
 func ListenGRPC(s engine.Space, userURL string, port int) error {
 	profileClient, err := userProfile.NewClient(userURL)
 	if err != nil {
+		log.Println("error in grpc file")
 		profileClient.Close()
 		return err
 	}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
+		log.Println("error in grpc file")
 		profileClient.Close()
 		return err
 	}
@@ -54,6 +56,7 @@ func ListenGRPC(s engine.Space, userURL string, port int) error {
 }
 
 func (s *grpcServer) PostSpace(ctx context.Context, r *pb.PostSpaceRequest) (*pb.PostSpaceResponse, error) {
+	log.Println("got in grpc")
 	err := s.service.Insert(ctx, r.Creator, r.Topic, r.Details, r.Description, r.Type, r.Managers, r.Followers, r.Tags)
 	if err != nil {
 		log.Println("here error in space method")
@@ -80,24 +83,24 @@ func (s *grpcServer) GetSpace(ctx context.Context, r *pb.GetSpaceRequest) (*pb.G
 		return nil, err
 	}
 
-	var mngs, fllwrs []string
-	for _, m := range a.Managers {
-		mngs = append(mngs, m.Hex())
-	}
-	for _, f := range a.Followers {
-		fllwrs = append(fllwrs, f.Hex())
-	}
+	// var mngs, fllwrs []string
+	// for _, m := range a.Managers {
+	// 	mngs = append(mngs, m.Hex())
+	// }
+	// for _, f := range a.Followers {
+	// 	fllwrs = append(fllwrs, f.Hex())
+	// }
 
 	return &pb.GetSpaceResponse{
 		Space: &pb.Space{
-			Id:          a.ID.Hex(),
-			Creator:     a.Creator.Hex(),
+			Id:          a.ID,
+			Creator:     a.Creator,
 			Topic:       a.Topic,
 			Details:     a.Details,
 			Description: a.Description,
 			Type:        a.Type,
-			Followers:   fllwrs,
-			Managers:    mngs,
+			Followers:   a.Followers,
+			Managers:    a.Managers,
 			Tags:        a.Tags,
 		},
 	}, nil
@@ -113,17 +116,17 @@ func (s *grpcServer) GetMultipleSpaces(ctx context.Context, r *pb.GetMultipleSpa
 	}
 	spaces := []*pb.Space{}
 	for _, p := range *res {
-		for _, m := range p.Managers {
-			mngs = append(mngs, m.Hex())
-		}
-		for _, f := range p.Followers {
-			fllwrs = append(fllwrs, f.Hex())
-		}
+		// for _, m := range p.Managers {
+		// 	mngs = append(mngs, m.Hex())
+		// }
+		// for _, f := range p.Followers {
+		// 	fllwrs = append(fllwrs, f.Hex())
+		// }
 		spaces = append(
 			spaces,
 			&pb.Space{
-				Id:          p.ID.Hex(),
-				Creator:     p.Creator.Hex(),
+				Id:          p.ID,
+				Creator:     p.Creator,
 				Topic:       p.Topic,
 				Details:     p.Details,
 				Description: p.Description,

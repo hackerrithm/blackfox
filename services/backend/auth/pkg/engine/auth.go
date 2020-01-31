@@ -33,7 +33,9 @@ type (
 		//GenerateToken ...
 		GenerateToken(ctx context.Context, id string) (string, error)
 		// ParseToken ...
-		ParseToken(ctx context.Context, token string) (map[string]interface{}, error)
+		ParseToken(ctx context.Context, token string) error
+		// ExtractTokenID ...
+		ExtractTokenID(tokenString string) (string, error)
 	}
 
 	auth struct {

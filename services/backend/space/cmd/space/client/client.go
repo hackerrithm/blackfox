@@ -17,10 +17,8 @@ package client
 import (
 	"context"
 	"log"
-	"time"
 
 	"google.golang.org/grpc"
-	"gopkg.in/mgo.v2/bson"
 
 	"github.com/hackerrithm/blackfox/services/backend/space/pkg/domain"
 	pb "github.com/hackerrithm/blackfox/services/backend/space/pkg/model"
@@ -34,10 +32,12 @@ type Client struct {
 
 // NewClient ...
 func NewClient(url string) (*Client, error) {
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithTimeout(time.Second*100))
+	conn, err := grpc.Dial(url, grpc.WithInsecure())
 	if err != nil {
+		log.Println("error in client new")
 		return nil, err
 	}
+
 	c := pb.NewSpaceServiceClient(conn)
 	return &Client{conn, c}, nil
 }
@@ -49,6 +49,8 @@ func (c *Client) Close() {
 
 // Post ...
 func (c *Client) Post(ctx context.Context, creator, topic, details, description, typ string, managers, followers, tags []string) (string, error) {
+	log.Println("got in client")
+
 	r, err := c.service.PostSpace(
 		ctx,
 		&pb.PostSpaceRequest{
@@ -60,6 +62,7 @@ func (c *Client) Post(ctx context.Context, creator, topic, details, description,
 			Followers:   followers,
 			Managers:    managers,
 			Tags:        tags,
+			Time:        nil,
 		},
 	)
 	if err != nil {
@@ -71,7 +74,7 @@ func (c *Client) Post(ctx context.Context, creator, topic, details, description,
 }
 
 // Put ...
-func (c *Client) Put(ctx context.Context, id, creator, topic, details, description, typ string, managers, followers, tags []string) (string, error) {
+func (c *Client) Put(ctx context.Context, id uint64, creator, topic, details, description, typ string, managers, followers, tags []string) (string, error) {
 	r, err := c.service.PutSpace(
 		ctx,
 		&pb.PutSpaceRequest{
@@ -93,7 +96,7 @@ func (c *Client) Put(ctx context.Context, id, creator, topic, details, descripti
 }
 
 // Get ...
-func (c *Client) Get(ctx context.Context, id string, userID uint64) (*domain.Space, error) {
+func (c *Client) Get(ctx context.Context, id uint64, userID uint64) (*domain.Space, error) {
 	r, err := c.service.GetSpace(
 		ctx,
 		&pb.GetSpaceRequest{Id: id, UserID: userID},
@@ -102,30 +105,30 @@ func (c *Client) Get(ctx context.Context, id string, userID uint64) (*domain.Spa
 		return nil, err
 	}
 
-	var mngs, fllwrs []bson.ObjectId
-	for _, m := range r.Space.Managers {
-		mngs = append(mngs, bson.ObjectIdHex(m))
-	}
-	for _, f := range r.Space.Followers {
-		fllwrs = append(fllwrs, bson.ObjectIdHex(f))
-	}
+	// var mngs, fllwrs []bson.ObjectId
+	// for _, m := range r.Space.Managers {
+	// 	mngs = append(mngs, bson.ObjectIdHex(m))
+	// }
+	// for _, f := range r.Space.Followers {
+	// 	fllwrs = append(fllwrs, bson.ObjectIdHex(f))
+	// }
 
 	return &domain.Space{
-		ID:          bson.ObjectIdHex(r.Space.Id),
-		Creator:     bson.ObjectIdHex(r.Space.Creator),
+		ID:          r.Space.Id,
+		Creator:     r.Space.Creator,
 		Topic:       r.Space.Topic,
 		Details:     r.Space.Details,
 		Description: r.Space.Description,
 		Type:        r.Space.Type,
-		Followers:   fllwrs,
-		Managers:    mngs,
+		Followers:   r.GetSpace().Followers,
+		Managers:    r.GetSpace().Followers,
 		Tags:        r.Space.Tags,
 	}, nil
 }
 
 // GetMultiple is used to get the list of specified spaces
 func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]domain.Space, error) {
-	var mngs, fllwrs []bson.ObjectId
+	// var mngs, fllwrs []bson.ObjectId
 
 	r, err := c.service.GetMultipleSpaces(
 		ctx,
@@ -140,22 +143,22 @@ func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]d
 
 	spaces := []domain.Space{}
 	for _, a := range r.Spaces {
-		for _, m := range a.Managers {
-			mngs = append(mngs, bson.ObjectIdHex(m))
-		}
-		for _, f := range a.Followers {
-			fllwrs = append(fllwrs, bson.ObjectIdHex(f))
-		}
+		// for _, m := range a.Managers {
+		// 	mngs = append(mngs, bson.ObjectIdHex(m))
+		// }
+		// for _, f := range a.Followers {
+		// 	fllwrs = append(fllwrs, bson.ObjectIdHex(f))
+		// }
 
 		spaces = append(spaces, domain.Space{
-			ID:          bson.ObjectIdHex(a.Id),
-			Creator:     bson.ObjectIdHex(a.Creator),
+			ID:          a.Id,
+			Creator:     a.Creator,
 			Topic:       a.Topic,
 			Details:     a.Details,
 			Description: a.Description,
 			Type:        a.Type,
-			Followers:   fllwrs,
-			Managers:    mngs,
+			Followers:   a.Followers,
+			Managers:    a.Followers,
 			Tags:        a.Tags,
 		})
 	}
@@ -163,7 +166,7 @@ func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]d
 }
 
 // Delete removes a space with passed identifier
-func (c *Client) Delete(ctx context.Context, id string) (string, error) {
+func (c *Client) Delete(ctx context.Context, id uint64) (string, error) {
 	r, err := c.service.DeleteSpace(
 		ctx,
 		&pb.DeleteSpaceRequest{Id: id},

@@ -108,7 +108,7 @@ type Profile {
 }
 
 type Space {
-	id: String
+	id: Int!
 	creator: String
 	topic: String
 	details: String
@@ -338,7 +338,7 @@ input PostSpaceInput {
 }
 
 input UpdateSpaceInput {
-	id: String!
+	id: Int!
 	creator: String!
 	topic: String!
 	details: String!
@@ -434,7 +434,7 @@ type Mutation {
 	updateSpace(space: UpdateSpaceInput!): String!
 	addGoal(goal: PostGoalInput!): String!
 	updateGoal(goal: UpdateGoalInput!): String!
-	addTask(text: String!): Task!
+	addTask(text: String!): String!
 	updateTask(task: UpdateTaskInput!): String!
 	postUserMessage(text: String!, senderName: String!, receiverName: String!): UserMessage!
 	addGroup(group: PostGroupInput!): String!
@@ -448,7 +448,7 @@ type Query {
 	getUserByEmailAddress(email: String!): User
 	getPost(id: String!): UserPost
 	getAllPosts(id: Int!): [UserPost!]!
-	getSpace(id: String!): Space
+	getSpace(id: Int!): Space
 	getAllSpaces: [Space!]!
 	getGoal(id: String!): Goal
 	getAllGoals: [Goal!]!

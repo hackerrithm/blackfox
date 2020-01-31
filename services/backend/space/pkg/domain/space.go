@@ -16,8 +16,6 @@ package domain
 
 import (
 	"time"
-
-	"gopkg.in/mgo.v2/bson"
 )
 
 var spaceContextKey contextKey = "space"
@@ -25,36 +23,79 @@ var spaceContextKey contextKey = "space"
 type contextKey string
 
 // Space ...
+// type Space struct {
+// 	ID          bson.ObjectId   `json:"id" bson:"_id,omitempty"`
+// 	Creator     bson.ObjectId   `json:"author" bson:"author,omitempty"`
+// 	Managers    []bson.ObjectId `json:"managers" bson:"managers,omitempty"`
+// 	Topic       string          `json:"topic" bson:"topic,omitempty"`
+// 	Details     string          `json:"details" bson:"details,omitempty"`
+// 	Description string          `json:"description" bson:"description,omitempty"`
+// 	Type        string          `json:"type" bson:"type,omitempty"`
+// 	Tags        []string        `json:"tags" bson:"tags,omitempty"`
+// 	Date        time.Time       `json:"timestamp" bson:"timestamp,omitempty"`
+// 	Followers   []bson.ObjectId `json:"followers" bson:"followers,omitempty"`
+// }
+
+// Space ...
+// type Space struct {
+// 	ID          uint64         `gorm:"primary_key;auto_increment" json:"id"`
+// 	Creator     string         `gorm:"type:varchar(100)" json:"creator"`
+// 	Managers    pq.StringArray `gorm:"type:varchar(64)[]"`
+// 	Topic       string         `json:"topic" gorm:"type:varchar(50)"`
+// 	Details     string         `json:"details" gorm:"type:varchar(100)"`
+// 	Description string         `json:"description" gorm:"type:varchar(100)"`
+// 	Type        string         `json:"type" gorm:"type:varchar(45)"`
+// 	Tags        pq.StringArray `gorm:"type:varchar(64)[]"`
+// 	Date        time.Time      `json:"timestamp"`
+// 	Followers   pq.StringArray `gorm:"type:varchar(64)[]"`
+// }
+
+// Space ...
 type Space struct {
-	ID          bson.ObjectId   `json:"id" bson:"_id,omitempty"`
-	Creator     bson.ObjectId   `json:"author" bson:"author,omitempty"`
-	Managers    []bson.ObjectId `json:"managers" bson:"managers,omitempty"`
-	Topic       string          `json:"topic" bson:"topic,omitempty"`
-	Details     string          `json:"details" bson:"details,omitempty"`
-	Description string          `json:"description" bson:"description,omitempty"`
-	Type        string          `json:"type" bson:"type,omitempty"`
-	Tags        []string        `json:"tags" bson:"tags,omitempty"`
-	Date        time.Time       `json:"timestamp" bson:"timestamp,omitempty"`
-	Followers   []bson.ObjectId `json:"followers" bson:"followers,omitempty"`
+	ID          uint64    `json:"id"`
+	Creator     string    `json:"creator"`
+	Managers    []string  `json:"managers"`
+	Topic       string    `json:"topic"`
+	Details     string    `json:"details"`
+	Description string    `json:"description"`
+	Type        string    `json:"type"`
+	Tags        []string  `json:"tags"`
+	Date        time.Time `json:"timestamp"`
+	Followers   []string  `json:"followers"`
 }
 
 // NewSpace creates a new Space!
+// func NewSpace(creator, topic, details, description, typ string, managers, followers, tags []string) *Space {
+// 	var mngs, fllwrs []bson.ObjectId
+// 	for _, m := range managers {
+// 		mngs = append(mngs, bson.ObjectIdHex(m))
+// 	}
+// 	for _, f := range followers {
+// 		fllwrs = append(fllwrs, bson.ObjectIdHex(f))
+// 	}
+// 	return &Space{
+// 		Creator:     bson.ObjectIdHex(creator),
+// 		Topic:       topic,
+// 		Details:     details,
+// 		Description: description,
+// 		Type:        typ,
+// 		Followers:   fllwrs,
+// 		Managers:    mngs,
+// 		Tags:        tags,
+// 		Date:        now(),
+// 	}
+// }
+
+// NewSpace ...
 func NewSpace(creator, topic, details, description, typ string, managers, followers, tags []string) *Space {
-	var mngs, fllwrs []bson.ObjectId
-	for _, m := range managers {
-		mngs = append(mngs, bson.ObjectIdHex(m))
-	}
-	for _, f := range followers {
-		fllwrs = append(fllwrs, bson.ObjectIdHex(f))
-	}
 	return &Space{
-		Creator:     bson.ObjectIdHex(creator),
+		Creator:     creator,
 		Topic:       topic,
 		Details:     details,
 		Description: description,
 		Type:        typ,
-		Followers:   fllwrs,
-		Managers:    mngs,
+		Followers:   followers,
+		Managers:    managers,
 		Tags:        tags,
 		Date:        now(),
 	}

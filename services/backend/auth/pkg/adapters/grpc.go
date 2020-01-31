@@ -132,7 +132,7 @@ func (s *grpcServer) GetUserFromToken(ctx context.Context, r *pb.GetUserFromToke
 
 	var ID = r.Token
 	log.Println("------------------- ID VAL: ", ID)
-	claims, err := s.service.ParseToken(ctx, ID)
+	err := s.service.ParseToken(ctx, ID)
 	if err != nil {
 		return &pb.GetUserFromTokenResponse{}, err
 	}
@@ -141,12 +141,13 @@ func (s *grpcServer) GetUserFromToken(ctx context.Context, r *pb.GetUserFromToke
 	// 	return &pb.GenerateTokenResponse{}, err
 	// }
 
-	userid, ok := claims["userid"].(string)
-	if !ok {
-		return &pb.GetUserFromTokenResponse{}, fmt.Errorf("user id can't get from token claims: %v", claims)
+	// userid, ok := claims["userid"].(string)
+	userID, err := s.service.ExtractTokenID(ID)
+	if err != nil {
+		return &pb.GetUserFromTokenResponse{}, fmt.Errorf("user id can't be found")
 	}
-	log.Println("------------------- ID VAL:- USERID ", userid)
+	log.Println("------------------- ID VAL:- USERID ", userID)
 	return &pb.GetUserFromTokenResponse{
-		Result: userid,
+		Result: userID,
 	}, nil
 }

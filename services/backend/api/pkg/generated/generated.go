@@ -14,7 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/hackerrithm/blackfox/services/backend/api/pkg"
+	"github.com/hackerrithm/blackfox/services/backend/api/pkg/models"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
@@ -160,20 +160,20 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddGoal         func(childComplexity int, goal pkg.PostGoalInput) int
-		AddGroup        func(childComplexity int, group pkg.PostGroupInput) int
-		AddPost         func(childComplexity int, post pkg.PostPostInput) int
-		AddSpace        func(childComplexity int, space pkg.PostSpaceInput) int
+		AddGoal         func(childComplexity int, goal models.PostGoalInput) int
+		AddGroup        func(childComplexity int, group models.PostGroupInput) int
+		AddPost         func(childComplexity int, post models.PostPostInput) int
+		AddSpace        func(childComplexity int, space models.PostSpaceInput) int
 		AddTask         func(childComplexity int, text string) int
 		DeleteUser      func(childComplexity int, id string) int
-		LoginUser       func(childComplexity int, user pkg.LoginInput) int
+		LoginUser       func(childComplexity int, user models.LoginInput) int
 		PostUserMessage func(childComplexity int, text string, senderName string, receiverName string) int
-		RegisterUser    func(childComplexity int, user pkg.RegisterInput) int
-		UpdateGoal      func(childComplexity int, goal pkg.UpdateGoalInput) int
-		UpdateGroup     func(childComplexity int, group pkg.UpdateGroupInput) int
-		UpdatePost      func(childComplexity int, post pkg.UpdatePostInput) int
-		UpdateSpace     func(childComplexity int, space pkg.UpdateSpaceInput) int
-		UpdateTask      func(childComplexity int, task pkg.UpdateTaskInput) int
+		RegisterUser    func(childComplexity int, user models.RegisterInput) int
+		UpdateGoal      func(childComplexity int, goal models.UpdateGoalInput) int
+		UpdateGroup     func(childComplexity int, group models.UpdateGroupInput) int
+		UpdatePost      func(childComplexity int, post models.UpdatePostInput) int
+		UpdateSpace     func(childComplexity int, space models.UpdateSpaceInput) int
+		UpdateTask      func(childComplexity int, task models.UpdateTaskInput) int
 	}
 
 	Profile struct {
@@ -202,7 +202,7 @@ type ComplexityRoot struct {
 		GetLocationDistance   func(childComplexity int, lon float64, lat float64) int
 		GetPost               func(childComplexity int, id string) int
 		GetProfile            func(childComplexity int, id string) int
-		GetSpace              func(childComplexity int, id string) int
+		GetSpace              func(childComplexity int, id int) int
 		GetTask               func(childComplexity int, id string) int
 		GetUser               func(childComplexity int, id string) int
 		GetUserByEmailAddress func(childComplexity int, email string) int
@@ -295,43 +295,43 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	RegisterUser(ctx context.Context, user pkg.RegisterInput) (string, error)
-	LoginUser(ctx context.Context, user pkg.LoginInput) (string, error)
+	RegisterUser(ctx context.Context, user models.RegisterInput) (string, error)
+	LoginUser(ctx context.Context, user models.LoginInput) (string, error)
 	DeleteUser(ctx context.Context, id string) (bool, error)
-	AddPost(ctx context.Context, post pkg.PostPostInput) (string, error)
-	UpdatePost(ctx context.Context, post pkg.UpdatePostInput) (string, error)
-	AddSpace(ctx context.Context, space pkg.PostSpaceInput) (string, error)
-	UpdateSpace(ctx context.Context, space pkg.UpdateSpaceInput) (string, error)
-	AddGoal(ctx context.Context, goal pkg.PostGoalInput) (string, error)
-	UpdateGoal(ctx context.Context, goal pkg.UpdateGoalInput) (string, error)
-	AddTask(ctx context.Context, text string) (*pkg.Task, error)
-	UpdateTask(ctx context.Context, task pkg.UpdateTaskInput) (string, error)
-	PostUserMessage(ctx context.Context, text string, senderName string, receiverName string) (*pkg.UserMessage, error)
-	AddGroup(ctx context.Context, group pkg.PostGroupInput) (string, error)
-	UpdateGroup(ctx context.Context, group pkg.UpdateGroupInput) (string, error)
+	AddPost(ctx context.Context, post models.PostPostInput) (string, error)
+	UpdatePost(ctx context.Context, post models.UpdatePostInput) (string, error)
+	AddSpace(ctx context.Context, space models.PostSpaceInput) (string, error)
+	UpdateSpace(ctx context.Context, space models.UpdateSpaceInput) (string, error)
+	AddGoal(ctx context.Context, goal models.PostGoalInput) (string, error)
+	UpdateGoal(ctx context.Context, goal models.UpdateGoalInput) (string, error)
+	AddTask(ctx context.Context, text string) (string, error)
+	UpdateTask(ctx context.Context, task models.UpdateTaskInput) (string, error)
+	PostUserMessage(ctx context.Context, text string, senderName string, receiverName string) (*models.UserMessage, error)
+	AddGroup(ctx context.Context, group models.PostGroupInput) (string, error)
+	UpdateGroup(ctx context.Context, group models.UpdateGroupInput) (string, error)
 }
 type QueryResolver interface {
-	GetAllUsers(ctx context.Context) ([]*pkg.User, error)
-	GetUser(ctx context.Context, id string) (*pkg.User, error)
-	GetUserByUserName(ctx context.Context, username string) (*pkg.User, error)
-	GetUserByEmailAddress(ctx context.Context, email string) (*pkg.User, error)
-	GetPost(ctx context.Context, id string) (*pkg.UserPost, error)
-	GetAllPosts(ctx context.Context, id int) ([]*pkg.UserPost, error)
-	GetSpace(ctx context.Context, id string) (*pkg.Space, error)
-	GetAllSpaces(ctx context.Context) ([]*pkg.Space, error)
-	GetGoal(ctx context.Context, id string) (*pkg.Goal, error)
-	GetAllGoals(ctx context.Context) ([]*pkg.Goal, error)
-	GetTask(ctx context.Context, id string) (*pkg.Task, error)
-	GetAllTasks(ctx context.Context) ([]*pkg.Task, error)
-	GetProfile(ctx context.Context, id string) (*pkg.Profile, error)
+	GetAllUsers(ctx context.Context) ([]*models.User, error)
+	GetUser(ctx context.Context, id string) (*models.User, error)
+	GetUserByUserName(ctx context.Context, username string) (*models.User, error)
+	GetUserByEmailAddress(ctx context.Context, email string) (*models.User, error)
+	GetPost(ctx context.Context, id string) (*models.UserPost, error)
+	GetAllPosts(ctx context.Context, id int) ([]*models.UserPost, error)
+	GetSpace(ctx context.Context, id int) (*models.Space, error)
+	GetAllSpaces(ctx context.Context) ([]*models.Space, error)
+	GetGoal(ctx context.Context, id string) (*models.Goal, error)
+	GetAllGoals(ctx context.Context) ([]*models.Goal, error)
+	GetTask(ctx context.Context, id string) (*models.Task, error)
+	GetAllTasks(ctx context.Context) ([]*models.Task, error)
+	GetProfile(ctx context.Context, id string) (*models.Profile, error)
 	GetLocationDistance(ctx context.Context, lon float64, lat float64) (float64, error)
-	UserChat(ctx context.Context, name string) (*pkg.Chat, error)
-	GetGroup(ctx context.Context, id string) (*pkg.Group, error)
-	GetAllGroups(ctx context.Context) ([]*pkg.Group, error)
-	GetAllMatches(ctx context.Context) ([]*pkg.MatchedUser, error)
+	UserChat(ctx context.Context, name string) (*models.Chat, error)
+	GetGroup(ctx context.Context, id string) (*models.Group, error)
+	GetAllGroups(ctx context.Context) ([]*models.Group, error)
+	GetAllMatches(ctx context.Context) ([]*models.MatchedUser, error)
 }
 type SubscriptionResolver interface {
-	UserMessageAdded(ctx context.Context, chatName string) (<-chan *pkg.UserMessage, error)
+	UserMessageAdded(ctx context.Context, chatName string) (<-chan *models.UserMessage, error)
 }
 
 type executableSchema struct {
@@ -856,7 +856,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddGoal(childComplexity, args["goal"].(pkg.PostGoalInput)), true
+		return e.complexity.Mutation.AddGoal(childComplexity, args["goal"].(models.PostGoalInput)), true
 
 	case "Mutation.addGroup":
 		if e.complexity.Mutation.AddGroup == nil {
@@ -868,7 +868,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddGroup(childComplexity, args["group"].(pkg.PostGroupInput)), true
+		return e.complexity.Mutation.AddGroup(childComplexity, args["group"].(models.PostGroupInput)), true
 
 	case "Mutation.addPost":
 		if e.complexity.Mutation.AddPost == nil {
@@ -880,7 +880,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddPost(childComplexity, args["post"].(pkg.PostPostInput)), true
+		return e.complexity.Mutation.AddPost(childComplexity, args["post"].(models.PostPostInput)), true
 
 	case "Mutation.addSpace":
 		if e.complexity.Mutation.AddSpace == nil {
@@ -892,7 +892,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddSpace(childComplexity, args["space"].(pkg.PostSpaceInput)), true
+		return e.complexity.Mutation.AddSpace(childComplexity, args["space"].(models.PostSpaceInput)), true
 
 	case "Mutation.addTask":
 		if e.complexity.Mutation.AddTask == nil {
@@ -928,7 +928,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.LoginUser(childComplexity, args["user"].(pkg.LoginInput)), true
+		return e.complexity.Mutation.LoginUser(childComplexity, args["user"].(models.LoginInput)), true
 
 	case "Mutation.postUserMessage":
 		if e.complexity.Mutation.PostUserMessage == nil {
@@ -952,7 +952,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RegisterUser(childComplexity, args["user"].(pkg.RegisterInput)), true
+		return e.complexity.Mutation.RegisterUser(childComplexity, args["user"].(models.RegisterInput)), true
 
 	case "Mutation.updateGoal":
 		if e.complexity.Mutation.UpdateGoal == nil {
@@ -964,7 +964,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGoal(childComplexity, args["goal"].(pkg.UpdateGoalInput)), true
+		return e.complexity.Mutation.UpdateGoal(childComplexity, args["goal"].(models.UpdateGoalInput)), true
 
 	case "Mutation.updateGroup":
 		if e.complexity.Mutation.UpdateGroup == nil {
@@ -976,7 +976,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGroup(childComplexity, args["group"].(pkg.UpdateGroupInput)), true
+		return e.complexity.Mutation.UpdateGroup(childComplexity, args["group"].(models.UpdateGroupInput)), true
 
 	case "Mutation.updatePost":
 		if e.complexity.Mutation.UpdatePost == nil {
@@ -988,7 +988,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdatePost(childComplexity, args["post"].(pkg.UpdatePostInput)), true
+		return e.complexity.Mutation.UpdatePost(childComplexity, args["post"].(models.UpdatePostInput)), true
 
 	case "Mutation.updateSpace":
 		if e.complexity.Mutation.UpdateSpace == nil {
@@ -1000,7 +1000,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSpace(childComplexity, args["space"].(pkg.UpdateSpaceInput)), true
+		return e.complexity.Mutation.UpdateSpace(childComplexity, args["space"].(models.UpdateSpaceInput)), true
 
 	case "Mutation.updateTask":
 		if e.complexity.Mutation.UpdateTask == nil {
@@ -1012,7 +1012,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTask(childComplexity, args["task"].(pkg.UpdateTaskInput)), true
+		return e.complexity.Mutation.UpdateTask(childComplexity, args["task"].(models.UpdateTaskInput)), true
 
 	case "Profile.about":
 		if e.complexity.Profile.About == nil {
@@ -1208,7 +1208,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetSpace(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.GetSpace(childComplexity, args["id"].(int)), true
 
 	case "Query.getTask":
 		if e.complexity.Query.GetTask == nil {
@@ -1779,13 +1779,13 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var parsedSchema = gqlparser.MustLoadSchema(
-	&ast.Source{Name: "schema.graphql", Input: `scalar Time
+	&ast.Source{Name: "./schema.graphql", Input: `scalar Time
 # scalar Upload
 
 schema {
-		query: Query
-		mutation: Mutation
-		subscription: Subscription
+	query: Query
+	mutation: Mutation
+	subscription: Subscription
 }
 
 type Journey {
@@ -1889,7 +1889,7 @@ type Profile {
 }
 
 type Space {
-	id: String
+	id: Int!
 	creator: String
 	topic: String
 	details: String
@@ -2119,7 +2119,7 @@ input PostSpaceInput {
 }
 
 input UpdateSpaceInput {
-	id: String!
+	id: Int!
 	creator: String!
 	topic: String!
 	details: String!
@@ -2215,10 +2215,10 @@ type Mutation {
 	updateSpace(space: UpdateSpaceInput!): String!
 	addGoal(goal: PostGoalInput!): String!
 	updateGoal(goal: UpdateGoalInput!): String!
-	addTask(text: String!): Task!
+	addTask(text: String!): String!
 	updateTask(task: UpdateTaskInput!): String!
-		postUserMessage(text: String!, senderName: String!, receiverName: String!): UserMessage!
-		addGroup(group: PostGroupInput!): String!
+	postUserMessage(text: String!, senderName: String!, receiverName: String!): UserMessage!
+	addGroup(group: PostGroupInput!): String!
 	updateGroup(group: UpdateGroupInput!): String!
 }
 
@@ -2229,7 +2229,7 @@ type Query {
 	getUserByEmailAddress(email: String!): User
 	getPost(id: String!): UserPost
 	getAllPosts(id: Int!): [UserPost!]!
-	getSpace(id: String!): Space
+	getSpace(id: Int!): Space
 	getAllSpaces: [Space!]!
 	getGoal(id: String!): Goal
 	getAllGoals: [Goal!]!
@@ -2244,7 +2244,7 @@ type Query {
 }
 
 type Subscription {
-		userMessageAdded(chatName: String!): UserMessage!
+	userMessageAdded(chatName: String!): UserMessage!
 }`},
 )
 
@@ -2255,9 +2255,9 @@ type Subscription {
 func (ec *executionContext) field_Mutation_addGoal_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.PostGoalInput
+	var arg0 models.PostGoalInput
 	if tmp, ok := rawArgs["goal"]; ok {
-		arg0, err = ec.unmarshalNPostGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostGoalInput(ctx, tmp)
+		arg0, err = ec.unmarshalNPostGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostGoalInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2269,9 +2269,9 @@ func (ec *executionContext) field_Mutation_addGoal_args(ctx context.Context, raw
 func (ec *executionContext) field_Mutation_addGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.PostGroupInput
+	var arg0 models.PostGroupInput
 	if tmp, ok := rawArgs["group"]; ok {
-		arg0, err = ec.unmarshalNPostGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostGroupInput(ctx, tmp)
+		arg0, err = ec.unmarshalNPostGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostGroupInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2283,9 +2283,9 @@ func (ec *executionContext) field_Mutation_addGroup_args(ctx context.Context, ra
 func (ec *executionContext) field_Mutation_addPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.PostPostInput
+	var arg0 models.PostPostInput
 	if tmp, ok := rawArgs["post"]; ok {
-		arg0, err = ec.unmarshalNPostPostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostPostInput(ctx, tmp)
+		arg0, err = ec.unmarshalNPostPostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostPostInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2297,9 +2297,9 @@ func (ec *executionContext) field_Mutation_addPost_args(ctx context.Context, raw
 func (ec *executionContext) field_Mutation_addSpace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.PostSpaceInput
+	var arg0 models.PostSpaceInput
 	if tmp, ok := rawArgs["space"]; ok {
-		arg0, err = ec.unmarshalNPostSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostSpaceInput(ctx, tmp)
+		arg0, err = ec.unmarshalNPostSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostSpaceInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2339,9 +2339,9 @@ func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_loginUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.LoginInput
+	var arg0 models.LoginInput
 	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNLoginInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐLoginInput(ctx, tmp)
+		arg0, err = ec.unmarshalNLoginInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLoginInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2383,9 +2383,9 @@ func (ec *executionContext) field_Mutation_postUserMessage_args(ctx context.Cont
 func (ec *executionContext) field_Mutation_registerUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.RegisterInput
+	var arg0 models.RegisterInput
 	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNRegisterInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐRegisterInput(ctx, tmp)
+		arg0, err = ec.unmarshalNRegisterInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐRegisterInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2397,9 +2397,9 @@ func (ec *executionContext) field_Mutation_registerUser_args(ctx context.Context
 func (ec *executionContext) field_Mutation_updateGoal_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.UpdateGoalInput
+	var arg0 models.UpdateGoalInput
 	if tmp, ok := rawArgs["goal"]; ok {
-		arg0, err = ec.unmarshalNUpdateGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateGoalInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateGoalInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2411,9 +2411,9 @@ func (ec *executionContext) field_Mutation_updateGoal_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.UpdateGroupInput
+	var arg0 models.UpdateGroupInput
 	if tmp, ok := rawArgs["group"]; ok {
-		arg0, err = ec.unmarshalNUpdateGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateGroupInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateGroupInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2425,9 +2425,9 @@ func (ec *executionContext) field_Mutation_updateGroup_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.UpdatePostInput
+	var arg0 models.UpdatePostInput
 	if tmp, ok := rawArgs["post"]; ok {
-		arg0, err = ec.unmarshalNUpdatePostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdatePostInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdatePostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdatePostInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2439,9 +2439,9 @@ func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateSpace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.UpdateSpaceInput
+	var arg0 models.UpdateSpaceInput
 	if tmp, ok := rawArgs["space"]; ok {
-		arg0, err = ec.unmarshalNUpdateSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateSpaceInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateSpaceInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2453,9 +2453,9 @@ func (ec *executionContext) field_Mutation_updateSpace_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_updateTask_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 pkg.UpdateTaskInput
+	var arg0 models.UpdateTaskInput
 	if tmp, ok := rawArgs["task"]; ok {
-		arg0, err = ec.unmarshalNUpdateTaskInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateTaskInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateTaskInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateTaskInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2573,9 +2573,9 @@ func (ec *executionContext) field_Query_getProfile_args(ctx context.Context, raw
 func (ec *executionContext) field_Query_getSpace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 int
 	if tmp, ok := rawArgs["id"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2704,7 +2704,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Address_streetAddressLine1(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_streetAddressLine1(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2741,7 +2741,7 @@ func (ec *executionContext) _Address_streetAddressLine1(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Address_streetAddressLine2(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_streetAddressLine2(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2778,7 +2778,7 @@ func (ec *executionContext) _Address_streetAddressLine2(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Address_postalCode(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_postalCode(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2815,7 +2815,7 @@ func (ec *executionContext) _Address_postalCode(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Address_province(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_province(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2852,7 +2852,7 @@ func (ec *executionContext) _Address_province(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Address_country(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_country(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2880,13 +2880,13 @@ func (ec *executionContext) _Address_country(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Country)
+	res := resTmp.(*models.Country)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOCountry2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐCountry(ctx, field.Selections, res)
+	return ec.marshalOCountry2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐCountry(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Address_state(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_state(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2914,13 +2914,13 @@ func (ec *executionContext) _Address_state(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.State)
+	res := resTmp.(*models.State)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOState2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐState(ctx, field.Selections, res)
+	return ec.marshalOState2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐState(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Address_city(ctx context.Context, field graphql.CollectedField, obj *pkg.Address) (ret graphql.Marshaler) {
+func (ec *executionContext) _Address_city(ctx context.Context, field graphql.CollectedField, obj *models.Address) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2948,13 +2948,13 @@ func (ec *executionContext) _Address_city(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.City)
+	res := resTmp.(*models.City)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOCity2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐCity(ctx, field.Selections, res)
+	return ec.marshalOCity2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐCity(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Chat_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Chat) (ret graphql.Marshaler) {
+func (ec *executionContext) _Chat_id(ctx context.Context, field graphql.CollectedField, obj *models.Chat) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -2991,7 +2991,7 @@ func (ec *executionContext) _Chat_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Chat_messages(ctx context.Context, field graphql.CollectedField, obj *pkg.Chat) (ret graphql.Marshaler) {
+func (ec *executionContext) _Chat_messages(ctx context.Context, field graphql.CollectedField, obj *models.Chat) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3022,13 +3022,13 @@ func (ec *executionContext) _Chat_messages(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]pkg.UserMessage)
+	res := resTmp.([]*models.UserMessage)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNUserMessage2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx, field.Selections, res)
+	return ec.marshalNUserMessage2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _City_name(ctx context.Context, field graphql.CollectedField, obj *pkg.City) (ret graphql.Marshaler) {
+func (ec *executionContext) _City_name(ctx context.Context, field graphql.CollectedField, obj *models.City) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3065,7 +3065,7 @@ func (ec *executionContext) _City_name(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _City_code(ctx context.Context, field graphql.CollectedField, obj *pkg.City) (ret graphql.Marshaler) {
+func (ec *executionContext) _City_code(ctx context.Context, field graphql.CollectedField, obj *models.City) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3102,7 +3102,7 @@ func (ec *executionContext) _City_code(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Comment) (ret graphql.Marshaler) {
+func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.CollectedField, obj *models.Comment) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3139,7 +3139,7 @@ func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Comment_userID(ctx context.Context, field graphql.CollectedField, obj *pkg.Comment) (ret graphql.Marshaler) {
+func (ec *executionContext) _Comment_userID(ctx context.Context, field graphql.CollectedField, obj *models.Comment) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3167,13 +3167,13 @@ func (ec *executionContext) _Comment_userID(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Comment_text(ctx context.Context, field graphql.CollectedField, obj *pkg.Comment) (ret graphql.Marshaler) {
+func (ec *executionContext) _Comment_text(ctx context.Context, field graphql.CollectedField, obj *models.Comment) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3201,13 +3201,13 @@ func (ec *executionContext) _Comment_text(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Contact_lineNumber(ctx context.Context, field graphql.CollectedField, obj *pkg.Contact) (ret graphql.Marshaler) {
+func (ec *executionContext) _Contact_lineNumber(ctx context.Context, field graphql.CollectedField, obj *models.Contact) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3244,7 +3244,7 @@ func (ec *executionContext) _Contact_lineNumber(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Contact_countryCode(ctx context.Context, field graphql.CollectedField, obj *pkg.Contact) (ret graphql.Marshaler) {
+func (ec *executionContext) _Contact_countryCode(ctx context.Context, field graphql.CollectedField, obj *models.Contact) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3281,7 +3281,7 @@ func (ec *executionContext) _Contact_countryCode(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Contact_areaCode(ctx context.Context, field graphql.CollectedField, obj *pkg.Contact) (ret graphql.Marshaler) {
+func (ec *executionContext) _Contact_areaCode(ctx context.Context, field graphql.CollectedField, obj *models.Contact) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3318,7 +3318,7 @@ func (ec *executionContext) _Contact_areaCode(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Contact_premfix(ctx context.Context, field graphql.CollectedField, obj *pkg.Contact) (ret graphql.Marshaler) {
+func (ec *executionContext) _Contact_premfix(ctx context.Context, field graphql.CollectedField, obj *models.Contact) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3355,7 +3355,7 @@ func (ec *executionContext) _Contact_premfix(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Country_name(ctx context.Context, field graphql.CollectedField, obj *pkg.Country) (ret graphql.Marshaler) {
+func (ec *executionContext) _Country_name(ctx context.Context, field graphql.CollectedField, obj *models.Country) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3392,7 +3392,7 @@ func (ec *executionContext) _Country_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Country_code(ctx context.Context, field graphql.CollectedField, obj *pkg.Country) (ret graphql.Marshaler) {
+func (ec *executionContext) _Country_code(ctx context.Context, field graphql.CollectedField, obj *models.Country) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3429,7 +3429,7 @@ func (ec *executionContext) _Country_code(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _File_name(ctx context.Context, field graphql.CollectedField, obj *pkg.File) (ret graphql.Marshaler) {
+func (ec *executionContext) _File_name(ctx context.Context, field graphql.CollectedField, obj *models.File) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3466,7 +3466,7 @@ func (ec *executionContext) _File_name(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _File_type(ctx context.Context, field graphql.CollectedField, obj *pkg.File) (ret graphql.Marshaler) {
+func (ec *executionContext) _File_type(ctx context.Context, field graphql.CollectedField, obj *models.File) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3494,13 +3494,13 @@ func (ec *executionContext) _File_type(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _File_size(ctx context.Context, field graphql.CollectedField, obj *pkg.File) (ret graphql.Marshaler) {
+func (ec *executionContext) _File_size(ctx context.Context, field graphql.CollectedField, obj *models.File) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3528,13 +3528,13 @@ func (ec *executionContext) _File_size(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int64)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int64(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _File_width(ctx context.Context, field graphql.CollectedField, obj *pkg.File) (ret graphql.Marshaler) {
+func (ec *executionContext) _File_width(ctx context.Context, field graphql.CollectedField, obj *models.File) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3562,13 +3562,13 @@ func (ec *executionContext) _File_width(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _File_height(ctx context.Context, field graphql.CollectedField, obj *pkg.File) (ret graphql.Marshaler) {
+func (ec *executionContext) _File_height(ctx context.Context, field graphql.CollectedField, obj *models.File) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3596,13 +3596,13 @@ func (ec *executionContext) _File_height(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_id(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3639,7 +3639,7 @@ func (ec *executionContext) _Goal_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_creator(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_creator(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3676,7 +3676,7 @@ func (ec *executionContext) _Goal_creator(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_aim(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_aim(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3713,7 +3713,7 @@ func (ec *executionContext) _Goal_aim(ctx context.Context, field graphql.Collect
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_participants(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_participants(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3750,7 +3750,7 @@ func (ec *executionContext) _Goal_participants(ctx context.Context, field graphq
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_likes(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_likes(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3787,7 +3787,7 @@ func (ec *executionContext) _Goal_likes(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_watchers(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_watchers(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3824,7 +3824,7 @@ func (ec *executionContext) _Goal_watchers(ctx context.Context, field graphql.Co
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_reason(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_reason(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3861,7 +3861,7 @@ func (ec *executionContext) _Goal_reason(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_inspiration(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_inspiration(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3898,7 +3898,7 @@ func (ec *executionContext) _Goal_inspiration(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_details(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_details(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3935,7 +3935,7 @@ func (ec *executionContext) _Goal_details(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_type(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_type(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -3972,7 +3972,7 @@ func (ec *executionContext) _Goal_type(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_tags(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_tags(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4009,7 +4009,7 @@ func (ec *executionContext) _Goal_tags(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_similarGoals(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_similarGoals(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4046,7 +4046,7 @@ func (ec *executionContext) _Goal_similarGoals(ctx context.Context, field graphq
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_isAchieved(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_isAchieved(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4074,13 +4074,13 @@ func (ec *executionContext) _Goal_isAchieved(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_isPrivate(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_isPrivate(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4108,13 +4108,13 @@ func (ec *executionContext) _Goal_isPrivate(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Goal_journey(ctx context.Context, field graphql.CollectedField, obj *pkg.Goal) (ret graphql.Marshaler) {
+func (ec *executionContext) _Goal_journey(ctx context.Context, field graphql.CollectedField, obj *models.Goal) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4142,13 +4142,13 @@ func (ec *executionContext) _Goal_journey(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Journey)
+	res := resTmp.(*models.Journey)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOJourney2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourney(ctx, field.Selections, res)
+	return ec.marshalOJourney2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourney(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Group) (ret graphql.Marshaler) {
+func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *models.Group) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4185,7 +4185,7 @@ func (ec *executionContext) _Group_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Group_title(ctx context.Context, field graphql.CollectedField, obj *pkg.Group) (ret graphql.Marshaler) {
+func (ec *executionContext) _Group_title(ctx context.Context, field graphql.CollectedField, obj *models.Group) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4222,7 +4222,7 @@ func (ec *executionContext) _Group_title(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Group_details(ctx context.Context, field graphql.CollectedField, obj *pkg.Group) (ret graphql.Marshaler) {
+func (ec *executionContext) _Group_details(ctx context.Context, field graphql.CollectedField, obj *models.Group) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4259,7 +4259,7 @@ func (ec *executionContext) _Group_details(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Group_description(ctx context.Context, field graphql.CollectedField, obj *pkg.Group) (ret graphql.Marshaler) {
+func (ec *executionContext) _Group_description(ctx context.Context, field graphql.CollectedField, obj *models.Group) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4287,13 +4287,13 @@ func (ec *executionContext) _Group_description(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Group_type(ctx context.Context, field graphql.CollectedField, obj *pkg.Group) (ret graphql.Marshaler) {
+func (ec *executionContext) _Group_type(ctx context.Context, field graphql.CollectedField, obj *models.Group) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4321,13 +4321,13 @@ func (ec *executionContext) _Group_type(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Group_people(ctx context.Context, field graphql.CollectedField, obj *pkg.Group) (ret graphql.Marshaler) {
+func (ec *executionContext) _Group_people(ctx context.Context, field graphql.CollectedField, obj *models.Group) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4364,7 +4364,7 @@ func (ec *executionContext) _Group_people(ctx context.Context, field graphql.Col
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Image_name(ctx context.Context, field graphql.CollectedField, obj *pkg.Image) (ret graphql.Marshaler) {
+func (ec *executionContext) _Image_name(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4401,7 +4401,7 @@ func (ec *executionContext) _Image_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Image_type(ctx context.Context, field graphql.CollectedField, obj *pkg.Image) (ret graphql.Marshaler) {
+func (ec *executionContext) _Image_type(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4429,13 +4429,13 @@ func (ec *executionContext) _Image_type(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Image_size(ctx context.Context, field graphql.CollectedField, obj *pkg.Image) (ret graphql.Marshaler) {
+func (ec *executionContext) _Image_size(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4463,13 +4463,13 @@ func (ec *executionContext) _Image_size(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int64)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int64(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Image_width(ctx context.Context, field graphql.CollectedField, obj *pkg.Image) (ret graphql.Marshaler) {
+func (ec *executionContext) _Image_width(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4497,13 +4497,13 @@ func (ec *executionContext) _Image_width(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Image_height(ctx context.Context, field graphql.CollectedField, obj *pkg.Image) (ret graphql.Marshaler) {
+func (ec *executionContext) _Image_height(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4531,13 +4531,13 @@ func (ec *executionContext) _Image_height(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_details(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_details(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4574,7 +4574,7 @@ func (ec *executionContext) _Journey_details(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_isComplete(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_isComplete(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4602,13 +4602,13 @@ func (ec *executionContext) _Journey_isComplete(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_isInProgress(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_isInProgress(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4636,13 +4636,13 @@ func (ec *executionContext) _Journey_isInProgress(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_isStarted(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_isStarted(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4670,13 +4670,13 @@ func (ec *executionContext) _Journey_isStarted(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_type(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_type(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4713,7 +4713,7 @@ func (ec *executionContext) _Journey_type(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_steps(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_steps(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4750,7 +4750,7 @@ func (ec *executionContext) _Journey_steps(ctx context.Context, field graphql.Co
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Journey_progress(ctx context.Context, field graphql.CollectedField, obj *pkg.Journey) (ret graphql.Marshaler) {
+func (ec *executionContext) _Journey_progress(ctx context.Context, field graphql.CollectedField, obj *models.Journey) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4778,13 +4778,13 @@ func (ec *executionContext) _Journey_progress(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Language_name(ctx context.Context, field graphql.CollectedField, obj *pkg.Language) (ret graphql.Marshaler) {
+func (ec *executionContext) _Language_name(ctx context.Context, field graphql.CollectedField, obj *models.Language) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4821,7 +4821,7 @@ func (ec *executionContext) _Language_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Language_code(ctx context.Context, field graphql.CollectedField, obj *pkg.Language) (ret graphql.Marshaler) {
+func (ec *executionContext) _Language_code(ctx context.Context, field graphql.CollectedField, obj *models.Language) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4858,7 +4858,7 @@ func (ec *executionContext) _Language_code(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Location) (ret graphql.Marshaler) {
+func (ec *executionContext) _Location_id(ctx context.Context, field graphql.CollectedField, obj *models.Location) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4895,7 +4895,7 @@ func (ec *executionContext) _Location_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_longitude(ctx context.Context, field graphql.CollectedField, obj *pkg.Location) (ret graphql.Marshaler) {
+func (ec *executionContext) _Location_longitude(ctx context.Context, field graphql.CollectedField, obj *models.Location) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4932,7 +4932,7 @@ func (ec *executionContext) _Location_longitude(ctx context.Context, field graph
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_latitude(ctx context.Context, field graphql.CollectedField, obj *pkg.Location) (ret graphql.Marshaler) {
+func (ec *executionContext) _Location_latitude(ctx context.Context, field graphql.CollectedField, obj *models.Location) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -4969,7 +4969,7 @@ func (ec *executionContext) _Location_latitude(ctx context.Context, field graphq
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_name(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_name(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5006,7 +5006,7 @@ func (ec *executionContext) _MatchedUser_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_username(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_username(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5043,7 +5043,7 @@ func (ec *executionContext) _MatchedUser_username(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_firstname(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_firstname(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5080,7 +5080,7 @@ func (ec *executionContext) _MatchedUser_firstname(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_lastname(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_lastname(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5117,7 +5117,7 @@ func (ec *executionContext) _MatchedUser_lastname(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_status(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_status(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5154,7 +5154,7 @@ func (ec *executionContext) _MatchedUser_status(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_type(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_type(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5191,7 +5191,7 @@ func (ec *executionContext) _MatchedUser_type(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_emailAddress(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_emailAddress(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5228,7 +5228,7 @@ func (ec *executionContext) _MatchedUser_emailAddress(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MatchedUser_gender(ctx context.Context, field graphql.CollectedField, obj *pkg.MatchedUser) (ret graphql.Marshaler) {
+func (ec *executionContext) _MatchedUser_gender(ctx context.Context, field graphql.CollectedField, obj *models.MatchedUser) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5291,7 +5291,7 @@ func (ec *executionContext) _Mutation_registerUser(ctx context.Context, field gr
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RegisterUser(rctx, args["user"].(pkg.RegisterInput))
+		return ec.resolvers.Mutation().RegisterUser(rctx, args["user"].(models.RegisterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5335,7 +5335,7 @@ func (ec *executionContext) _Mutation_loginUser(ctx context.Context, field graph
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LoginUser(rctx, args["user"].(pkg.LoginInput))
+		return ec.resolvers.Mutation().LoginUser(rctx, args["user"].(models.LoginInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5423,7 +5423,7 @@ func (ec *executionContext) _Mutation_addPost(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddPost(rctx, args["post"].(pkg.PostPostInput))
+		return ec.resolvers.Mutation().AddPost(rctx, args["post"].(models.PostPostInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5467,7 +5467,7 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePost(rctx, args["post"].(pkg.UpdatePostInput))
+		return ec.resolvers.Mutation().UpdatePost(rctx, args["post"].(models.UpdatePostInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5511,7 +5511,7 @@ func (ec *executionContext) _Mutation_addSpace(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddSpace(rctx, args["space"].(pkg.PostSpaceInput))
+		return ec.resolvers.Mutation().AddSpace(rctx, args["space"].(models.PostSpaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5555,7 +5555,7 @@ func (ec *executionContext) _Mutation_updateSpace(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSpace(rctx, args["space"].(pkg.UpdateSpaceInput))
+		return ec.resolvers.Mutation().UpdateSpace(rctx, args["space"].(models.UpdateSpaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5599,7 +5599,7 @@ func (ec *executionContext) _Mutation_addGoal(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddGoal(rctx, args["goal"].(pkg.PostGoalInput))
+		return ec.resolvers.Mutation().AddGoal(rctx, args["goal"].(models.PostGoalInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5643,7 +5643,7 @@ func (ec *executionContext) _Mutation_updateGoal(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateGoal(rctx, args["goal"].(pkg.UpdateGoalInput))
+		return ec.resolvers.Mutation().UpdateGoal(rctx, args["goal"].(models.UpdateGoalInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5699,10 +5699,10 @@ func (ec *executionContext) _Mutation_addTask(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Task)
+	res := resTmp.(string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateTask(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5731,7 +5731,7 @@ func (ec *executionContext) _Mutation_updateTask(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTask(rctx, args["task"].(pkg.UpdateTaskInput))
+		return ec.resolvers.Mutation().UpdateTask(rctx, args["task"].(models.UpdateTaskInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5787,10 +5787,10 @@ func (ec *executionContext) _Mutation_postUserMessage(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.UserMessage)
+	res := resTmp.(*models.UserMessage)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx, field.Selections, res)
+	return ec.marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_addGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5819,7 +5819,7 @@ func (ec *executionContext) _Mutation_addGroup(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddGroup(rctx, args["group"].(pkg.PostGroupInput))
+		return ec.resolvers.Mutation().AddGroup(rctx, args["group"].(models.PostGroupInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5863,7 +5863,7 @@ func (ec *executionContext) _Mutation_updateGroup(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateGroup(rctx, args["group"].(pkg.UpdateGroupInput))
+		return ec.resolvers.Mutation().UpdateGroup(rctx, args["group"].(models.UpdateGroupInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5881,7 +5881,7 @@ func (ec *executionContext) _Mutation_updateGroup(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_id(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5918,7 +5918,7 @@ func (ec *executionContext) _Profile_id(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_userID(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_userID(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5955,7 +5955,7 @@ func (ec *executionContext) _Profile_userID(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_level(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_level(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -5983,13 +5983,13 @@ func (ec *executionContext) _Profile_level(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_rings(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_rings(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6017,13 +6017,13 @@ func (ec *executionContext) _Profile_rings(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int32)
+	res := resTmp.(*int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2int32(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_about(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_about(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6060,7 +6060,7 @@ func (ec *executionContext) _Profile_about(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_profileImage(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_profileImage(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6088,13 +6088,13 @@ func (ec *executionContext) _Profile_profileImage(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Image)
+	res := resTmp.(*models.Image)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOImage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐImage(ctx, field.Selections, res)
+	return ec.marshalOImage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐImage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_backgroundImage(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_backgroundImage(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6122,13 +6122,13 @@ func (ec *executionContext) _Profile_backgroundImage(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Image)
+	res := resTmp.(*models.Image)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOImage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐImage(ctx, field.Selections, res)
+	return ec.marshalOImage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐImage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_followers(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_followers(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6165,7 +6165,7 @@ func (ec *executionContext) _Profile_followers(ctx context.Context, field graphq
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_following(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_following(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6202,7 +6202,7 @@ func (ec *executionContext) _Profile_following(ctx context.Context, field graphq
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Profile_dateLastUpdated(ctx context.Context, field graphql.CollectedField, obj *pkg.Profile) (ret graphql.Marshaler) {
+func (ec *executionContext) _Profile_dateLastUpdated(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -6230,10 +6230,10 @@ func (ec *executionContext) _Profile_dateLastUpdated(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6267,10 +6267,10 @@ func (ec *executionContext) _Query_getAllUsers(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.User)
+	res := resTmp.([]*models.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6308,10 +6308,10 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.User)
+	res := resTmp.(*models.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getUserByUserName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6349,10 +6349,10 @@ func (ec *executionContext) _Query_getUserByUserName(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.User)
+	res := resTmp.(*models.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getUserByEmailAddress(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6390,10 +6390,10 @@ func (ec *executionContext) _Query_getUserByEmailAddress(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.User)
+	res := resTmp.(*models.User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getPost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6431,10 +6431,10 @@ func (ec *executionContext) _Query_getPost(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.UserPost)
+	res := resTmp.(*models.UserPost)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx, field.Selections, res)
+	return ec.marshalOUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllPosts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6475,10 +6475,10 @@ func (ec *executionContext) _Query_getAllPosts(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.UserPost)
+	res := resTmp.([]*models.UserPost)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNUserPost2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx, field.Selections, res)
+	return ec.marshalNUserPost2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getSpace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6507,7 +6507,7 @@ func (ec *executionContext) _Query_getSpace(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSpace(rctx, args["id"].(string))
+		return ec.resolvers.Query().GetSpace(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6516,10 +6516,10 @@ func (ec *executionContext) _Query_getSpace(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Space)
+	res := resTmp.(*models.Space)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx, field.Selections, res)
+	return ec.marshalOSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllSpaces(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6553,10 +6553,10 @@ func (ec *executionContext) _Query_getAllSpaces(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.Space)
+	res := resTmp.([]*models.Space)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNSpace2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx, field.Selections, res)
+	return ec.marshalNSpace2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getGoal(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6594,10 +6594,10 @@ func (ec *executionContext) _Query_getGoal(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Goal)
+	res := resTmp.(*models.Goal)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx, field.Selections, res)
+	return ec.marshalOGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllGoals(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6631,10 +6631,10 @@ func (ec *executionContext) _Query_getAllGoals(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.Goal)
+	res := resTmp.([]*models.Goal)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNGoal2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx, field.Selections, res)
+	return ec.marshalNGoal2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getTask(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6672,10 +6672,10 @@ func (ec *executionContext) _Query_getTask(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Task)
+	res := resTmp.(*models.Task)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx, field.Selections, res)
+	return ec.marshalOTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllTasks(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6709,10 +6709,10 @@ func (ec *executionContext) _Query_getAllTasks(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.Task)
+	res := resTmp.([]*models.Task)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTask2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx, field.Selections, res)
+	return ec.marshalNTask2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getProfile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6750,10 +6750,10 @@ func (ec *executionContext) _Query_getProfile(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Profile)
+	res := resTmp.(*models.Profile)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOProfile2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐProfile(ctx, field.Selections, res)
+	return ec.marshalOProfile2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐProfile(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetLocationDistance(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6835,10 +6835,10 @@ func (ec *executionContext) _Query_userChat(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Chat)
+	res := resTmp.(*models.Chat)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOChat2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐChat(ctx, field.Selections, res)
+	return ec.marshalOChat2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐChat(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6876,10 +6876,10 @@ func (ec *executionContext) _Query_getGroup(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*pkg.Group)
+	res := resTmp.(*models.Group)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx, field.Selections, res)
+	return ec.marshalOGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllGroups(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6913,10 +6913,10 @@ func (ec *executionContext) _Query_getAllGroups(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.Group)
+	res := resTmp.([]*models.Group)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNGroup2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx, field.Selections, res)
+	return ec.marshalNGroup2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAllMatches(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6950,10 +6950,10 @@ func (ec *executionContext) _Query_getAllMatches(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*pkg.MatchedUser)
+	res := resTmp.([]*models.MatchedUser)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNMatchedUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐMatchedUser(ctx, field.Selections, res)
+	return ec.marshalNMatchedUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐMatchedUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -7031,7 +7031,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Share_party(ctx context.Context, field graphql.CollectedField, obj *pkg.Share) (ret graphql.Marshaler) {
+func (ec *executionContext) _Share_party(ctx context.Context, field graphql.CollectedField, obj *models.Share) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7068,7 +7068,7 @@ func (ec *executionContext) _Share_party(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_id(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7094,15 +7094,18 @@ func (ec *executionContext) _Space_id(ctx context.Context, field graphql.Collect
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_creator(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_creator(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7130,13 +7133,13 @@ func (ec *executionContext) _Space_creator(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_topic(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_topic(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7164,13 +7167,13 @@ func (ec *executionContext) _Space_topic(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_details(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_details(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7198,13 +7201,13 @@ func (ec *executionContext) _Space_details(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_description(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_description(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7232,13 +7235,13 @@ func (ec *executionContext) _Space_description(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_type(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_type(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7266,13 +7269,13 @@ func (ec *executionContext) _Space_type(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_tags(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_tags(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7309,7 +7312,7 @@ func (ec *executionContext) _Space_tags(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_date(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_date(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7337,13 +7340,13 @@ func (ec *executionContext) _Space_date(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_followers(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_followers(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7380,7 +7383,7 @@ func (ec *executionContext) _Space_followers(ctx context.Context, field graphql.
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Space_managers(ctx context.Context, field graphql.CollectedField, obj *pkg.Space) (ret graphql.Marshaler) {
+func (ec *executionContext) _Space_managers(ctx context.Context, field graphql.CollectedField, obj *models.Space) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7417,7 +7420,7 @@ func (ec *executionContext) _Space_managers(ctx context.Context, field graphql.C
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _State_name(ctx context.Context, field graphql.CollectedField, obj *pkg.State) (ret graphql.Marshaler) {
+func (ec *executionContext) _State_name(ctx context.Context, field graphql.CollectedField, obj *models.State) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7454,7 +7457,7 @@ func (ec *executionContext) _State_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _State_code(ctx context.Context, field graphql.CollectedField, obj *pkg.State) (ret graphql.Marshaler) {
+func (ec *executionContext) _State_code(ctx context.Context, field graphql.CollectedField, obj *models.State) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7519,13 +7522,13 @@ func (ec *executionContext) _Subscription_userMessageAdded(ctx context.Context, 
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
 }
 
-func (ec *executionContext) _Task_id(ctx context.Context, field graphql.CollectedField, obj *pkg.Task) (ret graphql.Marshaler) {
+func (ec *executionContext) _Task_id(ctx context.Context, field graphql.CollectedField, obj *models.Task) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7553,13 +7556,13 @@ func (ec *executionContext) _Task_id(ctx context.Context, field graphql.Collecte
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Task_text(ctx context.Context, field graphql.CollectedField, obj *pkg.Task) (ret graphql.Marshaler) {
+func (ec *executionContext) _Task_text(ctx context.Context, field graphql.CollectedField, obj *models.Task) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7596,7 +7599,7 @@ func (ec *executionContext) _Task_text(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7624,13 +7627,13 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7658,13 +7661,13 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_username(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_username(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7692,13 +7695,13 @@ func (ec *executionContext) _User_username(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_password(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_password(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7726,13 +7729,13 @@ func (ec *executionContext) _User_password(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_firstname(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_firstname(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7760,13 +7763,13 @@ func (ec *executionContext) _User_firstname(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_lastname(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_lastname(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7794,13 +7797,13 @@ func (ec *executionContext) _User_lastname(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_middlename(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_middlename(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7828,13 +7831,13 @@ func (ec *executionContext) _User_middlename(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_status(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_status(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7862,13 +7865,13 @@ func (ec *executionContext) _User_status(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_type(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_type(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7896,13 +7899,13 @@ func (ec *executionContext) _User_type(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_emailAddress(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_emailAddress(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7930,13 +7933,13 @@ func (ec *executionContext) _User_emailAddress(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_gender(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_gender(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7964,13 +7967,13 @@ func (ec *executionContext) _User_gender(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_birthDate(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_birthDate(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -7998,13 +8001,13 @@ func (ec *executionContext) _User_birthDate(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_dateJoined(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_dateJoined(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8032,13 +8035,13 @@ func (ec *executionContext) _User_dateJoined(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_mobilePhoneNumber(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_mobilePhoneNumber(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8066,13 +8069,13 @@ func (ec *executionContext) _User_mobilePhoneNumber(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Contact)
+	res := resTmp.(*models.Contact)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOContact2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐContact(ctx, field.Selections, res)
+	return ec.marshalOContact2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐContact(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_billingAddress(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_billingAddress(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8100,13 +8103,13 @@ func (ec *executionContext) _User_billingAddress(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Address)
+	res := resTmp.(*models.Address)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOAddress2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐAddress(ctx, field.Selections, res)
+	return ec.marshalOAddress2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐAddress(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_mailingAddress(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_mailingAddress(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8134,13 +8137,13 @@ func (ec *executionContext) _User_mailingAddress(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Address)
+	res := resTmp.(*models.Address)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOAddress2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐAddress(ctx, field.Selections, res)
+	return ec.marshalOAddress2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐAddress(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_languages(ctx context.Context, field graphql.CollectedField, obj *pkg.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_languages(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8171,13 +8174,13 @@ func (ec *executionContext) _User_languages(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]pkg.Language)
+	res := resTmp.([]*models.Language)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLanguage2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐLanguage(ctx, field.Selections, res)
+	return ec.marshalNLanguage2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLanguage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_id(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_id(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8214,7 +8217,7 @@ func (ec *executionContext) _UserMessage_id(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_sender(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_sender(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8251,7 +8254,7 @@ func (ec *executionContext) _UserMessage_sender(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_receiver(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_receiver(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8288,7 +8291,7 @@ func (ec *executionContext) _UserMessage_receiver(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_type(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_type(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8325,7 +8328,7 @@ func (ec *executionContext) _UserMessage_type(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_text(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_text(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8362,7 +8365,7 @@ func (ec *executionContext) _UserMessage_text(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_timestamp(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_timestamp(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8399,7 +8402,7 @@ func (ec *executionContext) _UserMessage_timestamp(ctx context.Context, field gr
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_isSeen(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_isSeen(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8436,7 +8439,7 @@ func (ec *executionContext) _UserMessage_isSeen(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_isSent(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_isSent(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8473,7 +8476,7 @@ func (ec *executionContext) _UserMessage_isSent(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserMessage_isReceived(ctx context.Context, field graphql.CollectedField, obj *pkg.UserMessage) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserMessage_isReceived(ctx context.Context, field graphql.CollectedField, obj *models.UserMessage) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8510,7 +8513,7 @@ func (ec *executionContext) _UserMessage_isReceived(ctx context.Context, field g
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_id(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_id(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8547,7 +8550,7 @@ func (ec *executionContext) _UserPost_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_author(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_author(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8584,7 +8587,7 @@ func (ec *executionContext) _UserPost_author(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_anonymous(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_anonymous(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8612,13 +8615,13 @@ func (ec *executionContext) _UserPost_anonymous(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*bool)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_topic(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_topic(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8655,7 +8658,7 @@ func (ec *executionContext) _UserPost_topic(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_category(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_category(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8683,13 +8686,13 @@ func (ec *executionContext) _UserPost_category(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_contentText(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_contentText(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8726,7 +8729,7 @@ func (ec *executionContext) _UserPost_contentText(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_type(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_type(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8763,7 +8766,7 @@ func (ec *executionContext) _UserPost_type(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_latitude(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_latitude(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8791,13 +8794,13 @@ func (ec *executionContext) _UserPost_latitude(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(*float64)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_longitude(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_longitude(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8825,13 +8828,13 @@ func (ec *executionContext) _UserPost_longitude(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(*float64)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_date(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_date(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8859,13 +8862,13 @@ func (ec *executionContext) _UserPost_date(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_contentPhoto(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_contentPhoto(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8893,13 +8896,13 @@ func (ec *executionContext) _UserPost_contentPhoto(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.Image)
+	res := resTmp.(*models.Image)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOImage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐImage(ctx, field.Selections, res)
+	return ec.marshalOImage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐImage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_contentFile(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_contentFile(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8927,13 +8930,13 @@ func (ec *executionContext) _UserPost_contentFile(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(pkg.File)
+	res := resTmp.(*models.File)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOFile2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐFile(ctx, field.Selections, res)
+	return ec.marshalOFile2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐFile(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_likes(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_likes(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -8970,7 +8973,7 @@ func (ec *executionContext) _UserPost_likes(ctx context.Context, field graphql.C
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_agreements(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_agreements(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -9007,7 +9010,7 @@ func (ec *executionContext) _UserPost_agreements(ctx context.Context, field grap
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_followers(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_followers(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -9044,7 +9047,7 @@ func (ec *executionContext) _UserPost_followers(ctx context.Context, field graph
 	return ec.marshalNString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_comments(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_comments(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -9075,13 +9078,13 @@ func (ec *executionContext) _UserPost_comments(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]pkg.Comment)
+	res := resTmp.([]*models.Comment)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNComment2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐComment(ctx, field.Selections, res)
+	return ec.marshalNComment2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐComment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _UserPost_shares(ctx context.Context, field graphql.CollectedField, obj *pkg.UserPost) (ret graphql.Marshaler) {
+func (ec *executionContext) _UserPost_shares(ctx context.Context, field graphql.CollectedField, obj *models.UserPost) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
 		if r := recover(); r != nil {
@@ -9112,10 +9115,10 @@ func (ec *executionContext) _UserPost_shares(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]pkg.Share)
+	res := resTmp.([]*models.Share)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNShare2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐShare(ctx, field.Selections, res)
+	return ec.marshalNShare2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐShare(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -10269,8 +10272,8 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputJourneyInput(ctx context.Context, obj interface{}) (pkg.JourneyInput, error) {
-	var it pkg.JourneyInput
+func (ec *executionContext) unmarshalInputJourneyInput(ctx context.Context, obj interface{}) (models.JourneyInput, error) {
+	var it models.JourneyInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10323,8 +10326,8 @@ func (ec *executionContext) unmarshalInputJourneyInput(ctx context.Context, obj 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLocationInput(ctx context.Context, obj interface{}) (pkg.LocationInput, error) {
-	var it pkg.LocationInput
+func (ec *executionContext) unmarshalInputLocationInput(ctx context.Context, obj interface{}) (models.LocationInput, error) {
+	var it models.LocationInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10347,8 +10350,8 @@ func (ec *executionContext) unmarshalInputLocationInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (pkg.LoginInput, error) {
-	var it pkg.LoginInput
+func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (models.LoginInput, error) {
+	var it models.LoginInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10371,8 +10374,8 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPaginationInput(ctx context.Context, obj interface{}) (pkg.PaginationInput, error) {
-	var it pkg.PaginationInput
+func (ec *executionContext) unmarshalInputPaginationInput(ctx context.Context, obj interface{}) (models.PaginationInput, error) {
+	var it models.PaginationInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10395,8 +10398,8 @@ func (ec *executionContext) unmarshalInputPaginationInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPostGoalInput(ctx context.Context, obj interface{}) (pkg.PostGoalInput, error) {
-	var it pkg.PostGoalInput
+func (ec *executionContext) unmarshalInputPostGoalInput(ctx context.Context, obj interface{}) (models.PostGoalInput, error) {
+	var it models.PostGoalInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10481,7 +10484,7 @@ func (ec *executionContext) unmarshalInputPostGoalInput(ctx context.Context, obj
 			}
 		case "journey":
 			var err error
-			it.Journey, err = ec.unmarshalOJourneyInput2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourneyInput(ctx, v)
+			it.Journey, err = ec.unmarshalOJourneyInput2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourneyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10491,8 +10494,8 @@ func (ec *executionContext) unmarshalInputPostGoalInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPostGroupInput(ctx context.Context, obj interface{}) (pkg.PostGroupInput, error) {
-	var it pkg.PostGroupInput
+func (ec *executionContext) unmarshalInputPostGroupInput(ctx context.Context, obj interface{}) (models.PostGroupInput, error) {
+	var it models.PostGroupInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10533,8 +10536,8 @@ func (ec *executionContext) unmarshalInputPostGroupInput(ctx context.Context, ob
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPostPostInput(ctx context.Context, obj interface{}) (pkg.PostPostInput, error) {
-	var it pkg.PostPostInput
+func (ec *executionContext) unmarshalInputPostPostInput(ctx context.Context, obj interface{}) (models.PostPostInput, error) {
+	var it models.PostPostInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10605,8 +10608,8 @@ func (ec *executionContext) unmarshalInputPostPostInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPostSpaceInput(ctx context.Context, obj interface{}) (pkg.PostSpaceInput, error) {
-	var it pkg.PostSpaceInput
+func (ec *executionContext) unmarshalInputPostSpaceInput(ctx context.Context, obj interface{}) (models.PostSpaceInput, error) {
+	var it models.PostSpaceInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10671,8 +10674,8 @@ func (ec *executionContext) unmarshalInputPostSpaceInput(ctx context.Context, ob
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPostTaskInput(ctx context.Context, obj interface{}) (pkg.PostTaskInput, error) {
-	var it pkg.PostTaskInput
+func (ec *executionContext) unmarshalInputPostTaskInput(ctx context.Context, obj interface{}) (models.PostTaskInput, error) {
+	var it models.PostTaskInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10695,8 +10698,8 @@ func (ec *executionContext) unmarshalInputPostTaskInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj interface{}) (pkg.RegisterInput, error) {
-	var it pkg.RegisterInput
+func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj interface{}) (models.RegisterInput, error) {
+	var it models.RegisterInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10743,8 +10746,8 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateGoalInput(ctx context.Context, obj interface{}) (pkg.UpdateGoalInput, error) {
-	var it pkg.UpdateGoalInput
+func (ec *executionContext) unmarshalInputUpdateGoalInput(ctx context.Context, obj interface{}) (models.UpdateGoalInput, error) {
+	var it models.UpdateGoalInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10835,7 +10838,7 @@ func (ec *executionContext) unmarshalInputUpdateGoalInput(ctx context.Context, o
 			}
 		case "journey":
 			var err error
-			it.Journey, err = ec.unmarshalOJourneyInput2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourneyInput(ctx, v)
+			it.Journey, err = ec.unmarshalOJourneyInput2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourneyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10845,8 +10848,8 @@ func (ec *executionContext) unmarshalInputUpdateGoalInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, obj interface{}) (pkg.UpdateGroupInput, error) {
-	var it pkg.UpdateGroupInput
+func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, obj interface{}) (models.UpdateGroupInput, error) {
+	var it models.UpdateGroupInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10893,8 +10896,8 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, obj interface{}) (pkg.UpdatePostInput, error) {
-	var it pkg.UpdatePostInput
+func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, obj interface{}) (models.UpdatePostInput, error) {
+	var it models.UpdatePostInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -10971,15 +10974,15 @@ func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateSpaceInput(ctx context.Context, obj interface{}) (pkg.UpdateSpaceInput, error) {
-	var it pkg.UpdateSpaceInput
+func (ec *executionContext) unmarshalInputUpdateSpaceInput(ctx context.Context, obj interface{}) (models.UpdateSpaceInput, error) {
+	var it models.UpdateSpaceInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
 		case "id":
 			var err error
-			it.ID, err = ec.unmarshalNString2string(ctx, v)
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -11043,8 +11046,8 @@ func (ec *executionContext) unmarshalInputUpdateSpaceInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, obj interface{}) (pkg.UpdateTaskInput, error) {
-	var it pkg.UpdateTaskInput
+func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, obj interface{}) (models.UpdateTaskInput, error) {
+	var it models.UpdateTaskInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -11083,7 +11086,7 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 
 var addressImplementors = []string{"Address"}
 
-func (ec *executionContext) _Address(ctx context.Context, sel ast.SelectionSet, obj *pkg.Address) graphql.Marshaler {
+func (ec *executionContext) _Address(ctx context.Context, sel ast.SelectionSet, obj *models.Address) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, addressImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11131,7 +11134,7 @@ func (ec *executionContext) _Address(ctx context.Context, sel ast.SelectionSet, 
 
 var chatImplementors = []string{"Chat"}
 
-func (ec *executionContext) _Chat(ctx context.Context, sel ast.SelectionSet, obj *pkg.Chat) graphql.Marshaler {
+func (ec *executionContext) _Chat(ctx context.Context, sel ast.SelectionSet, obj *models.Chat) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, chatImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11163,7 +11166,7 @@ func (ec *executionContext) _Chat(ctx context.Context, sel ast.SelectionSet, obj
 
 var cityImplementors = []string{"City"}
 
-func (ec *executionContext) _City(ctx context.Context, sel ast.SelectionSet, obj *pkg.City) graphql.Marshaler {
+func (ec *executionContext) _City(ctx context.Context, sel ast.SelectionSet, obj *models.City) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, cityImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11195,7 +11198,7 @@ func (ec *executionContext) _City(ctx context.Context, sel ast.SelectionSet, obj
 
 var commentImplementors = []string{"Comment"}
 
-func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, obj *pkg.Comment) graphql.Marshaler {
+func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, obj *models.Comment) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, commentImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11226,7 +11229,7 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 
 var contactImplementors = []string{"Contact"}
 
-func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, obj *pkg.Contact) graphql.Marshaler {
+func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, obj *models.Contact) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, contactImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11268,7 +11271,7 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 
 var countryImplementors = []string{"Country"}
 
-func (ec *executionContext) _Country(ctx context.Context, sel ast.SelectionSet, obj *pkg.Country) graphql.Marshaler {
+func (ec *executionContext) _Country(ctx context.Context, sel ast.SelectionSet, obj *models.Country) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, countryImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11300,7 +11303,7 @@ func (ec *executionContext) _Country(ctx context.Context, sel ast.SelectionSet, 
 
 var fileImplementors = []string{"File"}
 
-func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj *pkg.File) graphql.Marshaler {
+func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj *models.File) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, fileImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11335,7 +11338,7 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 
 var goalImplementors = []string{"Goal"}
 
-func (ec *executionContext) _Goal(ctx context.Context, sel ast.SelectionSet, obj *pkg.Goal) graphql.Marshaler {
+func (ec *executionContext) _Goal(ctx context.Context, sel ast.SelectionSet, obj *models.Goal) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, goalImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11423,7 +11426,7 @@ func (ec *executionContext) _Goal(ctx context.Context, sel ast.SelectionSet, obj
 
 var groupImplementors = []string{"Group"}
 
-func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, obj *pkg.Group) graphql.Marshaler {
+func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, obj *models.Group) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, groupImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11469,7 +11472,7 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 
 var imageImplementors = []string{"Image"}
 
-func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, obj *pkg.Image) graphql.Marshaler {
+func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, obj *models.Image) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, imageImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11504,7 +11507,7 @@ func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, ob
 
 var journeyImplementors = []string{"Journey"}
 
-func (ec *executionContext) _Journey(ctx context.Context, sel ast.SelectionSet, obj *pkg.Journey) graphql.Marshaler {
+func (ec *executionContext) _Journey(ctx context.Context, sel ast.SelectionSet, obj *models.Journey) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, journeyImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11549,7 +11552,7 @@ func (ec *executionContext) _Journey(ctx context.Context, sel ast.SelectionSet, 
 
 var languageImplementors = []string{"Language"}
 
-func (ec *executionContext) _Language(ctx context.Context, sel ast.SelectionSet, obj *pkg.Language) graphql.Marshaler {
+func (ec *executionContext) _Language(ctx context.Context, sel ast.SelectionSet, obj *models.Language) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, languageImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11581,7 +11584,7 @@ func (ec *executionContext) _Language(ctx context.Context, sel ast.SelectionSet,
 
 var locationImplementors = []string{"Location"}
 
-func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *pkg.Location) graphql.Marshaler {
+func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *models.Location) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, locationImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11618,7 +11621,7 @@ func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet,
 
 var matchedUserImplementors = []string{"MatchedUser"}
 
-func (ec *executionContext) _MatchedUser(ctx context.Context, sel ast.SelectionSet, obj *pkg.MatchedUser) graphql.Marshaler {
+func (ec *executionContext) _MatchedUser(ctx context.Context, sel ast.SelectionSet, obj *models.MatchedUser) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, matchedUserImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -11776,7 +11779,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 var profileImplementors = []string{"Profile"}
 
-func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, obj *pkg.Profile) graphql.Marshaler {
+func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, obj *models.Profile) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, profileImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12085,7 +12088,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 var shareImplementors = []string{"Share"}
 
-func (ec *executionContext) _Share(ctx context.Context, sel ast.SelectionSet, obj *pkg.Share) graphql.Marshaler {
+func (ec *executionContext) _Share(ctx context.Context, sel ast.SelectionSet, obj *models.Share) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, shareImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12112,7 +12115,7 @@ func (ec *executionContext) _Share(ctx context.Context, sel ast.SelectionSet, ob
 
 var spaceImplementors = []string{"Space"}
 
-func (ec *executionContext) _Space(ctx context.Context, sel ast.SelectionSet, obj *pkg.Space) graphql.Marshaler {
+func (ec *executionContext) _Space(ctx context.Context, sel ast.SelectionSet, obj *models.Space) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, spaceImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12123,6 +12126,9 @@ func (ec *executionContext) _Space(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = graphql.MarshalString("Space")
 		case "id":
 			out.Values[i] = ec._Space_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "creator":
 			out.Values[i] = ec._Space_creator(ctx, field, obj)
 		case "topic":
@@ -12163,7 +12169,7 @@ func (ec *executionContext) _Space(ctx context.Context, sel ast.SelectionSet, ob
 
 var stateImplementors = []string{"State"}
 
-func (ec *executionContext) _State(ctx context.Context, sel ast.SelectionSet, obj *pkg.State) graphql.Marshaler {
+func (ec *executionContext) _State(ctx context.Context, sel ast.SelectionSet, obj *models.State) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, stateImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12215,7 +12221,7 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 
 var taskImplementors = []string{"Task"}
 
-func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj *pkg.Task) graphql.Marshaler {
+func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj *models.Task) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, taskImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12244,7 +12250,7 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 
 var userImplementors = []string{"User"}
 
-func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *pkg.User) graphql.Marshaler {
+func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *models.User) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, userImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12303,7 +12309,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 
 var userMessageImplementors = []string{"UserMessage"}
 
-func (ec *executionContext) _UserMessage(ctx context.Context, sel ast.SelectionSet, obj *pkg.UserMessage) graphql.Marshaler {
+func (ec *executionContext) _UserMessage(ctx context.Context, sel ast.SelectionSet, obj *models.UserMessage) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, userMessageImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12370,7 +12376,7 @@ func (ec *executionContext) _UserMessage(ctx context.Context, sel ast.SelectionS
 
 var userPostImplementors = []string{"UserPost"}
 
-func (ec *executionContext) _UserPost(ctx context.Context, sel ast.SelectionSet, obj *pkg.UserPost) graphql.Marshaler {
+func (ec *executionContext) _UserPost(ctx context.Context, sel ast.SelectionSet, obj *models.UserPost) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, userPostImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -12713,11 +12719,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNComment2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐComment(ctx context.Context, sel ast.SelectionSet, v pkg.Comment) graphql.Marshaler {
+func (ec *executionContext) marshalNComment2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐComment(ctx context.Context, sel ast.SelectionSet, v models.Comment) graphql.Marshaler {
 	return ec._Comment(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNComment2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐComment(ctx context.Context, sel ast.SelectionSet, v []pkg.Comment) graphql.Marshaler {
+func (ec *executionContext) marshalNComment2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐComment(ctx context.Context, sel ast.SelectionSet, v []*models.Comment) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -12741,7 +12747,7 @@ func (ec *executionContext) marshalNComment2ᚕgithubᚗcomᚋhackerrithmᚋblac
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNComment2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐComment(ctx, sel, v[i])
+			ret[i] = ec.marshalNComment2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐComment(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12752,6 +12758,16 @@ func (ec *executionContext) marshalNComment2ᚕgithubᚗcomᚋhackerrithmᚋblac
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalNComment2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐComment(ctx context.Context, sel ast.SelectionSet, v *models.Comment) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Comment(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
@@ -12768,11 +12784,11 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNGoal2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx context.Context, sel ast.SelectionSet, v pkg.Goal) graphql.Marshaler {
+func (ec *executionContext) marshalNGoal2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx context.Context, sel ast.SelectionSet, v models.Goal) graphql.Marshaler {
 	return ec._Goal(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNGoal2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx context.Context, sel ast.SelectionSet, v []*pkg.Goal) graphql.Marshaler {
+func (ec *executionContext) marshalNGoal2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx context.Context, sel ast.SelectionSet, v []*models.Goal) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -12796,7 +12812,7 @@ func (ec *executionContext) marshalNGoal2ᚕᚖgithubᚗcomᚋhackerrithmᚋblac
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx, sel, v[i])
+			ret[i] = ec.marshalNGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12809,7 +12825,7 @@ func (ec *executionContext) marshalNGoal2ᚕᚖgithubᚗcomᚋhackerrithmᚋblac
 	return ret
 }
 
-func (ec *executionContext) marshalNGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx context.Context, sel ast.SelectionSet, v *pkg.Goal) graphql.Marshaler {
+func (ec *executionContext) marshalNGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx context.Context, sel ast.SelectionSet, v *models.Goal) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12819,11 +12835,11 @@ func (ec *executionContext) marshalNGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfo
 	return ec._Goal(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNGroup2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx context.Context, sel ast.SelectionSet, v pkg.Group) graphql.Marshaler {
+func (ec *executionContext) marshalNGroup2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx context.Context, sel ast.SelectionSet, v models.Group) graphql.Marshaler {
 	return ec._Group(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNGroup2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx context.Context, sel ast.SelectionSet, v []*pkg.Group) graphql.Marshaler {
+func (ec *executionContext) marshalNGroup2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx context.Context, sel ast.SelectionSet, v []*models.Group) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -12847,7 +12863,7 @@ func (ec *executionContext) marshalNGroup2ᚕᚖgithubᚗcomᚋhackerrithmᚋbla
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx, sel, v[i])
+			ret[i] = ec.marshalNGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12860,7 +12876,7 @@ func (ec *executionContext) marshalNGroup2ᚕᚖgithubᚗcomᚋhackerrithmᚋbla
 	return ret
 }
 
-func (ec *executionContext) marshalNGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx context.Context, sel ast.SelectionSet, v *pkg.Group) graphql.Marshaler {
+func (ec *executionContext) marshalNGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx context.Context, sel ast.SelectionSet, v *models.Group) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12884,11 +12900,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNLanguage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐLanguage(ctx context.Context, sel ast.SelectionSet, v pkg.Language) graphql.Marshaler {
+func (ec *executionContext) marshalNLanguage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLanguage(ctx context.Context, sel ast.SelectionSet, v models.Language) graphql.Marshaler {
 	return ec._Language(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLanguage2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐLanguage(ctx context.Context, sel ast.SelectionSet, v []pkg.Language) graphql.Marshaler {
+func (ec *executionContext) marshalNLanguage2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLanguage(ctx context.Context, sel ast.SelectionSet, v []*models.Language) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -12912,7 +12928,7 @@ func (ec *executionContext) marshalNLanguage2ᚕgithubᚗcomᚋhackerrithmᚋbla
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNLanguage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐLanguage(ctx, sel, v[i])
+			ret[i] = ec.marshalNLanguage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLanguage(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12925,15 +12941,25 @@ func (ec *executionContext) marshalNLanguage2ᚕgithubᚗcomᚋhackerrithmᚋbla
 	return ret
 }
 
-func (ec *executionContext) unmarshalNLoginInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐLoginInput(ctx context.Context, v interface{}) (pkg.LoginInput, error) {
+func (ec *executionContext) marshalNLanguage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLanguage(ctx context.Context, sel ast.SelectionSet, v *models.Language) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Language(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNLoginInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐLoginInput(ctx context.Context, v interface{}) (models.LoginInput, error) {
 	return ec.unmarshalInputLoginInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNMatchedUser2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐMatchedUser(ctx context.Context, sel ast.SelectionSet, v pkg.MatchedUser) graphql.Marshaler {
+func (ec *executionContext) marshalNMatchedUser2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐMatchedUser(ctx context.Context, sel ast.SelectionSet, v models.MatchedUser) graphql.Marshaler {
 	return ec._MatchedUser(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMatchedUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐMatchedUser(ctx context.Context, sel ast.SelectionSet, v []*pkg.MatchedUser) graphql.Marshaler {
+func (ec *executionContext) marshalNMatchedUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐMatchedUser(ctx context.Context, sel ast.SelectionSet, v []*models.MatchedUser) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -12957,7 +12983,7 @@ func (ec *executionContext) marshalNMatchedUser2ᚕᚖgithubᚗcomᚋhackerrithm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMatchedUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐMatchedUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNMatchedUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐMatchedUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -12970,7 +12996,7 @@ func (ec *executionContext) marshalNMatchedUser2ᚕᚖgithubᚗcomᚋhackerrithm
 	return ret
 }
 
-func (ec *executionContext) marshalNMatchedUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐMatchedUser(ctx context.Context, sel ast.SelectionSet, v *pkg.MatchedUser) graphql.Marshaler {
+func (ec *executionContext) marshalNMatchedUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐMatchedUser(ctx context.Context, sel ast.SelectionSet, v *models.MatchedUser) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -12980,31 +13006,31 @@ func (ec *executionContext) marshalNMatchedUser2ᚖgithubᚗcomᚋhackerrithmᚋ
 	return ec._MatchedUser(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPostGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostGoalInput(ctx context.Context, v interface{}) (pkg.PostGoalInput, error) {
+func (ec *executionContext) unmarshalNPostGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostGoalInput(ctx context.Context, v interface{}) (models.PostGoalInput, error) {
 	return ec.unmarshalInputPostGoalInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNPostGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostGroupInput(ctx context.Context, v interface{}) (pkg.PostGroupInput, error) {
+func (ec *executionContext) unmarshalNPostGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostGroupInput(ctx context.Context, v interface{}) (models.PostGroupInput, error) {
 	return ec.unmarshalInputPostGroupInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNPostPostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostPostInput(ctx context.Context, v interface{}) (pkg.PostPostInput, error) {
+func (ec *executionContext) unmarshalNPostPostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostPostInput(ctx context.Context, v interface{}) (models.PostPostInput, error) {
 	return ec.unmarshalInputPostPostInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNPostSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐPostSpaceInput(ctx context.Context, v interface{}) (pkg.PostSpaceInput, error) {
+func (ec *executionContext) unmarshalNPostSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐPostSpaceInput(ctx context.Context, v interface{}) (models.PostSpaceInput, error) {
 	return ec.unmarshalInputPostSpaceInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNRegisterInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐRegisterInput(ctx context.Context, v interface{}) (pkg.RegisterInput, error) {
+func (ec *executionContext) unmarshalNRegisterInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐRegisterInput(ctx context.Context, v interface{}) (models.RegisterInput, error) {
 	return ec.unmarshalInputRegisterInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNShare2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐShare(ctx context.Context, sel ast.SelectionSet, v pkg.Share) graphql.Marshaler {
+func (ec *executionContext) marshalNShare2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐShare(ctx context.Context, sel ast.SelectionSet, v models.Share) graphql.Marshaler {
 	return ec._Share(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNShare2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐShare(ctx context.Context, sel ast.SelectionSet, v []pkg.Share) graphql.Marshaler {
+func (ec *executionContext) marshalNShare2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐShare(ctx context.Context, sel ast.SelectionSet, v []*models.Share) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -13028,7 +13054,7 @@ func (ec *executionContext) marshalNShare2ᚕgithubᚗcomᚋhackerrithmᚋblackf
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNShare2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐShare(ctx, sel, v[i])
+			ret[i] = ec.marshalNShare2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐShare(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -13041,11 +13067,21 @@ func (ec *executionContext) marshalNShare2ᚕgithubᚗcomᚋhackerrithmᚋblackf
 	return ret
 }
 
-func (ec *executionContext) marshalNSpace2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx context.Context, sel ast.SelectionSet, v pkg.Space) graphql.Marshaler {
+func (ec *executionContext) marshalNShare2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐShare(ctx context.Context, sel ast.SelectionSet, v *models.Share) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Share(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSpace2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx context.Context, sel ast.SelectionSet, v models.Space) graphql.Marshaler {
 	return ec._Space(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSpace2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx context.Context, sel ast.SelectionSet, v []*pkg.Space) graphql.Marshaler {
+func (ec *executionContext) marshalNSpace2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx context.Context, sel ast.SelectionSet, v []*models.Space) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -13069,7 +13105,7 @@ func (ec *executionContext) marshalNSpace2ᚕᚖgithubᚗcomᚋhackerrithmᚋbla
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx, sel, v[i])
+			ret[i] = ec.marshalNSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -13082,7 +13118,7 @@ func (ec *executionContext) marshalNSpace2ᚕᚖgithubᚗcomᚋhackerrithmᚋbla
 	return ret
 }
 
-func (ec *executionContext) marshalNSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx context.Context, sel ast.SelectionSet, v *pkg.Space) graphql.Marshaler {
+func (ec *executionContext) marshalNSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx context.Context, sel ast.SelectionSet, v *models.Space) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -13135,11 +13171,11 @@ func (ec *executionContext) marshalNString2ᚕstring(ctx context.Context, sel as
 	return ret
 }
 
-func (ec *executionContext) marshalNTask2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx context.Context, sel ast.SelectionSet, v pkg.Task) graphql.Marshaler {
+func (ec *executionContext) marshalNTask2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx context.Context, sel ast.SelectionSet, v models.Task) graphql.Marshaler {
 	return ec._Task(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTask2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx context.Context, sel ast.SelectionSet, v []*pkg.Task) graphql.Marshaler {
+func (ec *executionContext) marshalNTask2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx context.Context, sel ast.SelectionSet, v []*models.Task) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -13163,7 +13199,7 @@ func (ec *executionContext) marshalNTask2ᚕᚖgithubᚗcomᚋhackerrithmᚋblac
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx, sel, v[i])
+			ret[i] = ec.marshalNTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -13176,7 +13212,7 @@ func (ec *executionContext) marshalNTask2ᚕᚖgithubᚗcomᚋhackerrithmᚋblac
 	return ret
 }
 
-func (ec *executionContext) marshalNTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx context.Context, sel ast.SelectionSet, v *pkg.Task) graphql.Marshaler {
+func (ec *executionContext) marshalNTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx context.Context, sel ast.SelectionSet, v *models.Task) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -13200,31 +13236,31 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateGoalInput(ctx context.Context, v interface{}) (pkg.UpdateGoalInput, error) {
+func (ec *executionContext) unmarshalNUpdateGoalInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateGoalInput(ctx context.Context, v interface{}) (models.UpdateGoalInput, error) {
 	return ec.unmarshalInputUpdateGoalInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateGroupInput(ctx context.Context, v interface{}) (pkg.UpdateGroupInput, error) {
+func (ec *executionContext) unmarshalNUpdateGroupInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateGroupInput(ctx context.Context, v interface{}) (models.UpdateGroupInput, error) {
 	return ec.unmarshalInputUpdateGroupInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNUpdatePostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdatePostInput(ctx context.Context, v interface{}) (pkg.UpdatePostInput, error) {
+func (ec *executionContext) unmarshalNUpdatePostInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdatePostInput(ctx context.Context, v interface{}) (models.UpdatePostInput, error) {
 	return ec.unmarshalInputUpdatePostInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateSpaceInput(ctx context.Context, v interface{}) (pkg.UpdateSpaceInput, error) {
+func (ec *executionContext) unmarshalNUpdateSpaceInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateSpaceInput(ctx context.Context, v interface{}) (models.UpdateSpaceInput, error) {
 	return ec.unmarshalInputUpdateSpaceInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateTaskInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUpdateTaskInput(ctx context.Context, v interface{}) (pkg.UpdateTaskInput, error) {
+func (ec *executionContext) unmarshalNUpdateTaskInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUpdateTaskInput(ctx context.Context, v interface{}) (models.UpdateTaskInput, error) {
 	return ec.unmarshalInputUpdateTaskInput(ctx, v)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx context.Context, sel ast.SelectionSet, v pkg.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v models.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx context.Context, sel ast.SelectionSet, v []*pkg.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v []*models.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -13248,7 +13284,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblac
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -13261,7 +13297,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋhackerrithmᚋblac
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx context.Context, sel ast.SelectionSet, v *pkg.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v *models.User) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -13271,11 +13307,11 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfo
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserMessage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx context.Context, sel ast.SelectionSet, v pkg.UserMessage) graphql.Marshaler {
+func (ec *executionContext) marshalNUserMessage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx context.Context, sel ast.SelectionSet, v models.UserMessage) graphql.Marshaler {
 	return ec._UserMessage(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserMessage2ᚕgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx context.Context, sel ast.SelectionSet, v []pkg.UserMessage) graphql.Marshaler {
+func (ec *executionContext) marshalNUserMessage2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx context.Context, sel ast.SelectionSet, v []*models.UserMessage) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -13299,7 +13335,7 @@ func (ec *executionContext) marshalNUserMessage2ᚕgithubᚗcomᚋhackerrithmᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserMessage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx, sel, v[i])
+			ret[i] = ec.marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -13312,7 +13348,7 @@ func (ec *executionContext) marshalNUserMessage2ᚕgithubᚗcomᚋhackerrithmᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserMessage(ctx context.Context, sel ast.SelectionSet, v *pkg.UserMessage) graphql.Marshaler {
+func (ec *executionContext) marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserMessage(ctx context.Context, sel ast.SelectionSet, v *models.UserMessage) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -13322,11 +13358,11 @@ func (ec *executionContext) marshalNUserMessage2ᚖgithubᚗcomᚋhackerrithmᚋ
 	return ec._UserMessage(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserPost2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx context.Context, sel ast.SelectionSet, v pkg.UserPost) graphql.Marshaler {
+func (ec *executionContext) marshalNUserPost2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx context.Context, sel ast.SelectionSet, v models.UserPost) graphql.Marshaler {
 	return ec._UserPost(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserPost2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx context.Context, sel ast.SelectionSet, v []*pkg.UserPost) graphql.Marshaler {
+func (ec *executionContext) marshalNUserPost2ᚕᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx context.Context, sel ast.SelectionSet, v []*models.UserPost) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -13350,7 +13386,7 @@ func (ec *executionContext) marshalNUserPost2ᚕᚖgithubᚗcomᚋhackerrithmᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx, sel, v[i])
+			ret[i] = ec.marshalNUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -13363,7 +13399,7 @@ func (ec *executionContext) marshalNUserPost2ᚕᚖgithubᚗcomᚋhackerrithmᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx context.Context, sel ast.SelectionSet, v *pkg.UserPost) graphql.Marshaler {
+func (ec *executionContext) marshalNUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx context.Context, sel ast.SelectionSet, v *models.UserPost) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -13599,8 +13635,15 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAddress2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐAddress(ctx context.Context, sel ast.SelectionSet, v pkg.Address) graphql.Marshaler {
+func (ec *executionContext) marshalOAddress2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐAddress(ctx context.Context, sel ast.SelectionSet, v models.Address) graphql.Marshaler {
 	return ec._Address(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOAddress2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐAddress(ctx context.Context, sel ast.SelectionSet, v *models.Address) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Address(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
@@ -13626,31 +13669,59 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOChat2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐChat(ctx context.Context, sel ast.SelectionSet, v pkg.Chat) graphql.Marshaler {
+func (ec *executionContext) marshalOChat2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐChat(ctx context.Context, sel ast.SelectionSet, v models.Chat) graphql.Marshaler {
 	return ec._Chat(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOChat2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐChat(ctx context.Context, sel ast.SelectionSet, v *pkg.Chat) graphql.Marshaler {
+func (ec *executionContext) marshalOChat2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐChat(ctx context.Context, sel ast.SelectionSet, v *models.Chat) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Chat(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCity2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐCity(ctx context.Context, sel ast.SelectionSet, v pkg.City) graphql.Marshaler {
+func (ec *executionContext) marshalOCity2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐCity(ctx context.Context, sel ast.SelectionSet, v models.City) graphql.Marshaler {
 	return ec._City(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOContact2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐContact(ctx context.Context, sel ast.SelectionSet, v pkg.Contact) graphql.Marshaler {
+func (ec *executionContext) marshalOCity2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐCity(ctx context.Context, sel ast.SelectionSet, v *models.City) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._City(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOContact2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐContact(ctx context.Context, sel ast.SelectionSet, v models.Contact) graphql.Marshaler {
 	return ec._Contact(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOCountry2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐCountry(ctx context.Context, sel ast.SelectionSet, v pkg.Country) graphql.Marshaler {
+func (ec *executionContext) marshalOContact2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐContact(ctx context.Context, sel ast.SelectionSet, v *models.Contact) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Contact(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOCountry2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐCountry(ctx context.Context, sel ast.SelectionSet, v models.Country) graphql.Marshaler {
 	return ec._Country(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOFile2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐFile(ctx context.Context, sel ast.SelectionSet, v pkg.File) graphql.Marshaler {
+func (ec *executionContext) marshalOCountry2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐCountry(ctx context.Context, sel ast.SelectionSet, v *models.Country) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Country(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOFile2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐFile(ctx context.Context, sel ast.SelectionSet, v models.File) graphql.Marshaler {
 	return ec._File(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOFile2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐFile(ctx context.Context, sel ast.SelectionSet, v *models.File) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._File(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOFloat2float64(ctx context.Context, v interface{}) (float64, error) {
@@ -13661,30 +13732,52 @@ func (ec *executionContext) marshalOFloat2float64(ctx context.Context, sel ast.S
 	return graphql.MarshalFloat(v)
 }
 
-func (ec *executionContext) marshalOGoal2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx context.Context, sel ast.SelectionSet, v pkg.Goal) graphql.Marshaler {
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOFloat2float64(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalOFloat2float64(ctx, sel, *v)
+}
+
+func (ec *executionContext) marshalOGoal2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx context.Context, sel ast.SelectionSet, v models.Goal) graphql.Marshaler {
 	return ec._Goal(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGoal(ctx context.Context, sel ast.SelectionSet, v *pkg.Goal) graphql.Marshaler {
+func (ec *executionContext) marshalOGoal2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGoal(ctx context.Context, sel ast.SelectionSet, v *models.Goal) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Goal(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOGroup2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx context.Context, sel ast.SelectionSet, v pkg.Group) graphql.Marshaler {
+func (ec *executionContext) marshalOGroup2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx context.Context, sel ast.SelectionSet, v models.Group) graphql.Marshaler {
 	return ec._Group(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐGroup(ctx context.Context, sel ast.SelectionSet, v *pkg.Group) graphql.Marshaler {
+func (ec *executionContext) marshalOGroup2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐGroup(ctx context.Context, sel ast.SelectionSet, v *models.Group) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Group(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOImage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐImage(ctx context.Context, sel ast.SelectionSet, v pkg.Image) graphql.Marshaler {
+func (ec *executionContext) marshalOImage2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐImage(ctx context.Context, sel ast.SelectionSet, v models.Image) graphql.Marshaler {
 	return ec._Image(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOImage2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐImage(ctx context.Context, sel ast.SelectionSet, v *models.Image) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Image(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {
@@ -13693,22 +13786,6 @@ func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}
 
 func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	return graphql.MarshalInt(v)
-}
-
-func (ec *executionContext) unmarshalOInt2int32(ctx context.Context, v interface{}) (int32, error) {
-	return graphql.UnmarshalInt32(v)
-}
-
-func (ec *executionContext) marshalOInt2int32(ctx context.Context, sel ast.SelectionSet, v int32) graphql.Marshaler {
-	return graphql.MarshalInt32(v)
-}
-
-func (ec *executionContext) unmarshalOInt2int64(ctx context.Context, v interface{}) (int64, error) {
-	return graphql.UnmarshalInt64(v)
-}
-
-func (ec *executionContext) marshalOInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
-	return graphql.MarshalInt64(v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
@@ -13726,46 +13803,60 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOJourney2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourney(ctx context.Context, sel ast.SelectionSet, v pkg.Journey) graphql.Marshaler {
+func (ec *executionContext) marshalOJourney2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourney(ctx context.Context, sel ast.SelectionSet, v models.Journey) graphql.Marshaler {
 	return ec._Journey(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalOJourneyInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourneyInput(ctx context.Context, v interface{}) (pkg.JourneyInput, error) {
+func (ec *executionContext) marshalOJourney2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourney(ctx context.Context, sel ast.SelectionSet, v *models.Journey) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Journey(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOJourneyInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourneyInput(ctx context.Context, v interface{}) (models.JourneyInput, error) {
 	return ec.unmarshalInputJourneyInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalOJourneyInput2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourneyInput(ctx context.Context, v interface{}) (*pkg.JourneyInput, error) {
+func (ec *executionContext) unmarshalOJourneyInput2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourneyInput(ctx context.Context, v interface{}) (*models.JourneyInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOJourneyInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐJourneyInput(ctx, v)
+	res, err := ec.unmarshalOJourneyInput2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐJourneyInput(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalOProfile2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐProfile(ctx context.Context, sel ast.SelectionSet, v pkg.Profile) graphql.Marshaler {
+func (ec *executionContext) marshalOProfile2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v models.Profile) graphql.Marshaler {
 	return ec._Profile(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOProfile2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐProfile(ctx context.Context, sel ast.SelectionSet, v *pkg.Profile) graphql.Marshaler {
+func (ec *executionContext) marshalOProfile2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v *models.Profile) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Profile(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSpace2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx context.Context, sel ast.SelectionSet, v pkg.Space) graphql.Marshaler {
+func (ec *executionContext) marshalOSpace2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx context.Context, sel ast.SelectionSet, v models.Space) graphql.Marshaler {
 	return ec._Space(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐSpace(ctx context.Context, sel ast.SelectionSet, v *pkg.Space) graphql.Marshaler {
+func (ec *executionContext) marshalOSpace2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐSpace(ctx context.Context, sel ast.SelectionSet, v *models.Space) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Space(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOState2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐState(ctx context.Context, sel ast.SelectionSet, v pkg.State) graphql.Marshaler {
+func (ec *executionContext) marshalOState2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐState(ctx context.Context, sel ast.SelectionSet, v models.State) graphql.Marshaler {
 	return ec._State(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOState2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐState(ctx context.Context, sel ast.SelectionSet, v *models.State) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._State(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
@@ -13791,11 +13882,11 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return ec.marshalOString2string(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOTask2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx context.Context, sel ast.SelectionSet, v pkg.Task) graphql.Marshaler {
+func (ec *executionContext) marshalOTask2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx context.Context, sel ast.SelectionSet, v models.Task) graphql.Marshaler {
 	return ec._Task(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐTask(ctx context.Context, sel ast.SelectionSet, v *pkg.Task) graphql.Marshaler {
+func (ec *executionContext) marshalOTask2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐTask(ctx context.Context, sel ast.SelectionSet, v *models.Task) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -13825,22 +13916,22 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	return ec.marshalOTime2timeᚐTime(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOUser2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx context.Context, sel ast.SelectionSet, v pkg.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v models.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUser(ctx context.Context, sel ast.SelectionSet, v *pkg.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v *models.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOUserPost2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx context.Context, sel ast.SelectionSet, v pkg.UserPost) graphql.Marshaler {
+func (ec *executionContext) marshalOUserPost2githubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx context.Context, sel ast.SelectionSet, v models.UserPost) graphql.Marshaler {
 	return ec._UserPost(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚐUserPost(ctx context.Context, sel ast.SelectionSet, v *pkg.UserPost) graphql.Marshaler {
+func (ec *executionContext) marshalOUserPost2ᚖgithubᚗcomᚋhackerrithmᚋblackfoxᚋservicesᚋbackendᚋapiᚋpkgᚋmodelsᚐUserPost(ctx context.Context, sel ast.SelectionSet, v *models.UserPost) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

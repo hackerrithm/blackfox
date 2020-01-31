@@ -1,158 +1,83 @@
 import * as React from "react";
-import { IHomeProps } from ".";
 import { gql } from "apollo-boost";
 import { Query } from "react-apollo";
-import {
-	Grid,
-	Paper,
-	makeStyles,
-	Theme,
-	createStyles
-} from "@material-ui/core";
-import { getThemeProps } from "@material-ui/styles";
-import CustomizedInputBase from "../general/reusable/input/search";
-import YouTube from "../examples/youtube/yt";
-import Books from "../book/books";
-
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import InfiniteList from "./infiniteList";
+import { useState } from "react";
+import CustomInfiniteScroll from "./customInfiniteScroll";
+import './home.css';
+import useStyles from "./styles";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper/Paper";
+import { Suspense, lazy } from "react";
+const Spaces = React.lazy(() => import("./spaces"));
+const Trending = React.lazy(() => import("./trending"));
 
 const GET_EXAMPLE = gql`
 	query {
-		getUser(id: "5d7daf474da65a16aa8a6c05") {
-			password
-			username
-			name
-			id
+		getTask(id: "5dbfe03a583ba72328bb89ae") {
+			text
 		}
 	}
 `;
-export default class Home extends React.Component<IHomeProps, any> {
-	public weirdAlgorithm(params: any, params1: any): any {
-		return params * params1;
-	}
+const Home = () => {
+	const [state, setState] = useState([]);
+	const classes = useStyles("");
 
-	componentDidMount() {
-		console.log(this.context.data);
-	}
-
-	/**
-	 * Render Homepage
-	 */
-	public render(): JSX.Element {
-		const array = [1, 2, 3, 4, 5, 6];
-		return (
-			<div className="homepage">
-				<br />
-				<br />
-				<br />
-				<br />
-				{/** GOALS */}
-				<GoalsSection />
-				{/** GOALS */}
-				<Query query={GET_EXAMPLE}>
-					{({ loading, error, data }: any) => {
-						if (loading) {
-							return <div>Loading...</div>;
-						}
-						if (error) {
-							return <div>No results at the moment</div>;
-						}
-
-						return (
-							<div>
-								{data.getUser.username}
-								{data.getUser.password}
-								{console.log("data here:: ", data)}
-							</div>
-						);
-					}}
-				</Query>
-				{/* //</div>    <br/>
-                    //     <br/>
-                    //     <div />
-
-                    //     <div></div>
-
-                    //     <div>{false}</div>
-
-                    //     <div>{null}</div>
-
-                    //     <div>{undefined}</div>
-
-                    //     <div>{true}</div>
-                    //     <h1>Home page</h1>
-                    //     <ul>
-                    //     {
-                    //         array.map((element: any, index: any) => {
-                    //             return (
-                    //                 <div key={index}>
-                    //                     <Button variant="contained" color="primary">
-                    //                         {this.weirdAlgorithm(element, index)}
-                    //                     </Button>
-                    //                     <br />
-                    //                     <br />
-                    //                     <br />
-                    //                     <br />
-                    //                     <br />
-                    //                     {index}
-                    //                     <br />
-                    //                     <br />
-                    //                     <br />
-                    //                     <br />
-                    //                     <br />
-                    //                 </div>
-                    //             )
-                    //         })
-                    //     }
-                    //     </ul>
-                    //     {this.props.test}
-                // </div>
-                    */}
-			</div>
-		);
-	}
-}
-
-const useStylesGoalsSection = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			flexGrow: 1
-		},
-		paper: {
-			padding: theme.spacing(2),
-			textAlign: "center",
-			color: theme.palette.text.secondary
-		}
-	})
-);
-
-function GoalsSection() {
-	const classes = useStylesGoalsSection(getThemeProps);
-	const goalsList = [1, 2, 3, 4];
 	return (
-		<div className={classes.root}>
-			<Grid container spacing={3}>
-				<Grid item xs={12}>
-					<Paper className={classes.paper}>
-						{" "}
-						<Books />
-					</Paper>
-				</Grid>
-				<Grid item xs={12} sm={6}></Grid>
-				<Grid item xs={12} sm={6}></Grid>
-				{/* {goalsList.map((val, index) => {
+		<div className="homepage">
+			{/* <Query query={GET_EXAMPLE}>
+				{({ loading, error, data }: any) => {
+					if (loading) {
+						return <div>Loading...</div>;
+					}
+					if (error) {
+						return <div>No results at the moment</div>;
+					}
+
 					return (
-						<Grid
-							alignContent={"center"}
-							item
-							xs={6}
-							sm={3}
-							key={index}
-						>
-							<ExpandableCard />
-						</Grid>
+						<div>
+							{data.getTask.text}
+							{data.getUser.password}
+						</div>
 					);
-				})} */}
+				}}
+			</Query> */}
+
+			<Grid container>
+				<Grid item xs={3} sm={3}>
+					<div className={"left-panel"}>
+						<Suspense fallback={<div>Loading...</div>}>
+							<h3 className={"spaces-label"}>Spaces</h3>
+							<Spaces state={state} setState={setState} />
+						</Suspense>
+					</div>
+				</Grid>
+				<Grid item xs={6} sm={6}>
+					<div className={"mid-view"}>
+						<CustomInfiniteScroll />
+						{/* <List postsList={null} initialListCount={17} state={state} setState={setState} />	 */}
+						{/* <InfiniteList state={state} setState={setState} /> */}
+						{/* <CustomInfiniteScroll state={state} setState={setState}/> */}
+					</div>
+				</Grid>
+				<Grid item xs={3} sm={3}>
+					<div className={"right-panel"}>
+						<Suspense fallback={<div>Loading...</div>}>
+							<h3 className={"trending-label"}>Trending</h3>
+							<Trending state={state} setState={setState} />
+						</Suspense>
+					</div>
+					{/* <div className={"ads-data-right"}>
+						<h3>This is an Ad</h3>
+					</div> */}
+				</Grid>
 			</Grid>
 		</div>
 	);
 }
+
+export default Home;

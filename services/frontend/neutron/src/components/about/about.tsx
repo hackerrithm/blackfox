@@ -18,7 +18,7 @@ const About = () => {
 	return (
 		<div>
 			<h2>About</h2>
-			<EmblaCarouselReact emblaRef={setEmbla} options={{ loop: true }}>
+			{/* <EmblaCarouselReact emblaRef={setEmbla} options={{ loop: true }}>
 				<div style={{ display: "flex" }}>
 					<div style={{ flex: "0 0 100%" }}>
 						<img
@@ -53,9 +53,9 @@ const About = () => {
 						/>
 					</div>
 				</div>
-			</EmblaCarouselReact>
 			<button onClick={() => embla.scrollPrev()}>Prev</button>
 			<button onClick={() => embla.scrollNext()}>Next</button>
+			</EmblaCarouselReact> */}
 			<Suspense fallback={<div>Loading...</div>}>
 				<Performers />
 				<Artist />

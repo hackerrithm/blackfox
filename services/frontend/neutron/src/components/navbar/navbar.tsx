@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -15,19 +15,43 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { getThemeProps } from "@material-ui/styles";
 import { Link, useHistory } from "react-router-dom";
-import "./style.css";
+// import "./style.css";
 import { authContext } from "../utils/authContext";
 import { LoginReducer, InitialState } from "../login";
 import Button from "@material-ui/core/Button";
 import useStyles from "./styles";
+import CustomizedInputBase from "../general/reusable/input/search";
+import UseDataApi from "./dataApi";
+import { AppContext } from "../../middleware";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
-export const Context = React.createContext(InitialState);
+// export const SearchContext = React.createContext(SearchInitialState);
 
 const PrimarySearchAppBar: React.FC = () => {
+	// const [query, setQuery] = useState("");
 	const { auth } = React.useContext(authContext);
+	const { query, setQuery } = React.useContext(AppContext);
+	const initialData = UseDataApi(
+		"https://api.github.com/search/repositories?q=stars:%22%3E10000%22&sort=stars&order=desc&per_page=10",
+		{
+			items: []
+		}
+	);
+	// const [searchState, searchDispatch] = useReducer(DataFetchReducer, {
+	// 	isLoading: false,
+	// 	isError: false,
+	// 	data: initialData
+	// });
+	const [{ data, isLoading, isError }, doFetch] = UseDataApi(
+		"https://api.github.com/search/repositories?q=stars:%22%3E10000%22&sort=stars&order=desc&per_page=10",
+		{
+			items: []
+		}
+	);
+
 	const [state, dispatch] = useReducer(LoginReducer, InitialState);
 	const history = useHistory();
-	const classes = useStyles(getThemeProps);
+	const classes = useStyles("");
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [
 		mobileMoreAnchorEl,
@@ -117,19 +141,25 @@ const PrimarySearchAppBar: React.FC = () => {
 	);
 
 	return (
-		<Context.Provider
-			value={{
-				username: state.username,
-				isLoading: state.isLoading,
-				isLoggedIn: state.isLoggedIn,
-				error: state.error
-			}}
-		>
-			<div className={classes.grow}>
+		// <SearchContext.Provider
+		// value={{
+		// 	username: state.username,
+		// 	isLoading: state.isLoading,
+		// 	isLoggedIn: state.isLoggedIn,
+		// 	error: state.error
+		// }}
+		// 	value={{
+		// 		searchState,
+		// 		searchDispatch
+		// 	}}
+		// >
+		<>
+			<CssBaseline />
+			<div>
 				<AppBar
 					color="secondary"
-					style={{ backgroundColor: "white" }}
-					position="sticky"
+					elevation={1}
+					className={classes.root}
 				>
 					<Toolbar variant="dense">
 						<IconButton
@@ -148,30 +178,38 @@ const PrimarySearchAppBar: React.FC = () => {
 							/>
 						</Link>
 						<Link
-									to="/discover"
-									style={{
-										textDecoration: "none",
-										marginLeft: 10,
-										color: "black"
-									}}
-								>
-									<Button color="inherit">discover</Button>
-								</Link>
-								<Link
-									to="/browse"
-									style={{
-										textDecoration: "none",
-										marginLeft: 10,
-										color: "black"
-									}}
-								>
-									<Button color="inherit">browse</Button>
-								</Link>
+							to="/discover"
+							style={{
+								textDecoration: "none",
+								marginLeft: 10,
+								color: "black"
+							}}
+						>
+							<Button color="inherit">discover</Button>
+						</Link>
+						<Link
+							to="/leaderboard"
+							style={{
+								textDecoration: "none",
+								marginLeft: 10,
+								color: "black"
+							}}
+						>
+							<Button color="inherit">Leaderboard</Button>
+						</Link>
 						<div className={classes.search}>
 							<div className={classes.searchIcon}>
 								<SearchIcon />
 							</div>
 							<InputBase
+								onChange={(event: any) => setQuery(event.target.value)}
+								onSubmit={(event: any) => {
+									doFetch(
+										`http://hn.algolia.com/api/v1/search?query=${query}`
+									);
+				
+									event.preventDefault();
+								}}
 								placeholder="Search…"
 								classes={{
 									root: classes.inputRoot,
@@ -179,6 +217,18 @@ const PrimarySearchAppBar: React.FC = () => {
 								}}
 								inputProps={{ "aria-label": "search" }}
 							/>
+							{/* <CustomizedInputBase
+				value={query}
+				onChange={(event: any) => setQuery(event.target.value)}
+				btnType="submit"
+				onSubmit={(event: any) => {
+					doFetch(
+						`http://hn.algolia.com/api/v1/search?query=${query}`
+					);
+
+					event.preventDefault();
+				}}
+			/> */}
 						</div>
 						<div className={classes.grow} />
 						<div className={classes.sectionDesktop}>
@@ -204,22 +254,16 @@ const PrimarySearchAppBar: React.FC = () => {
 									<Button color="inherit">about</Button>
 								</Link>
 							)}
-							<Link
-								to="/register"
-								style={{ textDecoration: "none" }}
-							>
+							<Link to="/register" style={{ textDecoration: "none" }}>
 								<Button
 									color="inherit"
 									variant="outlined"
 									style={{ marginLeft: 10, color: "black" }}
 								>
 									register
-								</Button>
+							</Button>
 							</Link>
-							<Link
-								to="/login"
-								style={{ textDecoration: "none" }}
-							>
+							<Link to="/login" style={{ textDecoration: "none" }}>
 								<Button
 									color="primary"
 									variant="contained"
@@ -229,9 +273,9 @@ const PrimarySearchAppBar: React.FC = () => {
 									}}
 								>
 									login
-								</Button>
+							</Button>
 							</Link>
-							<Link
+							{/* <Link
 								to="/"
 								style={{
 									textDecoration: "none",
@@ -245,7 +289,7 @@ const PrimarySearchAppBar: React.FC = () => {
 								}}
 							>
 								<Button color="inherit">logout</Button>
-							</Link>
+							</Link> */}
 						</div>
 						<div className={classes.sectionMobile}>
 							<IconButton
@@ -260,10 +304,12 @@ const PrimarySearchAppBar: React.FC = () => {
 						</div>
 					</Toolbar>
 				</AppBar>
-				{renderMobileMenu}
-				{renderMenu}
+				<Toolbar />
 			</div>
-		</Context.Provider>
+			{renderMobileMenu}
+			{renderMenu}
+		</>
+		// </SearchContext.Provider>
 	);
 };
 

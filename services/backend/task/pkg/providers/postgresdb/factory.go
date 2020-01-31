@@ -19,8 +19,10 @@ import (
 	"log"
 	"sync"
 
+	"github.com/hackerrithm/blackfox/services/backend/task/pkg/domain"
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/engine"
 	gorm "github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // _ postgres needed
 )
 
 type (
@@ -47,14 +49,19 @@ func NewStorage(url ...string) (engine.StorageFactory, error) {
 	return &storageFactory{db}, nil
 }
 
+// Automigrate ...
+func (s *storageFactory) Automigrate() {
+	s.session.Debug().AutoMigrate(&domain.Task{})
+}
+
 // NewTaskRepository creates a new datastore Task repository
-func (f *storageFactory) NewTaskRepository() engine.TaskRepository {
+func (s *storageFactory) NewTaskRepository() engine.TaskRepository {
 	taskRepositoryOnce.Do(func() {
-		taskRepositoryInstance = newTaskRepository(f.session)
+		taskRepositoryInstance = newTaskRepository(s.session)
 	})
 	return taskRepositoryInstance
 }
 
-func (f *storageFactory) Close() {
-	f.session.Close()
+func (s *storageFactory) Close() {
+	s.session.Close()
 }

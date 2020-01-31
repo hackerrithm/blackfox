@@ -16,6 +16,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -48,6 +49,7 @@ func (c *Client) Close() {
 
 // Post ...
 func (c *Client) Post(ctx context.Context, text string) (string, error) {
+	fmt.Println("this is text: ", text)
 	r, err := c.service.PostTask(
 		ctx,
 		&pb.PostTaskRequest{
@@ -55,7 +57,7 @@ func (c *Client) Post(ctx context.Context, text string) (string, error) {
 		},
 	)
 	if err != nil {
-		return "", err
+		return "this is not a insert error", err
 	}
 
 	log.Println(r.Task)

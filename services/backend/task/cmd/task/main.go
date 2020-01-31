@@ -64,6 +64,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("important db stuff:: ", cfg.PostgresHost)
+	fmt.Println("important db stuff:: ", cfg.PostgresPort)
+	fmt.Println("important db stuff:: ", cfg.PostgresUsername)
+	fmt.Println("important db stuff:: ", cfg.PostgresDB)
+	fmt.Println("important db stuff:: ", cfg.PostgresPassword)
 
 	var strg engine.StorageFactory
 	retry.ForeverSleep(2*time.Second, func(_ int) (err error) {
@@ -71,7 +76,7 @@ func main() {
 			cfg.PostgresHost,
 			cfg.PostgresPort,
 			cfg.PostgresUsername,
-			cfg.PostgresDBName,
+			cfg.PostgresDB,
 			cfg.PostgresPassword)
 		if err != nil {
 			log.Println(err)
@@ -79,6 +84,8 @@ func main() {
 		return
 	})
 	defer strg.Close()
+
+	strg.Automigrate()
 
 	eObj := engine.NewEngine(strg)
 	log1.Println(strg, eObj)

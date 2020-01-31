@@ -101,7 +101,7 @@ func (c *Client) GenerateToken(ctx context.Context, ID string) (string, error) {
 
 // GetUserFromToken ...
 func (c *Client) GetUserFromToken(ctx context.Context, token string) (string, error) {
-	log.Println("got in search for GetUserFromToken ----------- [", token, "]")
+	log.Println("got in search for GetUserFromToken -----------((here)) [", token, "]")
 	defer c.conn.Close()
 	r, err := c.service.GetUserFromToken(
 		ctx,

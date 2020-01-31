@@ -16,6 +16,7 @@ package postgresdb
 
 import (
 	"errors"
+	"fmt"
 
 	cfg "github.com/hackerrithm/blackfox/services/backend/task/configs"
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/domain"
@@ -44,6 +45,7 @@ func newTaskRepository(db *gorm.DB) engine.TaskRepository {
 
 func (r taskRepository) Insert(c context.Context, p domain.Task) error {
 	var err error
+	fmt.Println("task is ----- ", p)
 	err = r.db.Debug().Create(&p).Error
 	if err != nil {
 		return err

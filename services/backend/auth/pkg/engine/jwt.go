@@ -18,7 +18,8 @@ type (
 	// JWTSignParser ...
 	JWTSignParser interface {
 		Sign(claims map[string]interface{}, secret string) (string, error)
-		Parse(tokenStr string, secret string) (map[string]interface{}, error)
+		Parse(tokenStr string, secret string) error
+		ExtractTokenID(tokenString string) (string, error)
 	}
 
 	// AuthenticationFactory ...

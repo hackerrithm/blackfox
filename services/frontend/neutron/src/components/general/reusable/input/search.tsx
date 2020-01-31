@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function CustomizedInputBase({val, onChange, btnType, onSubmit}: any) {
+export default function CustomizedInputBase({val, onChange, btnType, onSubmit, placeholder}: any) {
 	const classes = useStyles("");
 
 	return (
@@ -42,7 +42,7 @@ export default function CustomizedInputBase({val, onChange, btnType, onSubmit}: 
                 type="text"
                 value={val}
 				className={classes.input}
-				placeholder="Search Blackfox"
+				placeholder={placeholder === undefined? "Search Blackfox": placeholder}
                 inputProps={{ "aria-label": "search blackfox" }}
                 onChange={onChange}
 			/>

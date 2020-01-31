@@ -7,7 +7,7 @@ COPY services/backend/user ../user
 COPY ./services/backend/wallet ./
 RUN go build -o /go/bin/app ./cmd/wallet/main.go
 
-FROM alpine:3.8
+FROM alpine:3.9
 WORKDIR /usr/bin
 COPY --from=build /go/bin .
 EXPOSE 8080

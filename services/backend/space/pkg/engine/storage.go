@@ -30,17 +30,17 @@ type (
 		Insert(c context.Context, space domain.Space) error
 
 		// Put adds a new Space to the datastore
-		Update(c context.Context, space domain.Space, id string) error
+		Update(c context.Context, space domain.Space, id uint64) error
 
 		// Query returns existing spaces matching the
 		// query provided
 		Query(c context.Context, query *Query) []*domain.Space
 
 		// FindOne returns ...
-		FindOne(c context.Context, id string) (*domain.Space, error)
+		FindOne(c context.Context, id uint64) (*domain.Space, error)
 
 		// Remove ...
-		Remove(c context.Context, id string) (string, error)
+		Remove(c context.Context, id uint64) (string, error)
 
 		// ListAllSpaces ...
 		ListAllSpaces(ctx context.Context, skip uint64, take uint64) ([]domain.Space, error)
@@ -53,6 +53,8 @@ type (
 		// NewSpaceRepository returns a storage specific
 		// SpaceRepository implementation
 		NewSpaceRepository() SpaceRepository
+
+		Automigrate()
 
 		Close()
 	}

@@ -7,6 +7,8 @@ import { login, LoginReducer, InitialState } from ".";
 import MButton from "../general/reusable/button/mbutton";
 import { authContext } from "../utils/authContext";
 import { apiRequest, validateLoginForm } from "../utils/Helpers";
+import { Grid } from "@material-ui/core";
+import LoginForm from "./loginForm";
 
 export const Context = React.createContext(InitialState);
 
@@ -31,7 +33,7 @@ const Login: React.FC = () => {
 	const history = useHistory();
 
 	const [state, dispatch] = useReducer(LoginReducer, InitialState);
-	const { username, password, isLoading, error, isLoggedIn } = state;
+	const { username, password, isLoading, errorM, isLoggedIn } = state;
 	const [loading, setLoading] = React.useState(false);
 
 	const onSubmit = async (e: any) => {
@@ -58,7 +60,7 @@ const Login: React.FC = () => {
 		try {
 			setLoading(true);
 			const userData = await apiRequest(
-				"https://jsonplaceholder.typicode.com/users",
+				"http://localhost:9000/",
 				// "http://www.mocky.io/v2/5ded90a83300006d002b9178",
 				"post",
 				{ username: username, password: password }
@@ -81,12 +83,12 @@ const Login: React.FC = () => {
 	// const [username, setUsername] = useState<any>("");
 	// const [password, setPassword] = useState<any>("");
 
-	// const [loginUserSubmit, { error, data }] = useMutation<
-	// 	{ loginUser: User },
-	// 	{ user: LoginDetails }
-	// >(LOGIN_USER, {
-	// 	variables: { user: { username, password } }
-	// });
+	const [loginUserSubmit, { error, data }] = useMutation<
+		{ loginUser: User },
+		{ user: LoginDetails }
+	>(LOGIN_USER, {
+		variables: { user: { username, password } }
+	});
 	return (
 		<div className="base-container">
 			<Context.Provider
@@ -98,66 +100,16 @@ const Login: React.FC = () => {
 					error: state.error
 				}}
 			>
-				<div className="header">Login</div>
-				{/* {error ? <p>Oh no! {error.message}</p> : null}
-			{data && loginUserSubmit ? <p>Login!</p> : null} */}
+				{error ? <p>Oh no! {error.message}</p> : null}
+			{data && loginUserSubmit ? <p>Login!</p> : null}
 				{/* {isLoggedIn ? (
 				<>
 					<Profile username={username} />
 				</>
 			) :  */}
-				<form
-					className="form"
-					onSubmit={(e: any) => {
-						e.preventDefault();
-						if (validateLoginForm(username, password)) {
-							authHandler();
-						}
-					}}
-				>
-					<div className="form-group">
-						<label htmlFor="username">Username</label>
-						<input
-							type="text"
-							name="username"
-							placeholder="username"
-							value={username}
-							onChange={(e: any) => {
-								dispatch({
-									type: "field",
-									fieldName: "username",
-									payload: e.currentTarget.value
-								});
-							}}
-						/>
-					</div>
-					<div className="form-group">
-						<label htmlFor="password">Password</label>
-						<input
-							type="text"
-							name="password"
-							placeholder="password"
-							value={password}
-							onChange={(e: any) => {
-								console.log("changed");
 
-								dispatch({
-									type: "field",
-									fieldName: "password",
-									payload: e.currentTarget.value
-								});
-							}}
-						/>
-					</div>
-					<MButton
-						className="submit"
-						type="submit"
-						disabled={isLoading}
-						color="primary"
-						variant="contained"
-						label={isLoading ? "Logging in..." : "Log In"}
-					/>
-				</form>
+			<LoginForm username={username} password={password} isLoading={isLoading} dispatch={dispatch} />
+
 				{/* // } */}
 			</Context.Provider>
 		</div>

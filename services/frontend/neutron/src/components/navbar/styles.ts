@@ -10,8 +10,19 @@ const useStyles = makeStyles((theme: Theme) =>
 		body: {
 			margin: theme.spacing(-10)
 		},
+		appbarPosition: {
+			zIndex: theme.zIndex.drawer + 1,
+		},
 		grow: {
 			flexGrow: 1
+		},
+		root: {
+			flexGrow: 1,
+			// marginTop: 0,
+			position: "fixed",
+			backgroundColor: theme.palette.common.white,
+			color: theme.palette.common.black,
+			// marginBottom: 50
 		},
 		menuButton: {
 			marginRight: theme.spacing(2)
@@ -21,15 +32,17 @@ const useStyles = makeStyles((theme: Theme) =>
 			[theme.breakpoints.up("sm")]: {
 				display: "block"
 			},
-			color: "#000"
+			color: theme.palette.common.black
 		},
 		search: {
 			position: "relative",
 			borderRadius: theme.shape.borderRadius,
-			backgroundColor: fade(theme.palette.common.black, 1),
-			color: theme.palette.common.white,
+			backgroundColor: fade(theme.palette.common.black, 0.1),
+			color: theme.palette.common.black,
 			"&:hover": {
-				backgroundColor: fade(theme.palette.common.black, 1)
+				backgroundColor: "#5588FF",
+				marginRight: theme.spacing(8),
+				color: "white"
 			},
 			marginRight: theme.spacing(2),
 			marginLeft: 0,
@@ -49,7 +62,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			justifyContent: "center"
 		},
 		inputRoot: {
-			color: "#fff"
+			color: "#000",
+			"&:hover": {
+				color: "#fff"
+			},
 		},
 		inputInput: {
 			padding: theme.spacing(1, 1, 1, 7),
