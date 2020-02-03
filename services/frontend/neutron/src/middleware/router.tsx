@@ -14,6 +14,7 @@ import Discover from "../components/discover/discover";
 import PrimarySearchAppBar from "../components/navbar/navbar";
 // import "./style.css";
 import Leaderboard from "../components/leaderboard/leaderboard";
+import Start from "../components/start/start";
 
 
 export default function({ children }: { children: React.ReactChild }) {
@@ -26,7 +27,8 @@ export default function({ children }: { children: React.ReactChild }) {
 				</header>
 				<main className={"content"}>
 					<Switch>
-						<Route exact path="/" component={Home} />
+						<Route exact path="/" component={Start} />
+						<Route exact path="/home" component={Home} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/register" component={Register} />
 						<Route exact path="/about" component={About} />

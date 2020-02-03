@@ -1,0 +1,49 @@
+body .base-container-login {
+        /* Location of the image */
+        /* background-image: url("https://i.imgur.com/LpwZycm.jpg"); */
+        background-image: url("https://media0.giphy.com/media/9cYP8zsiibKWQ/source.gif");
+        
+        /* Background image is centered vertically and horizontally at all times */
+        background-position: center center;
+        
+        /* Background image doesn't tile */
+        background-repeat: no-repeat;
+        
+        /* Background image is fixed in the viewport so that it doesn't move when 
+           the content's height is greater than the image's height */
+        background-attachment: fixed;
+        
+        /* This is what makes the background image rescale based
+           on the container's size */
+        background-size: cover;
+        
+        /* Set a background color that will be displayed
+           while the background image is loading */
+        background-color: #464646;
+}
+
+.username-form-group {
+        margin-bottom: 20px;
+}
+
+.btn-submit {
+        margin-top: 20px;
+}
+
+.mid-view {
+        align-content: "center";
+        text-align: center;
+}
+
+.header {
+        margin-bottom: 20px;
+        font-size: 200%;
+        font-weight: 800;
+}
+
+.account-creation-link {
+        margin-top: 40px;
+        font-size: 150%;
+        font-weight: 800;
+        color: white;
+}

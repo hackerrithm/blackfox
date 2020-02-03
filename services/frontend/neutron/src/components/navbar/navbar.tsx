@@ -24,6 +24,7 @@ import CustomizedInputBase from "../general/reusable/input/search";
 import UseDataApi from "./dataApi";
 import { AppContext } from "../../middleware";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import CompanyIcon from "../general/reusable/icons/company";
 
 // export const SearchContext = React.createContext(SearchInitialState);
 
@@ -170,13 +171,7 @@ const PrimarySearchAppBar: React.FC = () => {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Link to="/" style={{ textDecoration: "none" }}>
-							<img
-								style={{ width: "50px" }}
-								src="https://icon-library.net/images/fox-icon-png/fox-icon-png-12.jpg"
-								alt="Blackfox"
-							/>
-						</Link>
+						<CompanyIcon />
 						<Link
 							to="/discover"
 							style={{
@@ -260,7 +255,7 @@ const PrimarySearchAppBar: React.FC = () => {
 									variant="outlined"
 									style={{ marginLeft: 10, color: "black" }}
 								>
-									register
+									Join
 							</Button>
 							</Link>
 							<Link to="/login" style={{ textDecoration: "none" }}>

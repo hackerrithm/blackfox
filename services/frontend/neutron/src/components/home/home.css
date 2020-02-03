@@ -6,6 +6,8 @@
         position: -webkit-sticky;
         position: sticky;
         top: 5%;
+        align-content: "center";
+        text-align: center;
 }
 
 .right-panel {
@@ -16,6 +18,13 @@
         position: -webkit-sticky;
         position: sticky;
         top: 5%;
+        align-content: "center";
+        text-align: center;
+}
+
+.mid-view {
+        align-content: "center";
+        text-align: center;
 }
 
 .trending-label {
@@ -23,6 +32,8 @@
         position: center;
         position: -webkit-sticky;
         position: sticky;
+        align-content: "center";
+        text-align: center;
 
 }
 
@@ -31,6 +42,8 @@
         position: center;
         position: -webkit-sticky;
         position: sticky;
+        align-content: "center";
+        text-align: center;
 
 }
 
@@ -41,4 +54,6 @@
         margin-right: 40px;
         height: 25vh;
         background-color: #2ecc71;
+        align-content: "center";
+        text-align: center;
 }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Suspense, lazy } from "react";
-const Artist = React.lazy(() => import("../music/artist"));
+const Artist = React.lazy(() => import("../examples/music/artist"));
 import EmblaCarouselReact from "embla-carousel-react";
-import Performers from "../music/performers";
+import Performers from "../examples/music/performers";
 
 const About = () => {
 	const [embla, setEmbla] = useState(null);

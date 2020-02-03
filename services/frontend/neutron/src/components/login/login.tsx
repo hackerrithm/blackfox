@@ -90,7 +90,7 @@ const Login: React.FC = () => {
 		variables: { user: { username, password } }
 	});
 	return (
-		<div className="base-container">
+		<div className="base-container-login">
 			<Context.Provider
 				value={{
 					username: state.username,

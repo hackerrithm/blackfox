@@ -1,0 +1,36 @@
+.mid-view {
+        align-content: "center";
+        text-align: center;
+        margin-top: 200px;
+}
+
+.coming-soon-view {
+        align-content: "center";
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font: bold;
+        font-display: inherit;
+        font-size: 800%;
+        margin-top: 200px;
+        color: cornflowerblue;
+}
+
+.info-text-view {
+        align-content: "center";
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font: bold;
+        font-display: inherit;
+        font-size: 200%;
+        margin-top: 30px;
+}
+
+.countdown-timer-view {
+        align-content: "center";
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font: bold;
+        font-display: inherit;
+        font-size: 500%;
+        margin-top: 30px;    
+}

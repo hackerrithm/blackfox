@@ -1,9 +1,8 @@
 import * as React from "react";
-// import Button from "@material-ui/core/Button";
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useState } from "react";
-import "./style.css";
+import RegisterForm from "./regsiterForm";
 
 const SAVE_USER = gql`
   mutation registerUser($user: RegisterInput!) {
@@ -43,12 +42,6 @@ export default function Register() {
     function register() {
         console.log('register here');
     }
-
-    
-    /**
-     * Render Register
-     */
-    // public render() {
         const [username, setUsername] = useState<any>('');
         const [firstname, setFirstname] = useState<any>('');
         const [lastname, setLastname] = useState<any>('');
@@ -68,9 +61,10 @@ export default function Register() {
                 emailAddress, 
                 gender } }
         });
+
         return (
-                <div className="base-container">
-                    <div className="header">Register</div>
+                <div className="base-container-register">
+                    {/* <div className="header">Register</div>
                     {error ? <p>Oh no! {error.message}</p> : null}
                     {data && registerUser ? <p>Saved!</p> : null}
                     <div className="form">
@@ -103,7 +97,9 @@ export default function Register() {
                     <button type="button" className="btn" onClick={() => registerUser()}>
                         Register
                     </button>
-                    </div>
+                    </div> */}
+                    <RegisterForm username={username} password={password} emailaddress={emailAddress} gender={gender} error={error} 
+                    registerUser={registerUser} data={data} setUsername={setUsername} setEmailAddress={setEmailAddress} setPassword={setPassword}/>
                 </div>     
         );
     // }

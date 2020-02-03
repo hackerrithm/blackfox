@@ -1,18 +1,13 @@
 import * as React from "react";
 import { gql } from "apollo-boost";
 import { Query } from "react-apollo";
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import InfiniteList from "./infiniteList";
 import { useState } from "react";
 import CustomInfiniteScroll from "./customInfiniteScroll";
 import './home.css';
 import useStyles from "./styles";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper/Paper";
 import { Suspense, lazy } from "react";
+
 const Spaces = React.lazy(() => import("./spaces"));
 const Trending = React.lazy(() => import("./trending"));
 
@@ -23,9 +18,14 @@ const GET_EXAMPLE = gql`
 		}
 	}
 `;
+
+
+
 const Home = () => {
 	const [state, setState] = useState([]);
 	const classes = useStyles("");
+
+
 
 	return (
 		<div className="homepage">
