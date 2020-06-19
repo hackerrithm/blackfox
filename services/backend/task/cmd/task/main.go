@@ -33,7 +33,7 @@ import (
 	taskCfg "github.com/hackerrithm/blackfox/services/backend/task/configs"
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/adapters"
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/engine"
-	"github.com/hackerrithm/blackfox/services/backend/task/pkg/providers/postgresdb"
+	mongodb "github.com/hackerrithm/blackfox/services/backend/task/pkg/providers/mongodb"
 )
 
 type (
@@ -64,28 +64,21 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("important db stuff:: ", cfg.PostgresHost)
-	fmt.Println("important db stuff:: ", cfg.PostgresPort)
-	fmt.Println("important db stuff:: ", cfg.PostgresUsername)
-	fmt.Println("important db stuff:: ", cfg.PostgresDB)
-	fmt.Println("important db stuff:: ", cfg.PostgresPassword)
-
 	var strg engine.StorageFactory
 	retry.ForeverSleep(2*time.Second, func(_ int) (err error) {
-		strg, err = postgresdb.NewStorage(
-			cfg.PostgresHost,
-			cfg.PostgresPort,
-			cfg.PostgresUsername,
-			cfg.PostgresDB,
-			cfg.PostgresPassword)
+		strg, err = mongodb.NewStorage(
+			cfg.MongoHost,
+			cfg.MongoDB,
+			cfg.MongoUsername,
+			cfg.MongoPassword,
+			cfg.MongoCollection,
+			cfg.MONGOURL)
 		if err != nil {
 			log.Println(err)
 		}
 		return
 	})
 	defer strg.Close()
-
-	strg.Automigrate()
 
 	eObj := engine.NewEngine(strg)
 	log1.Println(strg, eObj)

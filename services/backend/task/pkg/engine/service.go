@@ -29,7 +29,7 @@ func (s *task) Insert(ctx context.Context, text string) error {
 	return nil
 }
 
-func (s *task) Update(ctx context.Context, id uint32, text string) error {
+func (s *task) Update(ctx context.Context, id string, text string) error {
 	a := domain.NewTask(text)
 	if err := s.repository.Update(ctx, *a, id); err != nil {
 		return err
@@ -38,7 +38,7 @@ func (s *task) Update(ctx context.Context, id uint32, text string) error {
 	return nil
 }
 
-func (s *task) FindOne(ctx context.Context, id uint32) (*domain.Task, error) {
+func (s *task) FindOne(ctx context.Context, id string) (*domain.Task, error) {
 	return s.repository.FindOne(ctx, id)
 }
 
@@ -55,6 +55,6 @@ func (s *task) Query(ctx context.Context, skip uint64, take uint64) ([]domain.Ta
 	return nil, nil
 }
 
-func (s *task) Remove(ctx context.Context, id uint32) (int64, error) {
+func (s *task) Remove(ctx context.Context, id string) (string, error) {
 	return s.repository.Remove(ctx, id)
 }

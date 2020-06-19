@@ -54,7 +54,6 @@ func ListenGRPC(s engine.Task, userURL string, port int) error {
 }
 
 func (s *grpcServer) PostTask(ctx context.Context, r *pb.PostTaskRequest) (*pb.PostTaskResponse, error) {
-	fmt.Println("this is in GRPC module: ", r.Text)
 	err := s.service.Insert(ctx, r.Text)
 	if err != nil {
 		log.Println("here error in task method")
@@ -83,7 +82,7 @@ func (s *grpcServer) GetTask(ctx context.Context, r *pb.GetTaskRequest) (*pb.Get
 
 	return &pb.GetTaskResponse{
 		Task: &pb.Task{
-			Id:   a.ID,
+			Id:   a.ID.Hex(),
 			Text: a.Text,
 		},
 	}, nil
@@ -99,7 +98,7 @@ func (s *grpcServer) GetMultipleTask(ctx context.Context, r *pb.GetMultipleTaskR
 		tasks = append(
 			tasks,
 			&pb.Task{
-				Id:   p.ID,
+				Id:   p.ID.Hex(),
 				Text: p.Text,
 			},
 		)
@@ -116,6 +115,6 @@ func (s *grpcServer) DeleteTask(ctx context.Context, r *pb.DeleteTaskRequest) (*
 		return nil, err
 	}
 	return &pb.DeleteTaskResponse{
-		Id: uint32(a),
+		Id: a,
 	}, nil
 }

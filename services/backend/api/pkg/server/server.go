@@ -12,19 +12,17 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/hackerrithm/blackfox/services/backend/api/pkg/authentication"
-	multiserviceMap "github.com/hackerrithm/blackfox/services/backend/api/pkg/resolver"
-
 	"github.com/sirupsen/logrus"
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-
 	"github.com/99designs/gqlgen/handler"
-	apiCfg "github.com/hackerrithm/blackfox/services/backend/api/pkg/configs"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/cors"
+
+	multiserviceMap "github.com/hackerrithm/blackfox/services/backend/api/pkg/resolver"
+	apiCfg "github.com/hackerrithm/blackfox/services/backend/api/pkg/configs"
 )
 
 const defaultPort = "8080"
@@ -161,7 +159,7 @@ func main() {
 	// mux := http.NewServeMux()
 	router := mux.NewRouter()
 	// router := chi.NewRouter()
-	router.Use(authentication.AuthHandlerMiddleware)
+	// router.Use(authentication.AuthHandlerMiddleware)
 	// h := cors.New(cors.Options{
 	// 	AllowedOrigins:   []string{"*"},
 	// 	AllowCredentials: false,

@@ -17,6 +17,8 @@ package domain
 import (
 	"context"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -29,10 +31,15 @@ type (
 	// Task is a task object
 	// that has datatypes for
 	// the task domain (Task)
+	// Task struct {
+	// 	ID   uint32    `gorm:"primary_key;auto_increment" json:"id"`
+	// 	Text string    `gorm:"size:255;not null;" json:"text"`
+	// 	Date time.Time `json:"date" bson:"date,omitempty"`
+	// }
 	Task struct {
-		ID   uint32    `gorm:"primary_key;auto_increment" json:"id"`
-		Text string    `gorm:"size:255;not null;" json:"text"`
-		Date time.Time `json:"date" bson:"date,omitempty"`
+		ID   bson.ObjectId `json:"id" bson:"_id,omitempty"`
+		Text string        `json:"text" bson:"text,omitempty"`
+		Date time.Time     `json:"date" bson:"date,omitempty"`
 	}
 )
 

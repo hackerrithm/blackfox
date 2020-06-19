@@ -1,0 +1,53 @@
+body .base-container-register {
+        /* Location of the image */
+        /* background-image: url("https://i.imgur.com/LpwZycm.jpg"); */
+        /* background-image: url("https://cdn.lowgif.com/full/7b10f2cc682812fb-pokemon-pikachu-hdgifs-high-definition-animated-gifs.gif"); */
+        
+        /* Background image is centered vertically and horizontally at all times */
+        background-position: center center;
+        
+        /* Background image doesn't tile */
+        background-repeat: no-repeat;
+        
+        /* Background image is fixed in the viewport so that it doesn't move when 
+           the content's height is greater than the image's height */
+        background-attachment: fixed;
+        
+        /* This is what makes the background image rescale based
+           on the container's size */
+        background-size: cover;
+        
+        /* Set a background color that will be displayed
+           while the background image is loading */
+        background-color: #fff;
+}
+
+.username-form-group {
+        margin-bottom: 20px;
+}
+
+.emailAddress-form-group {
+        margin-bottom: 20px;
+}
+
+.btn-submit {
+        margin-top: 20px;
+}
+
+.mid-view {
+        align-content: "center";
+        text-align: center;
+}
+
+.header {
+        margin-bottom: 20px;
+        font-size: 200%;
+        font-weight: 800;
+}
+
+.account-existing-link {
+        margin-top: 40px;
+        font-size: 150%;
+        font-weight: 800;
+        color: #000;
+}

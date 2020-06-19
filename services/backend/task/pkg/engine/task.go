@@ -28,16 +28,16 @@ type (
 		Insert(ctx context.Context, text string) error
 
 		// Update is the update-a-task use-case
-		Update(ctx context.Context, id uint32, text string) error
+		Update(ctx context.Context, id string, text string) error
 
 		// Query is the list-the-tasks use-case
 		Query(ctx context.Context, skip uint64, take uint64) ([]domain.Task, error)
 
 		// FindOne ...
-		FindOne(ctx context.Context, id uint32) (*domain.Task, error)
+		FindOne(ctx context.Context, id string) (*domain.Task, error)
 
 		// RemoveDelete ...
-		Remove(ctx context.Context, id uint32) (int64, error)
+		Remove(ctx context.Context, id string) (string, error)
 
 		// ListAllTasks ...
 		ListAllTasks(ctx context.Context, skip, take uint64) (*[]domain.Task, error)

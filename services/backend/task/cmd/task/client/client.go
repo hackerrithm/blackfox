@@ -11,16 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package client
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
 	"google.golang.org/grpc"
+	"gopkg.in/mgo.v2/bson"
 
 	"github.com/hackerrithm/blackfox/services/backend/task/pkg/domain"
 	pb "github.com/hackerrithm/blackfox/services/backend/task/pkg/model"
@@ -49,7 +48,6 @@ func (c *Client) Close() {
 
 // Post ...
 func (c *Client) Post(ctx context.Context, text string) (string, error) {
-	fmt.Println("this is text: ", text)
 	r, err := c.service.PostTask(
 		ctx,
 		&pb.PostTaskRequest{
@@ -57,7 +55,7 @@ func (c *Client) Post(ctx context.Context, text string) (string, error) {
 		},
 	)
 	if err != nil {
-		return "this is not a insert error", err
+		return "", err
 	}
 
 	log.Println(r.Task)
@@ -65,7 +63,7 @@ func (c *Client) Post(ctx context.Context, text string) (string, error) {
 }
 
 // Put ...
-func (c *Client) Put(ctx context.Context, id uint32, text string) (string, error) {
+func (c *Client) Put(ctx context.Context, id, text string) (string, error) {
 	r, err := c.service.PutTask(
 		ctx,
 		&pb.PutTaskRequest{
@@ -80,7 +78,7 @@ func (c *Client) Put(ctx context.Context, id uint32, text string) (string, error
 }
 
 // Get ...
-func (c *Client) Get(ctx context.Context, id uint32, userID uint64) (*domain.Task, error) {
+func (c *Client) Get(ctx context.Context, id string, userID uint64) (*domain.Task, error) {
 	r, err := c.service.GetTask(
 		ctx,
 		&pb.GetTaskRequest{Id: id, UserID: userID},
@@ -89,7 +87,7 @@ func (c *Client) Get(ctx context.Context, id uint32, userID uint64) (*domain.Tas
 		return nil, err
 	}
 	return &domain.Task{
-		ID:   r.Task.Id,
+		ID:   bson.ObjectIdHex(r.Task.Id),
 		Text: r.Task.Text,
 	}, nil
 }
@@ -110,7 +108,7 @@ func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]d
 	tasks := []domain.Task{}
 	for _, a := range r.Tasks {
 		tasks = append(tasks, domain.Task{
-			ID:   a.Id,
+			ID:   bson.ObjectIdHex(a.Id),
 			Text: a.Text,
 		})
 	}
@@ -118,13 +116,13 @@ func (c *Client) GetMultiple(ctx context.Context, skip uint64, take uint64) ([]d
 }
 
 // Delete removes a task with passed identifier
-func (c *Client) Delete(ctx context.Context, id uint32) (uint32, error) {
+func (c *Client) Delete(ctx context.Context, id string) (string, error) {
 	r, err := c.service.DeleteTask(
 		ctx,
 		&pb.DeleteTaskRequest{Id: id},
 	)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return r.Id, nil
 }

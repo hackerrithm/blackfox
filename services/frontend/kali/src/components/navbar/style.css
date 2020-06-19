@@ -1,0 +1,11 @@
+.fixed {
+  position: static;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  z-index: 2;
+  margin-top: 0;
+  height: 30;
+  /* background-color: white; */
+  /* margin-bottom: 30; */
+}

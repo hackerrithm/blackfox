@@ -56,7 +56,7 @@ const AppLaunchView = () => {
 const Start = () => {
         return (
                 <div>
-                        {2 > 1? <AppLaunchView/>: <IndexStartView/>}
+                        {2 < 1? <AppLaunchView/>: <IndexStartView/>}
                 </div>
         );
 }
